@@ -1,0 +1,108 @@
+.ui-widget-header button {
+	outline: 0;
+}
+
+#select-selectdialog {
+	font-family : "Trebuchet MS", "sans-serif";
+	-moz-user-select: none;
+	float: left;
+	padding: 4px 0 4px 0;
+}
+#select-dialogparent {
+	animation: shake 500ms infinite;
+	-webkit-animation: shake 500ms infinite;
+}
+#select-dialogparent:hover {
+	animation: none !important;
+	-webkit-animation: none !important;
+}
+
+#select-selectdialog table {
+	border-spacing: 0;
+	min-width: 200px;
+}
+#select-selectdialog table tr {
+	/*border-bottom: 1px solid #ccc;*/
+	
+	padding: 10px;
+	cursor: pointer;
+	white-space: nowrap;
+	line-height: 2em;
+}
+
+#select-selectdialog table tr:hover {
+	border: 1px solid #aaa;
+	background: #eee;
+}
+
+#select-selectdialog table tr:active {
+	background: #3E5F9C;
+	color: #fff;
+}
+
+#select-selectdialog table td {
+	padding: 0 5px;
+}
+
+.selectmany-td-first {
+	/* Limit the size of the td holding the legend image */
+	text-align: left;
+	width: 20px;
+	padding-left: 15px !important;
+}
+
+.selectdialog-rowtag img {
+	/*position: relative;*/
+	max-width: 20px;
+	max-height: 20px;
+	display: block;
+}
+
+
+@keyframes shake
+{
+	0% {
+		transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+	}
+	25% {
+		transform: rotate(2deg);
+		-ms-transform: rotate(2deg);
+		-webkit-transform: rotate(2deg);
+	}
+	50% {
+		transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+	}
+	75% {
+		transform: rotate(-2deg);
+		-ms-transform: rotate(-2deg);
+		-webkit-transform: rotate(-2deg);
+	}
+}
+
+@-webkit-keyframes shake
+{
+	0% {
+		transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+	}
+	25% {
+		transform: rotate(2deg);
+		-ms-transform: rotate(2deg);
+		-webkit-transform: rotate(2deg);
+	}
+	50% {
+		transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+	}
+	75% {
+		transform: rotate(-2deg);
+		-ms-transform: rotate(-2deg);
+		-webkit-transform: rotate(-2deg);
+	}
+}

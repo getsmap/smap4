@@ -1,0 +1,34 @@
+
+.loading-texttag {
+}
+
+
+#loading-background {
+	width: 100%;
+	height: 100%;
+	background-color: #aaa;
+	opacity: 0.3;
+	filter: alpha(opacity=30);
+	z-index: 1002;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+#loading-spinner-div {
+	position: absolute;
+	z-index: 2000;
+	text-align: center;
+	width: 200px;
+	top: 0px;
+	left: 0px;
+
+}
+#loading-spinner-text {
+	position: relative;
+	width: 200px;
+	top: 0px;
+	font-size: 12px;
+	font-weight: bold;
+	z-index: 2000;
+}

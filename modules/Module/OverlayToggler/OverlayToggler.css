@@ -1,0 +1,41 @@
+#oltoggler-maindiv {
+	background: #eee;
+	opacity: 0.9;
+	padding: 0;
+	width: auto;
+	height: auto;
+	border: 1px solid #aaa;
+	border-width: 1px;
+	z-index: 1010;
+	position: absolute;
+	left: 10px;
+	top: 10px;
+}
+
+#oltoggler-container {
+	border-spacing: 0 1px;
+	border-color: #aaa !important;
+}
+
+#oltoggler-container tr {
+	max-width: 200px;
+	cursor: pointer;
+	background: #fff;
+}
+#oltoggler-container td {
+	padding: 8px;
+}
+#oltoggler-container td img {
+	width: 15px;
+	height: 15px;
+}
+
+
+#oltoggler-container .ui-state-hover {
+	background: #eee;
+	color: #222;
+}
+#oltoggler-container .ui-state-active {	
+	background: #EF7D0B; /*#EF7D0B;*/
+	color: #fff;
+}

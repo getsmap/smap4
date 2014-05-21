@@ -1,0 +1,61 @@
+#advsearch-maindiv {
+
+}
+#advsearch-lyrdiv {
+	float : left;
+	height : auto;
+	margin-bottom: 25px;
+	margin-top: 5px;
+	width : auto;
+}
+#advsearch-lyrtbl{
+	border-collapse: collapse;
+	text-align: center;
+	width: 100%;
+}
+#advsearch-godiv {
+	float: left;
+	position: relative;
+}
+#advsearch-searchfield {
+	width: 250px;
+}
+#advsearch-gobtn {
+	margin-left: 10px;
+	width: auto;
+	height: auto;
+}
+#advsearch-logiclist {
+	display: inline;
+	height: auto;
+	margin-left: 5px;
+	width: auto;
+}
+#optDiv{
+	display: block;
+	margin-top: 5px;
+}
+#advsearch-lyrtbl td, #advsearch-lyrtbl th {
+	border: 1px solid black;
+	padding: 10px;
+}
+#advsearch-lyrtbl th {
+	background-color:#D3D3D3;
+}
+#advsearch-lyrtbl select {
+    -moz-border-radius : 4px;
+    vertical-align : middle;
+    width : 100%;
+}
+#advsearch-maindiv option {
+	-moz-border-radius : 4px;
+}
+#advsearch-maindiv option:hover {
+    cursor: pointer;
+}
+#advsearch-spinnerdiv{
+	float: right;
+	height: 50px;
+	position: relative;
+	right: 20px;
+}

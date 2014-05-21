@@ -1,0 +1,17 @@
+
+/* The placement properties of the navigation panel (not zoombar) */
+.pizza-icon-panbar {
+	width: 51px;
+	height: 51px;
+	background-repeat: no-repeat;
+	position: absolute;
+	top: 7px;
+	left: 7px;
+	z-index: 1000;
+}
+
+.pizza-slider {
+	height: 12px !important;
+	transition: top 100ms;
+	-webkit-transition: top 100ms;
+}

@@ -1,0 +1,90 @@
+#blixten-dialogdiv {
+	overflow: hidden;
+}
+
+#blixten-dialogdiv fieldset {
+	margin: 15px 0 0 0;
+	border: 1px solid #BBB;
+}
+
+.blixten-dialoglabel {
+    margin: 5px 0 0px 0;	
+    display: block;
+    font-style: italic;
+}
+
+
+
+
+#blixten-sliderdiv {
+    margin: 20px 0 0 0;
+}
+#blixten-labelradius {
+    margin: 0 0 5px 0;
+    display: block;
+    font-weight: bold;
+}
+#blixten-radiusentry {
+    size: 3;
+    display: inline;
+}
+
+
+#blixten-sliderdiv {
+    
+}
+#blixten-sliderdiv input {
+    display: inline-block;
+}
+
+#blixten-sliderdiv div {
+	margin: 10px 0 10px 0px;
+    display: block;
+    width: 250px;
+}
+
+/*
+#blixten-searchallcontainer {
+    	
+}
+#blixten-searchallcontainer input {
+    vertical-align: top;
+}
+#blixten-searchallcontainer label {
+    vertical-align: center;
+    cursor: pointer;	
+}*/
+
+
+
+#blixten-anim {
+	display: block;
+    position: absolute;
+    z-index: 2000;
+}
+
+
+
+#blixten-clickcontainer label {
+    font-style: italic;
+}
+#blixten-clickcontainer div {
+    margin-top: 5px;
+}
+#blixten-clickcontainer div label {
+    font-style: normal;
+    vertical-align: center;
+    cursor: pointer;
+}
+/* Layer tree print */
+#blixten-btnlayertreeprint {
+	float: left;
+}
+
+#toolbarlabel{
+	position: absolute;
+	font-family: arial;
+	font-size: 14px;
+	color: #fff;
+	z-index: -1;
+}

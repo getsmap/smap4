@@ -1,0 +1,30 @@
+div.olControlMousePosition {
+  font-size: larger;
+  font-weight: bold;
+}
+.olControlScale {
+  font-size: larger;
+  font-weight: bold;
+}
+#mousepos-projdiv {
+	float: right;
+	filter:alpha(opacity=50);
+	opacity : 0.5;
+}
+#mousepos-coords {
+	display : block;
+}
+.mousepos-maindiv {
+	bottom : 5px;
+	height : auto;
+	margin-right : 10px;
+	right : 15px;
+	float : right;
+}	
+.mousepos-maindiv select {
+    -moz-border-radius: 4px;
+    vertical-align: middle;
+}
+.mousepos-maindiv option:hover {
+    cursor: pointer;
+}

@@ -1,0 +1,44 @@
+.incorrect_email {
+  border: 1px solid red;
+  background: pink;
+  color: red;
+}
+
+#addresses {
+	font-size: 1.0em;
+	font-weight: bold;
+	color: blue;
+}
+
+.icon-epost {
+	background: none !important;
+	background-image: url('img/email.png') !important;
+}
+
+/* The dialog */
+#email-dialog {
+	overflow: visible; /* avoid scrolling when validation messages appear */
+	padding: 0;
+}
+
+#email-dialog fieldset {
+	border: none;
+}
+
+#email-dialog fieldset label {
+	display: block;
+	margin-top: 6px;	
+}
+
+#email-dialog fieldset input, #email-dialog fieldset textarea {
+	width: 240px;
+	border: 1px solid #bbb;
+	line-height: 1.5;
+	font-size: 12px;
+}
+
+#email-dialog fieldset input:focus, #email-dialog fieldset textarea:focus {}
+
+#email-dialog fieldset textarea {
+	height: 120px;	
+}

@@ -1,0 +1,48 @@
+#opacity-maindiv {
+	width : auto;
+}
+.opacity-rowsdiv {
+	height: auto;
+	padding-right: 10px;
+}
+.opacity-rows {
+	height: 40px;
+	top: 20px;
+	position: relative;	
+}
+.opacity-mapname {
+	float: left;
+	font-size: 0.9em;
+	margin-right: 5px;
+}
+.opacity-sliderdiv {
+    float: right;
+    width: 150px;
+	z-index: 1201;
+}
+.opacity-values {
+	float: right;
+	font-size: 0.9em;
+	margin-right: 15px;
+	margin-left: 5px;
+}
+#opacity-btndiv {
+	float : left;
+	position : relative;
+	top : 25px;
+	margin-top: 10px;
+}
+#opacity-togglebtn {
+	font-size: 0.8em;
+	height: auto;
+	margin-top: 10px;
+	width: auto;
+}
+#opacity-prefdiv {
+	clear : both;
+	font-size: 0.8em;
+	height: auto;
+	margin-top : 10px;
+	top: 10px;
+	width: auto;
+}

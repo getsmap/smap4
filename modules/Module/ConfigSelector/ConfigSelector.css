@@ -1,0 +1,11 @@
+#configSelectorDdl{
+	cursor: pointer;
+	cursor: hand;
+	font-size: 1.3em;
+	/* position: absolute; */
+	/* font-weight: normal; */
+	/* height: 25px; */
+	/* float: right; */
+	/* right: 15px; */
+    /* top: 5px;*/
+}

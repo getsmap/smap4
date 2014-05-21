@@ -1,0 +1,8 @@
+#extract-click-dialog input {
+	width: 200px;
+	line-height: 1.5;
+}
+
+#extract-click-dialog td {
+	min-width: 70px;
+}

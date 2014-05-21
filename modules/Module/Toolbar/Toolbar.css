@@ -1,0 +1,50 @@
+#toolbar-maindiv {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	font-size: 1.00em;
+	line-height: 38px;
+	padding: 0;
+	margin: 0;
+	white-space: nowrap;
+	border-left: none;
+	border-right: none;
+	z-index: 1;
+	box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .4);
+}
+
+.toolbar-entry {
+	position: relative;
+	font-size: 1.3em;
+	top: 4px;
+	padding: 2px 4px;
+	width: 100px;
+	display: inline;
+	float: left; /* always float left solves IE problems */
+}
+.toolbar-logo {
+	position: relative;
+	font-size: 1.3em;
+	padding: 4px 4px 4px 12px;
+	display: inline;
+	float: left; /* always float left solves IE problems */
+}
+.toolbar-title {
+	position: absolute;
+	font-size: 14px;
+	padding: 0px 0px 0px 12px;
+	line-height: 36px;
+	display: inline;
+	float: left; /* always float left solves IE problems */
+}
+
+/* All select tags will get these values */
+#toolbar-maindiv select {
+	float: right;
+	margin-top: 9px;	
+}
+
+.ui-widget-header .ui-button {
+	overflow: visible !important;
+}

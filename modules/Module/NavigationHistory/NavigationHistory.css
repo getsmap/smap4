@@ -1,0 +1,17 @@
+#NavigationHistory-mainDiv {
+	position: absolute;
+	top: 50px;
+	left: 150px;
+	width: 18.4em;
+	border: 1px solid #888;
+	background: #f00;
+	padding: 0;
+	filter: alpha(opacity=80);
+	opacity: 0.8;
+}
+
+#NavigationHistory-btnDiv {
+	font-size: 2em;
+	color: #333;
+	text-align: center;
+}

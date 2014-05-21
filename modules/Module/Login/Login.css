@@ -1,0 +1,24 @@
+#login-form fieldset {
+	border: 1px solid #ccc;
+	
+}
+
+#login-form label {
+	display: block;
+	margin: 5px 0 5px 0;
+}
+#login-form input {
+	display: block;
+	margin: 5px 0 5px 0;
+}
+#login-buttonsubmit {
+	margin: 5px 0 0 0;
+	font-size: 0.9em;	
+}
+
+/* Make the dialog modal background a little less transparent 
+so that the attention is put into the login box. */
+.ui-widget-overlay {
+	opacity: .50; /*Opacity in other browsers*/
+	filter: Alpha(Opacity=50);	/*Opacity in IE*/
+}

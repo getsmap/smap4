@@ -1,0 +1,229 @@
+.btnmeasure {
+	background: none !important;
+	background-image: url("img/icon_vinkelhake_turn.png") !important;
+}
+#measureDialogDiv {
+	width: 190px;
+	height: 140px;
+	font-size: 12px;
+	font-family: arial;
+}
+
+#measureDialogDiv p {
+	font-weight: bold;
+	font-size: 1.1em;	
+}
+
+#measure-helpDiv {
+	position: absolute;
+	left: 10px;
+	top: 7px;
+	width: 160px;
+}
+
+#measure-resultDiv {
+	position: absolute;
+	left: 10px;
+	top: 99px;
+	width: auto;
+	min-width: 160px;
+	height: auto;
+	padding: 5px;
+	border: 1px solid #bbb;
+
+	min-height: 25px;
+}
+
+#measure-resultDiv div {
+	width: 170px;
+	line-height: 22px;
+	font-size: 12px;
+}
+
+#measure-resultDiv div input {
+	font-weight: normal;
+	margin-left: 5px;
+	width: 90px;
+	float: right;
+	font-size: 13px;
+}
+
+#measure-resultDiv div span {
+	font-weight: bold;
+	float: left;	
+	font-size: 13px;	
+}
+
+#measure-resultDiv div {
+	position: relative;
+}
+
+
+#measure-projHeader {
+	position: absolute;
+	left: 10px;
+	top: 167px;
+	margin: 0;
+	padding: 0;
+}
+
+#measure-projectSelectTag {
+	position: absolute;
+	left: 10px;
+	top: 185px;
+	margin: 0;
+	padding: 0;
+}
+
+#measure-cursorDiv {
+	font-family: courier;
+	position: absolute;
+	padding: 5px;
+	font-size: 12px;
+	font-weight: normal;
+	color: #fff;
+	background-color: #333;
+	filter: alpha(opacity=80);
+	opacity: 0.8;
+	width: auto;
+	height: auto;
+	z-index: 3000;
+}
+
+#measure-cursorDiv span {
+	margin-left: 5px;
+}
+
+#measure-usercoords {
+	float: right; 
+	position: relative;
+	top: 62px;
+}
+
+#measure-errordiv {
+	background-color: #FFFFFF;
+	border-color: #CCCCCC;
+	border-style: solid;
+	border-width: 0 2px 2px 0;
+	font-size: 1.5em;
+	height: 120px;
+	left: 35%;
+	opacity: 0.8;
+	position: absolute;
+	top: 30%;
+	width: 250px;
+	z-index: 1201;
+}
+
+#measure-errortext {
+	font-family: Verdana;
+	font-size: 14px;
+	font-weight: 800;
+	left: 2px;
+	margin: 5px;
+	position: absolute;
+	top: 2px;
+}
+
+#measure-errorbtnclose {
+	background-color: #E6E6E6;
+	border-color: #999999;
+	border-style: solid;
+	border-width: 0 2px 2px 0;
+	bottom: 5px;
+	cursor: pointer;
+	font-family: Arial;
+	font-weight: 800;
+	opacity: 0.8;
+	padding: 2px;
+	position: absolute;
+	right: 25px;
+}
+
+
+/* jquery button panel */
+#measure-panel {
+	position: absolute;
+	top: 67px;
+	white-space: nowrap;
+}
+.measure-button {
+	height: auto;
+	width: auto;
+	float: left;
+	margin-right: 7px;
+	cursor: pointer;
+}
+
+/* Modifications of OpenLayers measure control classes */
+
+.olControlPanelMeasure {
+	position: absolute;
+	top: 67px;
+	cursor: pointer;
+	cursor: hand;
+	padding: 0;
+	margin: 0;
+}
+
+.olControlPanelMeasure div {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	float: left;
+	padding: 0;
+	margin: 0;
+}
+
+
+.olControlPanelMeasure .btnMeasurePointItemInactive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editTools/point_off.png");
+	margin: 0 6px 0 0;
+	
+}
+
+.olControlPanelMeasure .btnMeasurePointItemActive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editTools/point_on.png");
+	margin: 0 6px 0 0;
+}
+
+
+.olControlPanelMeasure .btnMeasureLineItemInactive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editTools/line_off.png");
+	margin: 0 6px 0 0;
+	
+}
+
+.olControlPanelMeasure .btnMeasureLineItemActive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editTools/line_on.png");
+	margin: 0 6px 0 0;
+}
+
+
+.olControlPanelMeasure .btnMeasurePolygonItemInactive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editTools/polygon_off.png");
+	margin: 0 6px 0 0;
+}
+
+.olControlPanelMeasure .btnMeasurePolygonItemActive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editTools/polygon_on.png");
+	margin: 0 6px 0 0;
+}

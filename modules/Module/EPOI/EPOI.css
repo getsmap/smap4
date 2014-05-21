@@ -1,0 +1,269 @@
+/* Settings for the panel - i.e. the div holding the editing buttons */
+.wfsediting-panel {
+	position: absolute;
+	left: 20px;
+	top: 85px;
+	z-index: 2000;
+	width: 25px;
+	height: 48px;
+	border: none;
+	float: left;
+}
+.crawls-panel {
+	position: absolute;
+	left: 20px;
+	top: 85px;
+	z-index: 2000;
+	width: 25px;
+	height: 48px;
+	border: none;
+	float: left;
+}
+/* CSS for the buttons inside the panel */
+.crawls-panel div {
+	position: relative;
+	float: left;
+	cursor: pointer;
+	background-image: url("http://localhost/sMap/modules/Module/EPOI/img/editToolsIcons/point_off.png");
+	/*background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");*/
+	background-repeat: no-repeat;
+	width: 24px;
+	height: 24px;
+	margin: 0 5px 5px 0;
+}
+
+.poi-lbl-draw {
+	position: absolute;
+	left: 55px;
+	top: 90px;
+	font-size: 0.9em;
+}
+.poi-lbl-draw label {
+	display: block;
+	margin-bottom: 14px;
+}
+
+.poi-lbl-draw button {
+	position: absolute;
+	left: 135px;
+	top: 85px;
+	font-size: 0.9em;
+	
+}
+
+.epoi-lbl-draw {
+	position: absolute;
+	left: 255px;
+	top: 14px;
+	font-size: 0.9em;
+}
+.epoi-lbl-draw label {
+	display: block;
+	margin-bottom: 14px;
+}
+
+.poi-edit-btnpanel {
+	position: absolute;
+	top: 90px;
+	bottom: 0px;
+	left: 17px;
+	padding: 0;
+    margin: 0;
+    width: 170px;
+    height: 100px;
+    background: none;
+    border: none;
+ 
+}
+.poi-edit-btnpanel span {
+	width: 150px;
+ 	left: 0px;
+}
+
+#poi-form{
+	width: 270px;
+}
+
+#poi-edit-btnpanel input {
+    float: right;
+    margin: 2px 5px 2px 5px;
+}
+
+.poi-edit-btnpanel label {
+    float: left;
+    margin: 4px 0px 4px 5px;
+}
+#poi-iconeraser {
+    position: absolute;
+    z-index: 1000;	
+}
+
+.olControlDrawFeaturePointItemActive {
+	background-position: -77px -23px ;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");
+}
+.olControlDrawFeaturePointItemInactive {
+	background-position: -77px 0px;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");
+}
+.olControlDrawFeaturePolygonItemInactive { 
+	background-position: -26px 0px;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");	 
+}
+.olControlDrawFeaturePolygonItemActive { 
+	background-position: -26px -23px;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");	                                                             
+}
+
+.olControlDrawFeaturePathItemActive {
+	background-position: -51px -23px ;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");	
+}
+.olControlDrawFeaturePathItemInactive {
+	background-position: -51px 0px;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");	
+}
+
+
+
+/*
+.olControlNavigationItemInactive { 
+	background-position: -103px -0px;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png"); 
+}
+.olControlNavigationItemActive { 
+	background-position: -103px -23px; 
+}
+.olControlSaveFeaturesItemInactive {
+	background-position: 0px 1px; 
+}
+.olControlSaveFeaturesItemActive {
+	background-position: 0px -23px; 
+}
+
+*/
+
+/* These buttons (modify, delete) should have a custom icon since there is no appropriate icon in the toolbar-png. */
+
+
+.poiedit-btnedit {
+	background-image: url("img/icon_lank.png");
+}
+
+.editpoi-dialogDiv {
+	position: absolute;
+		
+}
+
+.editpoi-dialogDiv select#poi-category {
+	width:220px;
+}
+
+.poi-dialogDiv select#poi-quantity {
+	width:90px;
+}
+
+.poi-dialogDiv select#poi-unity {
+	width:90px;
+}
+
+/* Settings for the panel - i.e. the div holding the editing buttons */
+.poi-panel {
+	position: absolute;
+	left: 20px;
+	top: 10px;
+	z-index: 2000;
+	width: 25px;
+	height: 48px;
+	border: none;
+	float: left;
+}
+/* CSS for the buttons inside the panel */
+.poi-panel div {
+	position: relative;
+	float: left;
+	cursor: pointer;
+	background-image: url("../../../lib/OpenLayers-2.10/theme/default/img/editing_tool_bar.png");
+	background-repeat: no-repeat;
+	width: 24px;
+	height: 24px;
+	margin: 0 5px 5px 0;
+}
+
+.poi-datecalendar {
+	position: absolute;
+	left: 70px;
+}
+
+.poi-datecalendar label {
+	display: block;
+	left: 15px;
+}
+
+.poi-dialogDiv form {
+	border: 2px solid red;
+	background-image:url('img/bgsmap.png'); /* background: #FFE4E1;*/
+	
+}
+
+#poiDialog-form{
+	width:460px;
+}
+
+
+.poi-dialogDiv select{
+	width: 150px;
+}
+
+.poi-dialogDiv input#input-title { 
+	color: #000000; 
+	font-family: Verdana; 
+	font-weight: bold; 
+	font-size: 12px; 
+	background: #FFE4E1;
+}
+
+.poi-dialogDiv div { 
+	color: #000000; 
+	font-family: Verdana; 
+	font-weight: bold; 
+	font-size: 12px; 
+	
+}
+
+.olControlPanelMeasure .btnDrawPointItemInactive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editToolsIcons/point_off.png");
+	margin: 0 6px 0 0;
+	
+}
+
+.olControlPanelMeasure .btnDrawPointItemActive {
+	position: relative;
+	width: 24px;
+	height: 22px;
+	background-image: url("img/editToolsIcons/point_on.png");
+	margin: 0 6px 0 0;
+}
+
+.editpoi-btntypeDiv input#epoi-btnType{
+	position: relative;
+	top: 10px;
+	left: 5px;
+	width:10px;
+	height:10px;	
+	background-repeat: no-repeat;
+	display:none;
+}
+
+.editpoi-btntypeDiv label{
+	position: relative;
+	top: 10px;
+	left: 5px;
+	width:29px;
+	height:27px;	
+	background-repeat: no-repeat;
+}
+}

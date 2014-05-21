@@ -1,0 +1,20 @@
+#introdialog-dialog {}
+
+#introdialog-checkboxdiv {
+	position: absolute;
+	right: 120px;
+	bottom: 20px;
+}
+#introdialog-checkboxdiv label {
+	margin-left: 3px;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.introdialog-italic {
+	font-style: italic;	
+}
+
+.introdialog-bgcolor {
+	
+}

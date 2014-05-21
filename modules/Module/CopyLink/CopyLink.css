@@ -1,0 +1,54 @@
+#copylink-maindiv {
+	cursor : default;
+	height : auto;
+	position : absolute;
+	right : 0px;
+	top : 0px;
+	z-index : 1007;
+	width : 440px;
+}
+.copylink-subdiv {
+	height : auto;
+	margin : 10px 0px 25px 5px;
+	position : relative; 
+	top : 10px;
+	width : 100%;
+}
+.copylink-labels {
+	width : auto;
+}
+.copylink-entries{
+	margin-top : 2px;
+	width : 95%;
+}
+#copylink-btn {
+	cursor: pointer;
+	cursor: hand;
+	margin-bottom : 5px;
+	position : absolute;
+	right : 10px;
+	top : 5px;
+	font-size: 0.8em;
+}
+#copylink-shortendiv {
+	bottom : 5px;
+	float : left;
+	font-size: 0.8em;
+	height: auto;
+	left : 5px;
+	position : relative;
+	width: auto;
+}
+#copylink-shortenbtn {
+	cursor: pointer;
+	cursor: hand;
+}
+#copylink-shortenmsg {
+	display: inline-block;
+	margin-left: 10px;
+	position: relative;
+}
+.btncopylink {
+	background: none !important;
+	background-image: url("img/icon_lank_svart.png") !important;
+}

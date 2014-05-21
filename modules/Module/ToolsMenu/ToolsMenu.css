@@ -1,0 +1,63 @@
+.toolsmenu-dropdown {
+	border: 1px solid #848484;
+	cursor: pointer;
+	cursor: hand;
+	height: auto;
+	position: absolute;
+	white-space: nowrap;
+	z-index: 1;
+	border-top: 1px solid #848484;
+	padding-top: 10px;
+	background: #fff ;
+	-webkit-border-radius: 0 2px 2px 2px !important;
+	-moz-border-radius: 0 2px 2px 2px !important;
+	border-radius: 0 2px 2px 2px !important;
+	-webkit-box-shadow: 1px 1px 15px #999;
+	box-shadow: 1px 1px 15px #999;
+}
+
+.toolsmenu-rows div {
+	border-top: none !important;
+}
+
+.toolsmenu-rows label {
+	padding: 7px;	
+}
+
+.toolsmenu-rows .ui-button-text {
+	text-align: left;	
+}
+
+.toolsmenu-rows .ui-state-default {
+	width : auto;
+	color: #666 ;
+	border-width: 0 !important;
+	border-bottom: 1px solid #eee ;
+	-webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	border-radius: 0px !important;
+}
+.toolsmenu-mainbutton {
+	z-index: 2;
+}
+.toolsmenu-mainbutton.ui-state-active {
+	background: #fff ;
+	color: #666 ;
+	border-bottom: none !important;
+	-webkit-border-radius: 2px 2px 0 0 !important;
+	-moz-border-radius: 2px 2px 0 0 !important;
+	border-radius: 2px 2px 0 0 !important;
+	border-color: #bbb ;
+	
+}
+/*.ui-state-active .ui-icon {
+	filter: saturate(10);
+	-webkit-filter: saturate(10);
+}*/	
+
+
+/* Override CSS for toolbuttons by using classes in your custom CSS:
+.toolsmenu-rows .ui-state-default
+.toolsmenu-rows .ui-state-hover
+.toolsmenu-rows .ui-state-active
+*/

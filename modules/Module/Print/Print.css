@@ -1,0 +1,156 @@
+#blixten-btnlayertreeprint {
+	float: right;	
+}
+
+#ui-id-2 {
+	overflow: hidden;	
+}
+
+#printwindow-tabscontainer {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: none;
+    width: 97%;
+}
+#printwindow-tabscontainer a {
+    padding: .4em 1em;
+}
+
+.print-tabcontent {
+    padding: 0.7em !important;
+    border: 1px solid #aaa !important;
+    margin-left: 2px;
+}
+#printwindow-tabscontainer ul {
+    background: none;
+    border: none;
+    border-radius: none;
+}
+/*#printwindow-tabscontainer li {
+    background: #E8E8E8;
+    color: #333;
+    border: none;
+    border-radius: none;
+}*/
+
+/* Components in the dialog */
+
+/* COMMON */
+
+#print-extentslider-header {
+    position: absolute;
+    top: 50px;
+    left: 15px;
+}
+#print-extentslider {
+    position: absolute;
+    top: 75px;
+    left: 15px;
+    width: 180px;
+}
+
+
+
+/* PRINT TAB */
+#print-description-header {
+	margin-top: 70px;
+}
+#print-description-tag {
+	margin-top: 3px;
+}
+
+#print-btnprint {
+    margin-top: 20px;
+}
+	
+
+
+/* EXPORT TAB */
+
+#print-btnexport {
+	margin-top: 70px;
+	text-align: center;
+}
+
+#print-btndownload {
+    position: absolute;
+    top: 110px;
+    left: 145px;
+    padding: .7em;
+    
+}
+
+#print-downloadtip {
+    position: absolute;
+    top: 160px;
+    left: 80px;
+    width: 120px;
+    padding: 5px;
+    background-color: #000;
+    color: #fff;
+    filter: alpha(opacity=70);
+    opacity: 0.7;
+}
+#print-downloadtip-line {
+    position: absolute;
+    top: 141px;
+    left: 160px;
+    width: 0px;
+    height: 17px;
+    border: 1px solid #000;
+    /*filter: alpha(opacity=70);
+    opacity: 0.7;*/	
+}
+
+
+
+/************************************************************************************************************************/
+
+#print-mapdiv {
+	position: absolute;
+	left: 1px;
+	top: 1px;
+	z-index: -10;
+}
+
+#print-div {
+    display: none;
+}
+
+#print-dialog {
+	overflow: hidden;	
+}
+
+
+@media print {
+	 #smapDiv, #mapDiv, #toolbarDiv, #sideDivRight, #sideDivLeft, #smap-loader, #smap-loader-bg {
+	   display: none;
+	   z-index: 0;
+	   border: none;
+	 }
+	 .ui-dialog, .ui-dialog-content, .ui-dialog-titlebar, .ui-widget, .ui-corner-all, .ui-widget-content
+	  {
+	   display: none;
+	   z-index: 0;
+	   border: none;
+	 }
+	 #print-div {
+	   display: block;
+	   margin: 0;
+	   padding: 0;
+	   z-index: 2000;
+	   background-color: #fff;
+	 }
+}
+
+
+
+
+
+
+
+
+
+
+

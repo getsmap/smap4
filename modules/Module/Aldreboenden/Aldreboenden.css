@@ -1,0 +1,60 @@
+.aldreboenden-popup {
+	display: block;
+	min-width: 200px;
+	min-height: 100px;
+	position: relative;
+	top: -15px;
+}
+
+.aldreboenden-popup a, .aldreboenden-popup h3 {
+	color: #00693C;
+}
+
+.aldreboenden-popup h3 {
+	margin-bottom: 0.4em;
+ 	margin-top: 0.9em;	
+}
+
+.aldreboenden-popup a {
+	text-decoration: none;
+	display: block;
+}
+
+.aldreboenden-popup img {
+	width: 100px;
+	max-height: 200px;
+	cursor: pointer;
+}
+.aldreboenden-popup label {
+	cursor: pointer;
+	font-size: 1.084em !important;
+}
+.aldreboenden-popup input {
+    margin: 0 .5em 0 0!important;
+}
+
+
+.aldreboenden-popup-divleft {
+	position: relative;
+	margin-right: 10px;
+	float: left;
+}
+.aldreboenden-popup-divright {
+	position: relative;
+}
+
+.aldreboenden-popup-headerlink {
+	margin-bottom: 10px;
+	font-size: 1.1em;
+}
+
+/* -- Override OpenLayers' popup classes */
+
+/*div.olMapViewport div.olPopup {
+ 	height: 167px !important;
+ 	width: 235px !important;
+}*/
+
+.olFramedCloudPopupContent {
+  left: 11px !important;
+}

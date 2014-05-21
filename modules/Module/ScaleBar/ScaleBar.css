@@ -1,0 +1,11 @@
+#scaleDiv {
+	width : 232px;
+	height : 35px;
+	background-color : #ffffff;
+	position : absolute;
+	right : 0px;
+	bottom : 0px;
+	z-index : 999;
+	filter : alpha(opacity=50);
+	opacity : 0.5;
+}

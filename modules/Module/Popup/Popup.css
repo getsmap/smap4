@@ -1,0 +1,49 @@
+.popup-text1 {
+	font-size: 1em;	
+}
+.popup-text2 {
+    font-size: 1em;
+    font-weight: bold;
+}
+.popup-header1 {
+	border-bottom: 1px solid #CCC;
+	color: #333;
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 8px;
+	margin-top: 10px;
+	padding-bottom: 3px;
+	
+}
+.popup-header2 {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.popup-header3 {
+	font-size: 1em;
+	font-weight: bold;
+	font-type: italic;	
+}
+.popup-img1, .popup-img1 img {
+	max-width: 150px;
+}
+.olFramedCloudPopupContent img {
+	width: 100%;
+}
+.olFramedCloudPopupContent a[href=""]{
+	display: none;
+}
+/* Remove-button in popup */
+.popup-rmBtn{
+	
+}
+
+/* CSS for images embedded in an <a>-tag */
+.popup-a-img
+.popup-a-img:visited,
+.popup-a-img:link,
+.popup-a-img:hover,
+.popup-a-img:active  {
+    text-decoration: none;
+    color: none;
+}

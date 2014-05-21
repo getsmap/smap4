@@ -1,0 +1,57 @@
+#search-nopoitext {
+	font-family: Verdana;
+	left: 2px;
+	margin: 5px;
+	top: 2px;
+}
+
+/*Used for the drop-down menu; if that option is set to true in Search_conf.js */
+#search-dropdownmenu {
+	cursor: pointer;
+	cursor: hand;
+	position: relative;
+	float: none !important;	
+}
+#search-optionsmenu {
+	height: auto;
+	display: block;
+	position: absolute;
+	white-space: nowrap;
+	z-index: 1202;
+}
+#search-btnclose {
+	cursor: pointer;
+	cursor: hand;
+	margin-bottom : 5px;
+	position : absolute;
+	right : 5px;
+	top : 5px;
+}
+#search-innerdiv {
+	padding-bottom: 25px;
+	text-align: center;
+}
+.search-popup1 {
+	font-size: 1em;
+	font-weight: bold;
+	margin-top: 5px;	
+}
+.noTitleDialog .ui-dialog-titlebar {
+	display:none;
+}
+.search-popup {
+	font-size: 1em;
+	font-family: Helvetica, arial, sans-serif;
+}
+#searchBox {
+	transition: width 500ms;
+	-moz-transition: width 500ms; /* Firefox 4 */
+	-webkit-transition: width 500ms; /* Safari and Chrome */
+	-o-transition: width 500ms; /* Opera */
+	line-height: 27px;
+	height: 27px;
+	top: 0px;
+}
+#searchBox:focus {
+	width: 250px !important;
+}

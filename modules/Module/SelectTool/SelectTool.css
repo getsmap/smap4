@@ -1,0 +1,8 @@
+.btnselectbox {
+	background: none !important;
+	background-image: url("img/selectTools/selectBox.png") !important;
+}
+.btnselectclear {
+	background: none !important;
+	background-image: url("img/selectTools/selectClear.png") !important;
+}
