@@ -1,0 +1,208 @@
+{   
+    "js": [
+
+		"core/js/sMap.js",
+		"core/js/sMap/cmd.js",
+		"core/js/sMap/DivController.js",
+		"core/js/sMap/Events.js",
+		"core/js/sMap/Lang.js",
+		"core/js/sMap/Layer.js",
+		"core/js/sMap/Map.js",
+		"core/js/sMap/ModuleController.js",
+		"core/js/sMap/util.js",
+		"core/js/sMap/WebParams.js",    
+		
+		"lib/DeleteFeature.js",
+		"lib/ModDrag.js",
+		"lib/ModBox.js",
+		
+		"modules/Module.js",
+		
+		"modules/Module/Aldreboenden/Aldreboenden.js",
+		"modules/Module/Aldreboenden/Aldreboenden_conf.js",
+		"modules/Module/Aldreboenden/Aldreboenden_lang.js",
+		
+		"modules/Module/BaselayerSwitcher/BaselayerSwitcher.js",
+		"modules/Module/BaselayerSwitcher/BaselayerSwitcher_conf.js",
+		"modules/Module/BaselayerSwitcher/BaselayerSwitcher_lang.js",
+		
+		"modules/Module/Blixten/Blixten.js",
+		"modules/Module/Blixten/Blixten_conf.js",
+		"modules/Module/Blixten/Blixten_lang.js",
+		
+		"modules/Module/BlixtenPopup2/BlixtenPopup2.js",
+		"modules/Module/BlixtenPopup2/BlixtenPopup2_conf.js",
+		"modules/Module/BlixtenPopup2/BlixtenPopup2_lang.js",
+		
+		"modules/Module/ConfigSelector/ConfigSelector.js",
+		"modules/Module/ConfigSelector/ConfigSelector_conf.js",
+		"modules/Module/ConfigSelector/ConfigSelector_lang.js",
+		
+		"modules/Module/CopyLink/CopyLink.js",
+		"modules/Module/CopyLink/CopyLink_conf.js",
+		"modules/Module/CopyLink/CopyLink_lang.js",
+		
+		"modules/Module/Draw/Draw.js",
+		"modules/Module/Draw/Draw_conf.js",
+		"modules/Module/Draw/Draw_lang.js",
+		
+		"modules/Module/Email/Email.js",
+		"modules/Module/Email/Email_conf.js",
+		"modules/Module/Email/Email_lang.js",
+		
+		"modules/Module/ExtractClick/ExtractClick.js",
+		"modules/Module/ExtractClick/ExtractClick_conf.js",
+		"modules/Module/ExtractClick/ExtractClick_lang.js",
+		
+		"modules/Module/FeatureRequester/FeatureRequester.js",
+		"modules/Module/FeatureRequester/FeatureRequester_conf.js",
+		"modules/Module/FeatureRequester/FeatureRequester_lang.js",
+		
+		"modules/Module/GetFeatureInfo/GetFeatureInfo.js",
+		"modules/Module/GetFeatureInfo/GetFeatureInfo_conf.js",
+		"modules/Module/GetFeatureInfo/GetFeatureInfo_lang.js",
+		
+		"modules/Module/IntroDialog/IntroDialog.js",
+		"modules/Module/IntroDialog/IntroDialog_conf.js",
+		"modules/Module/IntroDialog/IntroDialog_lang.js",
+		
+		"modules/Module/LinkTo/LinkTo.js",
+		"modules/Module/LinkTo/LinkTo_conf.js",
+		"modules/Module/LinkTo/LinkTo_lang.js",
+		
+		"modules/Module/LayerTree/LayerTree.js",
+		"modules/Module/LayerTree/LayerTree_conf.js",
+		"modules/Module/LayerTree/LayerTree_lang.js",
+		
+		"modules/Module/Loading/Loading.js",
+		"modules/Module/Loading/Loading_conf.js",
+		"modules/Module/Loading/Loading_lang.js",
+		
+		"modules/Module/LinkTo/LinkTo.js",
+		"modules/Module/LinkTo/LinkTo_conf.js",
+		"modules/Module/LinkTo/LinkTo_lang.js",
+		
+		"modules/Module/MeasureDialog/MeasureDialog.js",
+		"modules/Module/MeasureDialog/MeasureDialog_conf.js",
+		"modules/Module/MeasureDialog/MeasureDialog_lang.js",
+		
+		"modules/Module/MousePos/MousePos.js",
+		"modules/Module/MousePos/MousePos_conf.js",
+		"modules/Module/MousePos/MousePos_lang.js",
+		
+		"modules/Module/Opacity/Opacity.js",
+		"modules/Module/Opacity/Opacity_conf.js",
+		"modules/Module/Opacity/Opacity_lang.js",
+		
+		"modules/Module/OverlayToggler/OverlayToggler.js",
+		"modules/Module/OverlayToggler/OverlayToggler_conf.js",
+		"modules/Module/OverlayToggler/OverlayToggler_lang.js",
+		
+		"modules/Module/Pizza/Pizza.js",
+		"modules/Module/Pizza/Pizza_conf.js",
+		"modules/Module/Pizza/Pizza_lang.js",
+		
+		"modules/Module/Popup/Popup.js",
+		"modules/Module/Popup/Popup_conf.js",
+		"modules/Module/Popup/Popup_lang.js",
+		
+		"modules/Module/Print/Print.js",
+		"modules/Module/Print/Print_conf.js",
+		"modules/Module/Print/Print_lang.js",
+		
+		"modules/Module/RedirectClick/RedirectClick.js",
+		"modules/Module/RedirectClick/RedirectClick_conf.js",
+		"modules/Module/RedirectClick/RedirectClick_lang.js",
+		
+		"modules/Module/Report/Report.js",
+		"modules/Module/Report/Report_conf.js",
+		"modules/Module/Report/Report_lang.js",
+		
+		"modules/Module/ScaleBar/ScaleBar.js",
+		"modules/Module/ScaleBar/ScaleBar_conf.js",
+		"modules/Module/ScaleBar/ScaleBar_lang.js",
+		
+		"modules/Module/ScaleSelector/ScaleSelector.js",
+		"modules/Module/ScaleSelector/ScaleSelector_conf.js",
+		"modules/Module/ScaleSelector/ScaleSelector_lang.js",
+		
+		"modules/Module/Search/Search.js",
+		"modules/Module/Search/Search_conf.js",
+		"modules/Module/Search/Search_lang.js",
+		
+		"modules/Module/Select/Select.js",
+		"modules/Module/Select/Select_conf.js",
+		"modules/Module/Select/Select_lang.js",
+		
+		"modules/Module/SelectResult/SelectResult.js",
+		"modules/Module/SelectResult/SelectResult_conf.js",
+		"modules/Module/SelectResult/SelectResult_lang.js",
+		
+		"modules/Module/SelectTool/SelectTool.js",
+		"modules/Module/SelectTool/SelectTool_conf.js",
+		"modules/Module/SelectTool/SelectTool_lang.js",
+		
+		"modules/Module/SimpleSelect/SimpleSelect.js",
+		"modules/Module/SimpleSelect/SimpleSelect_conf.js",
+		"modules/Module/SimpleSelect/SimpleSelect_lang.js",
+		
+		"modules/Module/Sprint/Sprint.js",
+		"modules/Module/Sprint/Sprint_conf.js",
+		"modules/Module/Sprint/Sprint_lang.js",
+		"modules/Module/Sprint/Core.js",
+		"modules/Module/Sprint/PrintControlDialog.js",
+		
+		"modules/Module/Toolbar/Toolbar.js",
+		"modules/Module/Toolbar/Toolbar_conf.js",
+		"modules/Module/Toolbar/Toolbar_lang.js",
+		
+		"modules/Module/ToolsMenu/ToolsMenu.js",
+		"modules/Module/ToolsMenu/ToolsMenu_conf.js",
+		"modules/Module/ToolsMenu/ToolsMenu_lang.js"
+    
+    ],
+    "css": [
+		"core/css/sMap.css",
+		"modules/Module/Aldreboenden/Aldreboenden.css",
+		"modules/Module/BaselayerSwitcher/BaselayerSwitcher.css",
+		"modules/Module/Blixten/Blixten.css",
+		"modules/Module/BlixtenPopup2/BlixtenPopup2.css",
+		"modules/Module/CopyLink/CopyLink.css",
+		"modules/Module/Draw/Draw.css",
+		"modules/Module/Email/Email.css",
+		"modules/Module/ExtractClick/ExtractClick.css",
+		"modules/Module/FeatureRequester/FeatureRequester.css",
+		"modules/Module/GetFeatureInfo/GetFeatureInfo.css",
+		"modules/Module/IntroDialog/IntroDialog.css",
+		
+		"modules/Module/LayerTree/LayerTree.css",
+		"modules/Module/Loading/Loading.css",
+		"modules/Module/MeasureDialog/MeasureDialog.css",
+		"modules/Module/MousePos/MousePos.css",
+		"modules/Module/Opacity/Opacity.css",
+		"modules/Module/OverlayToggler/OverlayToggler.css",
+		"modules/Module/Pizza/Pizza.css",
+		"modules/Module/Popup/Popup.css",
+		"modules/Module/Print/Print.css",
+		"modules/Module/Report/Report.css",
+		"modules/Module/ScaleBar/ScaleBar.css",
+		"modules/Module/ScaleSelector/ScaleSelector.css",
+		"modules/Module/Search/Search.css",
+		"modules/Module/Select/Select.css",
+		"modules/Module/SelectResult/SelectResult.css",
+		"modules/Module/SelectTool/SelectTool.css",
+		"modules/Module/SimpleSelect/SimpleSelect.css",
+		"modules/Module/SPrint/SPrint.css",
+		"modules/Module/Toolbar/Toolbar.css",
+		"modules/Module/ToolsMenu/ToolsMenu.css"
+    
+    ],
+    
+    "malmoCss": [
+    	"core/css/malmo-overrides.css"
+    ]
+    
+    
+}
+
+
