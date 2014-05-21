@@ -1,0 +1,67 @@
+.olControlScaleBar {
+	position: absolute;
+    bottom: 0px;
+    right: 10px;
+    font-family: sans-serif;
+    color: black;
+    font-size: 14px;
+}
+
+.olControlScaleBarBar {
+    height: 1px;
+    top: 14px;
+    background: black;
+    /*border: 1pt solid black;*/
+}
+
+.olControlScaleBarBarAlt {
+    height: 1px;
+    top: 14px;
+    background: black;
+    /*border: 1pt solid black;*/
+}
+
+.olControlScaleBarMarkerMajor {
+    height: 10px;
+    width: 1px;
+    top: 11px;
+    background: black;
+    z-index: 1200;
+
+}
+
+.olControlScaleBarMarkerMinor {
+    height: 8px;
+    width: 1px;
+    top: 12px;
+    background: black;
+    z-index: 2000;
+}
+
+.olControlScaleBarNumbersBox {
+    width: 40px;
+    height: 13px;
+    top: 21px;
+    font-size: 0.7em;
+    color: black;
+}
+
+.olControlScaleBarLabelBox {
+    top: -2px;
+    height: 15px;
+    letter-spacing: 0.1em;
+    font-size: 0.7em;
+    font-variant: small-caps;
+    font-weight: bold;
+    color: black;
+    font-size: 12px;
+}
+
+.olControlScaleBarLabelBoxSingleLine {
+    height: 15px;
+    width: 35px;
+    top: 5px;
+    left: 10px;
+    font-size: 0.7em;
+    font-variant: small-caps;
+}
