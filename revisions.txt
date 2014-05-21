@@ -1,0 +1,93 @@
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x                                                                                                         x
+x  Här finns info om revisioner för kartor i drift.                                                       x
+x  Detta gör att vi inte behöver skapa en kopia av koden varje gång en karta lanseras eller uppdateras.   x
+x  Det är möjligt att gå tillbaka till en revision genom att antingen checka ut koden på nytt med:        x
+x                                                                                                         x
+x  svn co http://svn.smap.se/svn/smap/trunk/ theFolderName                                                x
+x                                                                                                         x
+x  eller (kanske smartare):                                                                               x
+x                                                                                                         x
+x  svn update -r yourOldRevesionNumber                                                                    x
+x                                                                                                         x
+x  För att hämta revisionsnumret, skriv:                                                                  x
+x                                                                                                         x
+x  svn info                                                                                               x
+x                                                                                                         x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+
+
+XXXXXX  SMAP  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+------------------------------------------------------
+Kodbasens URL: http://kartor.smap.se/
+Senast uppdaterad: 2013-09-30
+Revision: xxx
+Config-filer:
+	•	SKÅNEKARTAN
+		Senast uppdaterad: 2013-09-30
+		URL: kartor.smap.se/skane/
+		Revision (config): xxx
+------------------------------------------------------
+
+
+
+
+XXXXXXXXX  MALMÖ  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+
+
+------------------------------------------------------
+Kodbasens URL: http://xyz.malmo.se/rest/2.0/map/.
+Senast uppdaterad: 2013-10-04
+Revision: 3317
+Config-filer:
+	•	config_stadsatlas.js (MALMÖ STADSATLAS)
+		URL: http://www.malmo.se/karta -> http://xyz.malmo.se/mkarta/init/map-1.10.htm -> http://xyz.malmo.se/rest/2.0/?config=config_stadsatlas.js
+		Senast uppdaterad: 2013-09-30
+		Revision: 3317
+				
+------------------------------------------------------
+Kodbasens URL: http://sbkvmgeoserver.malmo.se/map/
+Senast uppdaterad: 2013-10-XX
+Revision: 3317
+Config-filer:
+	•	PLAN- & BYGGATLASEN
+		URL: http://sbkvmgeoserver.malmo.se/map/index.html?config=pbatlas.js
+		Senast uppdaterad: 2013-10-XX
+		Revision: 3317
+------------------------------------------------------
+
+
+
+XXXXXX  KRISTIANSTAD  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+
+
+
+
+
+
+
+
+XXXXXX  HELSINGBORG  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+
+
+
+
+
+
+
+
+–––––––– LUND ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––

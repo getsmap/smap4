@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><!-- Avoid quirks mode in IE -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>sMap</title>
+
+<!-- ************* CSS FOR LIBRARIES ************* -->
+<link rel="stylesheet" type="text/css" href="lib/openlayers-2.13.1/theme/default/scalebar-thin.css" type="text/css" />
+
+<!-- CSS used by Search to create the autocomplete function. -->
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-1.8.18.custom/jquery-autocomplete/jquery.autocomplete.css" />
+<!-- CSS used by SelectResult for the grid function. -->
+<link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
+<!-- TipTip tooltip -->
+<link rel="stylesheet" type="text/css" href="lib/tipTipv13/tipTip.css" type="text/css" />
+
+
+<!-- ************* JAVASCRIPT LIBRARIES ************* -->
+
+<!--  Required libraries for sMap core -->
+<!-- Johans localhost: ABQIAAAAbBxF-To9VyYOnF1Vg3xRaBSgvSl2DeAfz0HbWBgSgJZ7iT9gtRTMA-NVlueZy8Wo2YNEJkcch6ZfIA -->
+<!-- kartor.smap.se key: ABQIAAAAbBxF-To9VyYOnF1Vg3xRaBRx7lBRzjuz6i5odqFOZGxvYtEOHRR2HxANfRIcxbjfkLApiFyC4Ra7tA -->
+
+<link rel="stylesheet" href="lib/openlayers-2.13.1/theme/default/style.css" type="text/css" />
+
+<script src="lib/openlayers-2.13.1/OpenLayers.js"></script>
+<script src="//maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+<!--  script type="text/javascript" src="lib/openlayers-2.13.1/extra/DragPopup.js"></script>-->
+<!--  script type="text/javascript" src="lib/openlayers-2.13.1/extra/ScaleBar.js"></script>--><!-- Best is to add this in the OL-build -->
+
+<script type="text/javascript" src="lib/proj/proj4js-compressed.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+<script defer type="text/javascript" src="lib/console.js"></script>
+
+<!--  For user interface (dialogs) -->
+<script defer src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+<script defer type="text/javascript" src="lib/jquery-ui-1.8.18.custom/jquery-autocomplete/jquery.autocomplete_mod.js"></script>
+<script defer type="text/javascript" src="lib/jquery-ui-1.8.18.custom/extra/jquery-base64/jquery.base64.min.js"></script>
+<script defer type="text/javascript" src="lib/jquery-cookie/jquery.cookie.js"></script>
+<script defer src="lib/heartcode-canvasloader-min.js"></script>
+
+<!-- JSON for IE6 and 7 (used to parse/stringify JSON strings/JS-objects) -->
+<script defer type="text/javascript" src="lib/jsonForIE.js"></script>
+
+<!-- TipTip tooltip -->
+<script defer type="text/javascript" src="lib/tipTipv13/jquery.tipTip.minified.js"></script>
+
+<!-- DynaTree for the layer tree functionality -->
+<!-- link rel="stylesheet" href="lib/dynatree-1.1.1/src/skin/ui.dynatree.css" type="text/css" /> -->
+<link rel="stylesheet" href="lib/dynatree-1.1.1/src/skin-vista/ui.dynatree.css" type="text/css" />
+<script defer type="text/javascript" src="lib/dynatree-1.1.1/src/jquery.dynatree.min.js"></script>
+
+<!-- Loading animation, used in several modules -->
+<script defer type="text/javascript" src="lib/spin.min.js"></script>
+
+<!-- jqgrid used by SelectResult. -->
+<script defer src="lib/jqgrid/js/i18n/grid.locale-sv.js" type="text/javascript"></script>
+<script defer src="lib/jqgrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+
+<!-- Validation using jquery validation -->
+<script defer type="text/javascript" src="lib/jquery-ui-1.8.18.custom/extra/jquery-validation-1.10.0/dist/jquery.validate.min.js"></script>
+
+<!-- Validation using jquery PosAbsolute -->
+<link rel="stylesheet" href="lib/jquery-ui-1.8.18.custom/extra/jQuery-Validation-Engine-master/css/validationEngine.jquery.css" type="text/css"/>
+<script defer src="lib/jquery-ui-1.8.18.custom/extra/jQuery-Validation-Engine-master/js/languages/jquery.validationEngine-se.js" type="text/javascript" charset="utf-8"></script>
+<script defer src="lib/jquery-ui-1.8.18.custom/extra/jQuery-Validation-Engine-master/js/jquery.validationEngine.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- <><><><><><><><><><><><>  SMAP'S FILES  <><><><><><><><><><><><><><><><><><><><><><><><><><><><> -->
+
+<link rel="stylesheet" href="sMap_comp.css" type="text/css" />
+<script type="text/javascript" src="sMap_comp.js"></script>
+
+<!--[if IE]>
+<link rel="stylesheet" type="text/css" href="core/css/smap-overrides-ie.css" />
+<![endif]-->
+ 
+<script type="text/javascript">
+$(document).ready(function() {
+	if ($.browser.msie && parseInt($.browser.version) <= 7) {
+		alert("Du rekommenderas att uppgradera din webbläsare. Använd t ex:\n- Chrome\n- Safari\n- Firefox\n- Internet Explorer 9, 10 eller 11");
+	}
+	var myMap = new sMap.Map(document.body);
+});
+
+</script>
+
+</head>
+<body>
+	<div class="smap-init-loading"><img src="img/ajax-loader-large.gif" width="60"></img><label>Laddar karta...</label></div>
+</body>
+</html>

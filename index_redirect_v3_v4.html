@@ -1,0 +1,40 @@
+﻿<html>
+	<head>
+		<script type="text/javascript">
+			function reloadWithNewQuerystring () {
+				var existingQueryVars = location.search ? location.search.substring(1).replace(/&amp;/g, "&").split("&") : [],
+				baseUrl = "http://kartor.kristianstad.se/kkarta4/",
+				newConfig = "config=kkarta.php",
+				newQueryVarsDict = {
+					"center" : "center",
+					"zoomlevel" : "zoom",
+					"maptype" : "bl",
+					"overlays" : "ol",
+					"poi" : "poi",
+					"addmarker" : "features"
+				},
+				newUrl = baseUrl + "?" + newConfig;
+				if(existingQueryVars.length > 0) {
+					for (var i = 0; i < existingQueryVars.length; i++) {
+						var pair = existingQueryVars[i].split("=");
+						for (var oldKey in newQueryVarsDict){
+							if (pair[0] == oldKey){
+								newUrl += "&" + newQueryVarsDict[oldKey] +"=";
+								if (oldKey=="addmarker") { //features ends with =
+									newUrl += existingQueryVars[i].substring(10).replace(/=/g, "%3D");
+								}
+								else {
+									newUrl += pair[1];
+								}
+							}
+						}
+					}
+				}
+				window.location.href = newUrl;
+			}
+		</script>
+	</head>
+	<body onload="reloadWithNewQuerystring()">
+		<p>Redirecting</p>
+	</body>
+</html>
