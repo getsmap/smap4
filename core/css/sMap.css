@@ -1,0 +1,243 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	font-family: 'Trebuchet MS','DejaVu Sans','Bitstream Vera Sans',sans-serif;
+	background: #fff;
+	overflow: hidden;
+}
+
+div, span, p, button, label {
+	-moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+
+#canvasLoader {
+	position: absolute;
+	display: block;
+	top: 40%;
+	left: 48%;
+	z-index: 2000;
+	filter : alpha(opacity=50);
+	opacity: .5;
+}
+
+/* For the loader shown during initialization of the app */
+.smap-init-loading {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	filter : alpha(opacity=80);
+    opacity: 0.8;
+    background: #333;
+    z-index: 3000;
+}
+.invisible {
+    opacity: 0 !important;
+	filter : alpha(opacity=0) !important;
+	transition: opacity 1000ms, filter 1000ms;
+	-webkit-transition: opacity 1000ms, filter 1000ms;
+}
+
+.smap-init-loading img {
+	position: absolute;
+	left: 470px;
+	top: 40%;
+	z-index: 1;
+	display: block;
+}
+.smap-init-loading label {
+	position: absolute;
+	display: block;
+	left: 550px;
+	top: 42%;
+	z-index: 2;
+	color: #fff;
+	font-size: 2em;
+	
+}
+
+/* All tags with this class will be unselectable */
+*.unselectable {
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
+}
+
+#smapDiv {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+#mapDiv {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+#sideDivLeft {
+	position: absolute;
+}
+#sideDivRight {
+	position: absolute;
+	background-color: #fff;
+	border-left: 1px solid #aaa;
+	z-index: 0;
+}
+
+#toolbarDiv {
+	width: 100%;
+	background-color: #ccc;
+	border: none;
+}
+/* The loader icon showing when something is loading. */
+
+#smap-loader-bg {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+    background-color: rgba(30,30,30,0);
+    z-index: 1999;
+    transition: background-color .5s;
+	-webkit-transition: background-color .5s;
+}
+.smap-loaderbg-visible {
+	background-color: rgba(30,30,30,.5) !important;
+}
+	
+#smap-loader {
+    position: absolute;
+    font-size: 2em;
+    font-weight: bold;
+    z-index: 1301;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    transition: opacity 1000ms, filter 1000ms;
+	-webkit-transition: opacity 1000ms, filter 1000ms;
+}
+#smap-loader span {
+    position: relative;
+    top: 40%;
+    text-align: center;
+    display: block;
+}
+#smap-loader img {
+    position: relative;
+    top: 35%;
+    text-align: center;
+}
+
+
+
+.olControlAttribution {
+    position: absolute;
+	left: 4px;
+	right: auto ! important;
+	bottom: 2px ! important;
+	height: auto;
+	width: auto;
+	padding: 0 2px;
+	z-index: 752;
+	font-size: 1.0em ! important;
+	font-weight: normal;
+	font-style: normal;
+	text-decoration: none;
+	background-color: white;
+	filter : alpha(opacity=50);
+	opacity: 0.5;
+}
+.olControlAttribution a {
+	font-weight: normal;
+	text-decoration: none;
+	color: black;
+}
+
+.smapCursorCrosshair {
+    cursor: crosshair;
+}
+.smapCursorHand, img.smapCursorHand, div.smapCursorHand {
+	cursor: hand;
+}
+
+/*.olFramedCloudPopupContent img {
+	width: 100%;
+}*/
+
+.ui-dialog {
+	box-shadow: rgba(20, 20, 20, 0.3) 5px 5px 20px 1px;
+	
+}
+
+/* Util method: add minimize button for jquery dialogs */
+.ui-dialog .ui-dialog-titlebar-minimize { position: absolute; right: .3em; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; margin-right: 30px;}
+.ui-dialog .ui-dialog-titlebar-minimize span { display: block; margin: 1px; }
+.ui-dialog .ui-dialog-titlebar-minimize:hover, .ui-dialog .ui-dialog-titlebar-minimize:focus {
+	padding: 0;
+	cursor: pointer;
+}
+
+.error {
+	color: #fff;
+	font-weight: bold;
+	font-size: 12px;
+	background-color: #f00;
+	padding: 3px 5px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	white-space: nowrap;
+	
+}
+
+
+/* Overthrow CSS:
+   Enable overflow: auto on elements with overthrow class when html element has overthrow class too */
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.util-cursordiv {
+	position: absolute;
+	background: #000;
+	color: #fff;
+	padding: 10px;
+	z-index: 3000;
+	font-weight: bold;
+	width: auto;
+	height: auto;
+	max-width: 220px;
+	
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow:  0px 0px 10px 3px #888;
+	box-shadow:  0px 0px 10px 3px #888;
+}
+.util-cursordiv p {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	font-weight: bold;
+}

@@ -1,0 +1,39 @@
+body {
+	font-family: "Trebuchet MS",sans-serif !important;	
+}
+
+
+a {
+	outline: none;	
+}
+
+.toolsmenu-dropdown {
+	background: #fff !important;
+}
+
+.baselayer-button.ui-state-default { 
+	transition: background 400ms, color 400ms;
+	-webkit-transition: background 400ms, color 400ms;
+}
+
+.toolsmenu-rows .ui-state-default {
+	background: #fff !important;
+}
+.toolsmenu-rows .ui-state-hover {
+	background: #F7F7F7 !important;
+}
+.toolsmenu-rows .ui-state-active {
+	background: #3E5F9C !important;
+	color: #fff !important;
+}
+
+.toolsmenu-mainbutton.ui-state-active {
+	background: #fff !important;
+	border-color: #cdcdcd !important;
+}
+
+.baselayer-button-clicked {
+	background: #fff !important;	
+}
+
+
