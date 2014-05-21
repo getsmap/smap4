@@ -1,0 +1,31 @@
+/* Layout Stylesheet */ 
+
+body{
+ margin: 0;
+ padding:0;     
+ }
+	 
+#hdr{
+ width: 100%;
+ height: 55px;
+ margin: 0;
+ border: solid #333333;
+ border-width: 0 0 2px 0;
+ background: #eeeeee;
+ color: #333333;
+ }
+     
+#print{
+ width: 48%;
+ float: left;
+ border: solid #333333;
+ border-width: 0 2px 0 0;
+ margin: 0;
+ padding: 10px;
+ }
+
+#export{
+ margin: 0;
+ padding: 10px;
+ border: 0;
+ }

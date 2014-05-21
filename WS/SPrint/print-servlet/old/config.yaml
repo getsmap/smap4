@@ -1,0 +1,660 @@
+#===========================================================================
+# allowed DPIs
+#===========================================================================
+dpis:
+  - 300
+  - 190
+  - 96
+
+#===========================================================================
+# the allowed scales
+#===========================================================================
+scales:
+  - 250
+  - 500
+  - 1000
+  - 2000
+  - 4000
+  - 8000
+  - 16000
+  - 32000
+  - 48000
+  - 64000
+  - 96000
+  - 128000
+
+#===========================================================================
+# the list of allowed hosts
+#===========================================================================
+hosts:
+  - !localMatch
+    dummy: true
+  - !ipMatch
+    ip: www.camptocamp.org
+  - !dnsMatch
+    host: labs.metacarta.com
+    port: 80
+  - !dnsMatch
+    host: fkmap
+    port: 82
+  - !dnsMatch
+    host: fkmap.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap1.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap2.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap3.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap4.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap
+    port: 83
+  - !dnsMatch
+    host: utv.mapsite.sdc.se
+    port: 80
+  - !dnsMatch
+    host: www.gis.lst.se
+    port: 80
+  - !dnsMatch
+    host: demo.mapfish.org
+    port: 80
+
+layouts:
+  #===========================================================================
+  "02. A4 liggande":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: 842 595
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 574
+          width: 800
+          height: 553
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 578
+          width: 800
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontSize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 595
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+  #===========================================================================
+  "01. A4 liggande pil skala":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: 842 595
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 574
+          width: 800
+          height: 553
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 578
+          width: 800
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontsize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 595
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+        - !columns
+          absoluteX: 62
+          absoluteY: 538
+          width: 70
+          items:
+            - !image
+               align: left
+               maxWidth: 60
+               maxHeight: 60
+               url: 'http://localhost:8180/print-servlet/Arrow_North_CFCF.svg'
+               rotation: '${rotation}'
+        - !columns
+          absoluteX: 47
+          absoluteY: 58
+          width: 80
+          items:
+            - !text
+               font: Helvetica
+               fontSize: 10
+               align: left
+               text: 'Skala 1:${scale}'
+        - !columns
+          absoluteX: 715
+          absoluteY: 78
+          width: 80
+          items:
+            - !scalebar
+               align: right
+               maxSize: 180
+               type: 'bar sub'
+               intervals: 5
+  #===========================================================================
+  "03. A4 liggande pil skala legend":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    lastPage:
+      pageSize: 842 595
+      items:
+        - !image
+          maxWidth: 400
+          maxHeight: 500
+          spacingAfter: 50
+          align: center
+          url: 'http://localhost:8180/print-servlet/legend.png'
+      footer: &commonFooter
+        height: 30
+        items:
+          - !columns
+            items:
+              - !text
+                align: left
+                text: '©FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+              - !text
+                align: right
+                text: 'Sida ${pageNum}'
+
+    #-------------------------------------------------------------------------
+    mainPage:
+      pageSize: 842 595
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 574
+          width: 800
+          height: 553
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 578
+          width: 800
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontsize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 595
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+        - !columns
+          absoluteX: 62
+          absoluteY: 538
+          width: 70
+          items:
+            - !image
+               align: left
+               maxWidth: 60
+               maxHeight: 60
+               url: 'http://localhost:8180/print-servlet/Arrow_North_CFCF.svg'
+               rotation: '${rotation}'
+        - !columns
+          absoluteX: 47
+          absoluteY: 58
+          width: 80
+          items:
+            - !text
+               font: Helvetica
+               fontSize: 10
+               align: left
+               text: 'Skala 1:${scale}'
+        - !columns
+          absoluteX: 715
+          absoluteY: 78
+          width: 80
+          items:
+            - !scalebar
+               align: right
+               maxSize: 180
+               type: 'bar sub'
+               intervals: 5
+  #===========================================================================
+  "11. A3 liggande":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: 1191 842
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 821
+          width: 1149
+          height: 800
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 825
+          width: 1149
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontsize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 944
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+  #===========================================================================
+  "12. A3 liggande pil skala":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: 1191 842
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 821
+          width: 1149
+          height: 800
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 825
+          width: 1149
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontsize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 944
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+        - !columns
+          absoluteX: 62
+          absoluteY: 789
+          width: 70
+          items:
+            - !image
+               align: left
+               maxWidth: 60
+               maxHeight: 60
+               url: 'http://localhost:8180/print-servlet/Arrow_North_CFCF.svg'
+               rotation: '${rotation}'
+        - !columns
+          absoluteX: 47
+          absoluteY: 58
+          width: 80
+          items:
+            - !text
+               font: Helvetica
+               fontSize: 10
+               align: left
+               text: 'Skala 1:${scale}'
+        - !columns
+          absoluteX: 1064
+          absoluteY: 78
+          width: 80
+          items:
+            - !scalebar
+               align: right
+               maxSize: 180
+               type: 'bar sub'
+               intervals: 5
+  #===========================================================================
+  "13. A3 liggande pil skala legend":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    lastPage:
+      pageSize: 1191 842
+      items:
+        - !image
+          maxWidth: 500
+          maxHeight: 758
+          spacingAfter: 50
+          align: center
+          url: 'http://localhost:8180/print-servlet/legend.png'
+      footer: *commonFooter
+
+    #-------------------------------------------------------------------------
+    mainPage:
+      pageSize: 1191 842
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 821
+          width: 1149
+          height: 800
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 825
+          width: 1149
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontSize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 944
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+        - !columns
+          absoluteX: 62
+          absoluteY: 789
+          width: 70
+          items:
+            - !image
+               align: left
+               maxWidth: 60
+               maxHeight: 60
+               url: 'http://localhost:8180/print-servlet/Arrow_North_CFCF.svg'
+               rotation: '${rotation}'
+        - !columns
+          absoluteX: 47
+          absoluteY: 58
+          width: 80
+          items:
+            - !text
+               font: Helvetica
+               fontSize: 10
+               align: left
+               text: 'Skala 1:${scale}'
+        - !columns
+          absoluteX: 1064
+          absoluteY: 78
+          width: 80
+          items:
+            - !scalebar
+               align: right
+               maxSize: 180
+               type: 'bar sub'
+               intervals: 5
+  #===========================================================================
+  "21. A4 staende":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: 595 842
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 821
+          width: 553
+          height: 800
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 825
+          width: 553
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontSize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 348
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+  #===========================================================================
+  "22. A4 staende pil skala":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: 595 842
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 821
+          width: 553
+          height: 800
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 825
+          width: 553
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontSize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 348
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+        - !columns
+          absoluteX: 62
+          absoluteY: 789
+          width: 70
+          items:
+            - !image
+               align: left
+               maxWidth: 60
+               maxHeight: 60
+               url: 'http://localhost:8180/print-servlet/Arrow_North_CFCF.svg'
+               rotation: '${rotation}'
+        - !columns
+          absoluteX: 47
+          absoluteY: 58
+          width: 80
+          items:
+            - !text
+               font: Helvetica
+               fontSize: 10
+               align: left
+               text: 'Skala 1:${scale}'
+        - !columns
+          absoluteX: 468
+          absoluteY: 78
+          width: 80
+          items:
+            - !scalebar
+               align: right
+               maxSize: 180
+               type: 'bar sub'
+               intervals: 5
+  #===========================================================================
+  "23. A4 staende pil skala legend":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'karta'
+      creator: 'Fastighetskontoret'
+
+    lastPage:
+      pageSize: 595 842
+      items:
+        - !image
+          maxWidth: 400
+          maxHeight: 500
+          spacingAfter: 50
+          align: center
+          url: 'http://localhost:8180/print-servlet/legend.png'
+      footer: *commonFooter
+
+    #-------------------------------------------------------------------------
+    mainPage:
+      pageSize: 595 842
+      rotation: true
+      items:
+        - !map
+          name: Karta
+          absoluteX: 21
+          absoluteY: 821
+          width: 553
+          height: 800
+        - !columns
+          # Only columns can have an absolute position (except for map). 
+          # Columns need the 3 following fields:
+          absoluteX: 21
+          absoluteY: 825
+          width: 553
+          items:
+            - !text
+               font: Helvetica
+               align: center
+               fontSize: 14
+               text: '${mapTitle}'
+        - !columns
+          absoluteX: 348
+          absoluteY: 58
+          width: 200
+          items:
+            - !text
+              font: Helvetica
+              align: right
+              fontSize: 10
+              text: 'FKKartan - Fastighetskontoret, ${now yyyy-MM-dd}'
+        - !columns
+          absoluteX: 62
+          absoluteY: 789
+          width: 70
+          items:
+            - !image
+               align: left
+               maxWidth: 60
+               maxHeight: 60
+               url: 'http://localhost:8180/print-servlet/Arrow_North_CFCF.svg'
+               rotation: '${rotation}'
+        - !columns
+          absoluteX: 47
+          absoluteY: 58
+          width: 80
+          items:
+            - !text
+               font: Helvetica
+               fontSize: 10
+               align: left
+               text: 'Skala 1:${scale}'
+        - !columns
+          absoluteX: 468
+          absoluteY: 78
+          width: 80
+          items:
+            - !scalebar
+               align: right
+               maxSize: 180
+               type: 'bar sub'
+               intervals: 5

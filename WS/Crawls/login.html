@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+
+  p { margin:0; color:blue; }
+  div,p { margin-left:10px; }
+  span { color:red; }
+  </style>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script type="text/javascript" src="lib/OpenLayers-2.10/OpenLayers.js"></script>
+</head>
+<body>
+  <p>Login</p>
+  <form id='crawls-loginform' action="javascript:alert('Connection Established!');">
+    <div>
+      <input type="text" />
+      <input type="password" />     
+      <input type="submit" />
+    </div>
+    <div>
+    	<tr>
+    	 <td>Username</td>
+    	 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password</td>
+    	</tr>
+    <div/>
+  </form>
+  <span></span>
+<script>
+
+    $("form").submit(function() {
+      var inputs = $("#crawls-loginform").find("input");
+      var un = $(inputs[0]).val();
+      var pw = $(inputs[1]).val();
+      connectPostgres(un, pw);
+    });
+  
+    function connectPostgres(un, pw){
+    	
+    	//alert("I am here...!!!");
+    	
+    	$.post("http://localhost/sMap/WS/login.php", {
+    	//$.post("http://localhost/cgi-bin/pylogin.py", {
+    		userName: un,
+    		password: pw,
+    		}, function(data) {
+    			alert(data);
+    		},
+    		"text"
+    	);
+    };
+    
+</script>
+</body>
+</html>

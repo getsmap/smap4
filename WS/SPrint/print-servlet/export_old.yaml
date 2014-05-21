@@ -1,0 +1,131 @@
+#===========================================================================
+# allowed DPIs
+#===========================================================================
+dpis:
+  - 300
+  - 150
+  - 75
+
+#===========================================================================
+# the allowed scales
+#===========================================================================
+scales:
+  - 250
+  - 500
+  - 1000
+  - 2000
+  - 4000
+  - 8000
+  - 16000
+  - 32000
+  - 48000
+  - 64000
+  - 96000
+  - 128000
+  
+#===========================================================================
+# the list of allowed hosts
+#===========================================================================
+hosts:
+  - !localMatch
+    dummy: true
+  - !ipMatch
+    ip: www.camptocamp.org
+  - !dnsMatch
+    host: labs.metacarta.com
+    port: 80
+  - !dnsMatch
+    host: demo.mapfish.org
+    port: 80
+  - !dnsMatch
+    host: utv.mapsite.sdc.se
+    port: 80
+  - !dnsMatch
+    host: acc.mapsite.sdc.se
+    port: 80
+  - !dnsMatch
+    host: ktest2.mapsite.sdc.se
+    port: 80
+  - !dnsMatch
+    host: mapsite.sdc.se
+    port: 80
+  - !dnsMatch
+    host: www.gis.lst.se
+    port: 80
+  - !dnsMatch
+    host: fkmap.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap1.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap2.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap3.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap4.malmo.se
+    port: 80
+
+layouts:
+  #===========================================================================
+  "1. Kvadrat":
+  #===========================================================================
+    mainPage:
+      rotation: false
+      pageSize: 500 500
+      marginLeft: 0
+      marginRight: 0
+      marginTop: 0
+      marginBottom: 0
+      items:
+        - !map
+          width: 500
+          height: 500
+  
+  #===========================================================================
+  "2. Liggande rektangel":
+  #===========================================================================
+    mainPage:
+      rotation: false
+      pageSize: 500 375
+      marginLeft: 0
+      marginRight: 0
+      marginTop: 0
+      marginBottom: 0
+      items:
+        - !map
+          width: 500
+          height: 375
+  
+  #===========================================================================
+  "3. Staende rektangel":
+  #===========================================================================
+    mainPage:
+      rotation: false
+      pageSize: 375 500
+      marginLeft: 0
+      marginRight: 0
+      marginTop: 0
+      marginBottom: 0
+      items:
+        - !map
+          width: 375
+          height: 500
+  
+  #===========================================================================
+  "4. Bred rektangel":
+  #===========================================================================
+    mainPage:
+      rotation: false
+      pageSize: 500 281
+      marginLeft: 0
+      marginRight: 0
+      marginTop: 0
+      marginBottom: 0
+      items:
+        - !map
+          width: 500
+          height: 281
+  

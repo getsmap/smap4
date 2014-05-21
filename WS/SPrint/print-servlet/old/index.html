@@ -1,0 +1,192 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="layout.css" />
+<script type="text/javascript">
+	function post() {
+		var data = $('#spec').serialize(true);
+		$.ajax({
+			type : 'POST',
+			url : 'print/create.json',
+			data : data,
+			success : function(data) {
+				var result = jQuery.parseJSON(data)
+				location.href = result.getURL;
+			},
+			dataType : 'application/json'
+		});
+
+	}
+</script>
+<title>Test Page</title>
+</head>
+<body>
+	<div id="hdr">Test page</div>
+	<div id="print">
+
+		<h4>Print</h4>
+		<form id="spec" action="pdf/print.pdf">
+			<textarea name="spec" cols="80" rows="30">
+{
+    layout: 'Skotsel Arrende rapport',
+    title: 'A simple example',
+    srs: 'EPSG:4326',
+    dpi: 96,
+    units: 'degrees',
+    outputFormat: 'pdf',
+    layers: [{
+            type: 'WMS',
+            layers: ['basic'],
+            baseURL: 'http://labs.metacarta.com/wms/vmap0',
+            format: 'image/jpeg'
+        },
+        {
+            type: 'WMS',
+            layers: ['routes'],
+            baseURL: 'http://www.camptocamp.org/cgi-bin/mapserv_c2corg',
+            format: 'image/png'
+        },    {
+                "opacity": 0.5,
+                "customParams": {},
+                "type": "Vector",
+                "styles": {
+                    "1": {
+                        "fillColor": "red",
+                        "strokeColor": "red",
+                        "fillOpacity": 0.4000000000000001,
+                        "hoverFillColor": "white",
+                        "hoverFillOpacity": 0.8000000000000002,
+                        "strokeOpacity": 1,
+                        "strokeWidth": 0.5,
+                        "strokeLinecap": "round",
+                        "strokeDashstyle": "solid",
+                        "hoverStrokeColor": "red",
+                        "hoverStrokeOpacity": 1.0,
+                        "hoverStrokeWidth": 0.2,
+                        "pointRadius": 6,
+                        "hoverPointRadius": 1,
+                        "hoverPointUnit": "%",
+                        "pointerEvents": "visiblePainted",
+                        "cursor": "inherit"
+                    }
+                },
+                "styleProperty": "_style",
+                "geoJson": {
+                    "type": "FeatureCollection",
+                    "features": [{
+                        "type": "Feature",
+                        "id": "OpenLayers.Feature.Vector_243",
+                        "properties": {
+                            "_style": 1,
+                            "name": "",
+                            "description": "",
+                            "ext-comp-1048": "default"
+                        },
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[5, 45], [5, 47], [7, 47], [7, 45], [5, 45]]]
+                        }
+                    }]
+                },
+                "name": "Cosmetic"
+            }
+    ],
+    pages: [
+        {
+            center: [6, 45.5],
+            scale: 128000,
+            mapTitle: "First map",
+            comment: "This is the first page selected by the user.",
+            rotation: 0,
+            data: {
+                data: [
+                    {id:1, name: 'blah', icon: 'icon_pan', nameBackgroundColor: 'red', nameBorderColor: 'blue'},
+                    {id:2, name: 'blip', icon: 'icon_zoomin', nameBackgroundColor: 'yellow', nameBorderColor: 'green'}
+                ],
+                columns: ['id', 'name', 'icon']
+            }
+        },{
+            center: [6, 45.5],
+            scale: 128000,
+            mapTitle: "First map",
+            comment: "This is the first page selected by the user.",
+            rotation: 0,
+            data: {
+                data: [
+                    {id:1, name: 'blah', icon: 'icon_pan', nameBackgroundColor: 'red', nameBorderColor: 'blue'},
+                    {id:2, name: 'blip', icon: 'icon_zoomin', nameBackgroundColor: 'yellow', nameBorderColor: 'green'}
+                ],
+                columns: ['id', 'name', 'icon']
+            }
+        }
+    ]
+}
+      </textarea>
+			<br>
+			<button name="Print">Get Print</button>
+			<button name="Post Print" type="button" onclick="javascript:post()">Post
+				Print</button>
+		</form>
+		<p>
+			To get informations: <a href="pdf/info.json">printInfo</a>
+		</p>
+	</div>
+	<div id="export">
+		<h4>Export</h4>
+		<form id="spec" action="export/print.pdf">
+			<textarea name="spec" cols="80" rows="30">
+          {
+             dpi: 190,
+             layout: '1. Kvadrat',
+             title: 'A simple example',
+             srs: 'EPSG:4326',
+             units: 'dd',
+             outputFilename: 'mapfish-print',
+             outputFormat: 'pdf',
+             layers: [
+                 {
+                     type: 'WMS',
+                     format: 'image/png',
+                     layers: ['basic'],
+                     baseURL: 'http://labs.metacarta.com/wms/vmap0'
+                 }
+             ],
+             pages: [
+                 {
+                     center: [6, 45.5],
+                     scale: 128000,
+                     dpi: 150,
+                     printformat: 'PNG',
+                     mapTitle: "First map",
+                     comment: "The \"routes\" layer is not shown (the scale is too small)",
+                     data: [
+                         {id:1, name: 'blah', icon: 'icon_pan'},
+                         {id:2, name: 'blip', icon: 'icon_zoomin'}
+                     ]
+                 },
+                 {
+                     center: [6.9, 46.2],
+                     scale: 128000,
+                     dpi: 150,
+                     printformat: 'PNG',
+                     mapTitle: "Second map",
+                     comment: "This is a zoomed in version of the first map. Since the scale is more appropriate, we show the \"routes\" layer.",
+                     data: [
+                         {id:1, name: 'blah', icon: 'icon_pan'},
+                         {id:2, name: 'blip', icon: 'icon_zoomin'}
+                     ]
+                 }
+             ]
+          }
+      </textarea>
+			<br>
+			<button name="Export">Get Export</button>
+			<button name="Post Export" type="button" onclick="javascript:post()">Post
+				Export</button>
+		</form>
+		<p>
+			To get informations: <a href="export/info.json">exportInfo</a>
+		</p>
+	</div>
+</body>
+</html>

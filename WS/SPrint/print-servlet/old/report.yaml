@@ -1,0 +1,225 @@
+#===========================================================================
+# allowed DPIs
+#===========================================================================
+dpis:
+  - 300
+  - 190
+  - 96
+
+#===========================================================================
+# the allowed scales
+#===========================================================================
+scales:
+  - 250
+  - 500
+  - 1000
+  - 2000
+  - 4000
+  - 8000
+  - 16000
+  - 32000
+  - 48000
+  - 64000
+  - 96000
+  - 128000
+
+#===========================================================================
+# the list of allowed hosts
+#===========================================================================
+hosts:
+  - !localMatch
+    dummy: true
+  - !ipMatch
+    ip: www.camptocamp.org
+  - !dnsMatch
+    host: labs.metacarta.com
+    port: 80
+  - !dnsMatch
+    host: fkmap
+    port: 82
+  - !dnsMatch
+    host: fkmap.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap1.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap2.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap3.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap4.malmo.se
+    port: 80
+  - !dnsMatch
+    host: fkmap
+    port: 83
+  - !dnsMatch
+    host: utv.mapsite.sdc.se
+    port: 80
+  - !dnsMatch
+    host: www.gis.lst.se
+    port: 80
+  - !dnsMatch
+    host: demo.mapfish.org
+    port: 80
+
+layouts:
+  #===========================================================================
+  "FK-skotsel, Arrendeenheten":
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'print,rapport'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: A4
+      rotation: true
+      landscape: true
+      header:
+        height: 50
+        items:
+          - !text
+            font: Helvetica
+            fontSize: 30
+            align: center
+            text: '${mapTitle}'
+      items:
+        - !attributes
+          source: data
+          spacingAfter: 30
+          fontSize: 8
+          tableConfig:
+            borderWidth: 0.5
+            borderColor: black
+            cells:
+              - borderWidth: 0.5
+                borderColor: #777777
+                padding: 2
+                paddingBottom: 4
+          columnDefs:
+            Anm:
+              columnWeight: 4
+              header: !text
+                text: Anm
+                backgroundColor: #A0A0A0
+              cell: !text
+                text: '${Anm}'
+            Atgard:
+              columnWeight: 2
+              header: !text
+                text: Atgard
+                backgroundColor: #A0A0A0
+              cell: !text
+                text: '${Atgard}'
+            Utforare:
+              columnWeight: 1
+              header: !text
+                text: Utforare
+                backgroundColor: #A0A0A0
+              cell: !text
+                text: '${Utforare}'
+            FASTIGHET:
+              columnWeight: 4
+              header: !text
+                text: FASTIGHET
+                backgroundColor: #A0A0A0
+              cell: !text
+                text: '${FASTIGHET}'
+  #===========================================================================
+  Diverse overenskommelser:
+  #===========================================================================
+    metaData:
+      author: 'Fastighetskontoret'
+      keywords: 'print,rapport'
+      creator: 'Fastighetskontoret'
+
+    mainPage:
+      pageSize: A4
+      rotation: true
+      landscape: true
+      header:
+        height: 50
+        items:
+          - !text
+            font: Helvetica
+            fontSize: 30
+            align: center
+            text: '${mapTitle}'
+      items:
+        - !attributes
+          source: data
+          spacingAfter: 30
+          fontSize: 8
+          tableConfig:
+            borderWidth: 0.5
+            borderColor: black
+            cells:
+              - borderWidth: 0.5
+                borderColor: #777777
+                padding: 2
+                paddingBottom: 4
+              # match every even cell (yellowish background)
+              - row: '\d*[02468]'
+                backgroundColor: #FFFFCC
+              # for the header
+              - row: 0
+                borderWidthBottom: 1
+                backgroundColor: #A0A0A0
+          columnDefs:
+            AktNR:
+              columnWeight: 1
+              header: !text
+                text: AktNR
+              cell: !text
+                text: '${AktNR}'
+            Bokstav:
+              columnWeight: 1
+              header: !text
+                text: Bokstav
+              cell: !text
+                text: '${Bokstav}'
+            Mapp:
+              columnWeight: 1
+              header: !text
+                text: Mapp
+              cell: !text
+                text: '${Mapp}'
+            Beskrivning:
+              columnWeight: 1
+              header: !text
+                text: Beskrivning
+              cell: !text
+                text: '${Beskrivning}'
+            Avreg:
+              columnWeight: 1
+              header: !text
+                text: Avreg
+              cell: !text
+                text: '${Avreg}'
+            DiarieNr:
+              columnWeight: 1
+              header: !text
+                text: DiarieNr
+              cell: !text
+                text: '${DiarieNr}'
+            Filnamn:
+              columnWeight: 1
+              header: !text
+                text: Filnamn
+              cell: !text
+                text: '${Filnamn}'
+            Type:
+              columnWeight: 1
+              header: !text
+                text: Type
+              cell: !text
+                text: '${Type}'
+            AvregDatum:
+              columnWeight: 1
+              header: !text
+                text: AvregDatum
+              cell: !text
+                text: '${AvregDatum}'
