@@ -1,0 +1,39 @@
+The sMap Project and its contributors hold the copyright of the sMap product. The product consists of (but is
+not limited to) files containing source code, graphical assets, stylesheets and so on. All of these files, no
+matter if they contain a license header or not, are licensed under the Apache Software License 2.0 unless
+otherwise noted.
+
+This package contains embedded third-party software. Most of the source code is located in the lib directory.
+Most of this source code is licensed under the MIT or BSD licenses. The sMap project does not claim any
+copyright to this third-party software. Please refer to each software's licensing information.
+
+Data from online resources (such as tilemaps and realtime web services) is copyrighted by their respective
+holders and may not be used freely unless clearly stated so.
+
+The following sMap modules were originally contributed as follows (incomplete list).
+
+ - AdvSearch, Kristian Bergstrand (Helsingborgs stad)
+ - BaselayerSwitcher, Karl-Magnus Jönsson (Kristianstad kommun)
+ - Blixten, Johan Lahti (Malmö stad)
+ - BlixtenPopup2, Johan Lahti (Malmö stad)
+ - ConfigSelector, Karl-Magnus Jönsson (Kristianstad kommun)
+ - CopyLink, Kristian Bergstrand (Helsingborgs stad)
+ - Draw, Karl-Magnus Jönsson (Kristianstad kommun)
+ - EPOI, Cleber Arruda (Malmö stad)
+ - FeatureRequester, Johan Lahti (Malmö stad)
+ - GetFeatureInfo, Karl-Magnus Jönsson (Kristianstad kommun)
+ - MeasureDialog, Karl-Magnus Jönsson (Kristianstad kommun)
+ - MousePos, Kristian Bergstrand (Helsingborgs stad)
+ - NavigationHistory, Karl-Magnus Jönsson (Kristianstad kommun)
+ - Opacity, Kristian Bergstrand (Helsingborgs stad)
+ - OverlaySwitcher/SimpleSwitcher, Karl-Magnus Jönsson (Kristianstad kommun)
+ - OverlaySwitcher, Karl-Magnus Jönsson (Kristianstad kommun)
+ - Pizza, Kristian Bergstrand (Helsingborgs stad)
+ - ScaleBar, Karl-Magnus Jönsson (Kristianstad kommun)
+ - Search, Kristian Bergstrand (Helsingborgs stad)
+ - Select, Johan Lahti (Malmö stad)
+ - SelectResult, Karl-Magnus Jönsson (Kristianstad kommun)
+ - SelectTool, Karl-Magnus Jönsson (Kristianstad kommun)
+ - SPrint, Markus Nilsson (Sweco)
+ - ToolsMenu, Kristian Bergstrand (Helsingborgs stad)
+ 
