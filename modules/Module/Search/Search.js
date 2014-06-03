@@ -64,7 +64,11 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 			self.appendAsOwnDiv = false;
 			self.dropDownOption = false;
 		}
-		
+		if (self.dropDownOption === true && self.appendAsOwnDiv===false) {
+			self.added();
+			var startingCat = $("#search-dropdownmenu").find("option:selected").text();
+			self.changeCat(startingCat);
+		}
 		// Call the activate function of the parent class
 		return sMap.Module.prototype.activate.apply(
 	            this, arguments);
@@ -629,7 +633,22 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
         }
         sMap.map.setCenter(new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y), theZoom);
 	},			
-	
+			
+	/**
+	 * Add class and event to drop-down menu. The dropDownOption must be set to true in Search_conf.js.
+	 */
+		
+	added : function() {
+		var self = this,
+		dropDownMenu = $("#search-dropdownmenu");
+		dropDownMenu.addClass('search-dropdown');
+			
+		//onChange of the dropDown
+		$('.search-dropdown').change(function() {
+			var selectedCat = $(this).find("option:selected").text();
+			self.changeCat(selectedCat);
+		});
+	},
 	/**
 	 * Check bounds. Display an error if any coordinate is out of bounds.
 	 */
@@ -682,7 +701,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		//if($.isEmptyObject(resultObj) == true){alert("out of bounds");return;}
 		var allCoords = {};
 		if(theEpsg == null){
-			self.addInfoMsg("OutOfBounds", 'Koordinaterna ligger inte i kartans utströckning. Prova igen (t.ex " 100191 6214761 ")');
+			self.addInfoMsg("OutOfBounds", 'Koordinaterna ligger inte i kartans utsträckning. Prova igen (t.ex " 100191 6214761 ")');
 			return;
 		}
 		else{

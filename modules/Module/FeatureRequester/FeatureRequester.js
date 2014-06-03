@@ -405,7 +405,7 @@ sMap.Module.FeatureRequester = OpenLayers.Class(sMap.Module, {
 				typename: t.layers, 
 				version: t.version || "1.0.0",
 				request: "GetFeature",
-				outputformat: t.outputFormat || "GML2",
+				outputformat: "GML2",//t.outputFormat || "GML2",
 				format: "text/xml",
 				bbox: bounds.toBBOX(),
 				maxfeatures: this.maxFeatures, //"&maxfeatures="+this.maxFeatures,

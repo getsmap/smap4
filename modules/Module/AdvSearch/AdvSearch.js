@@ -287,21 +287,24 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 	/**
 	 * Listener for "searchlayer" event
 	 * @param e
-	 * 	- layer {String} the layer name to search in
+	 * 	- layer {String} the layer name(s comma separated) to search in
 	 * 	- attributes {Array} the attributes to search in
 	 * 	- option {String} the logic to be applied (EQUAL_TO, LIKE etc.)
 	 *  - q {String} the query value to search for
 	 */
 
 	searchlayer : function(e){
+		var layerlist = e.layer.split(',');
 		var lyrs = {};
-		lyrs[e.layer] = e.attributes;
-		sMap.events.triggerEvent("showlayer", this, {
-			layerName: e.layer
-		});
-		var t = sMap.cmd.getLayerConfig(e.layer);
-		if (t.layerType.toUpperCase() != "VECTOR"){
-			this.searchHandler(lyrs, e.option, e.q, e.bounds);
+		for (var i=0;i<layerlist.length;i++){
+			lyrs[layerlist[i]] = e.attributes;
+			sMap.events.triggerEvent("showlayer", this, {
+				layerName: layerlist[i]
+			});
+			var t = sMap.cmd.getLayerConfig(layerlist[i]);
+			if (t.layerType.toUpperCase() != "VECTOR"){
+				this.searchHandler(lyrs, e.option, e.q, e.bounds);
+			}
 		}
 	},
 	/**
@@ -453,7 +456,7 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 			
 			if (theType == "vector" || theType == "wms") {
 				REQUEST = "&request=getfeature";
-				SERVICE = "&service=wfs";
+				SERVICE = "&service=WFS";
 				LAYERS = t && t.layers ?  "&typename=" + t.layers : ly.params ? "&typename=" + ly.params.layers : "&typename=" + ly.protocol.featureNS + ":" + ly.protocol.featureType;
 				VERSION= "&version=1.0.0";//t && t.version ? "&version=" + t.version : (ly.protocol && ly.protocol.version ? "&version=" + ly.protocol.version : "&version=1.0.0");
 			}
@@ -552,9 +555,9 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 						$.each(self.globalLayers, function(k,val){
 							var tempParam = this.params && this.params.layers ? this.params.layers : null;
 							tempParam = this.getFeatureInfo && this.getFeatureInfo.layers ? this.getFeatureInfo.layers : tempParam;
-							tempParam = tempParam.split(":")[1];
-							
-							if(tempParam == typeName){
+							tempParam = tempParam.indexOf(":")>0 ? tempParam.replace(":",",") : tempParam;
+							tempParam = $.inArray(typeName,tempParam.split(","));
+							if (tempParam>-1){
 								rightLayer = this;
 							}
 						});
