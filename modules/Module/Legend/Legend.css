@@ -1,0 +1,46 @@
+.legend-container {
+	position: absolute;
+	z-index: 1001;
+	left: 0px;
+	bottom: 0px;
+	padding: 1em 3em 1em 1em;
+	background-color: rgba(255,255,255,1);
+	display: table;
+	border: 1px solid rgba(0,0,0,1);
+	border-width: 3px 3px 0 0;
+	max-height: 65%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: block;
+}
+
+.legend-container .close {
+	display: block;
+	position: absolute;
+	font-size: 3.5em;
+	right: 0.2em;
+	top: -0.2em;
+	cursor: pointer;
+	color: rgb(60,60,60);
+}
+.legend-container .close:hover {
+	color: rgb(0,0,0);
+}
+
+.legend-container div {
+	display: table-row;
+}
+
+
+.legend-container label {
+	font-size: 1.2em;
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.legend-container img {
+	display: table-cell;
+	margin-right: .2em;
+	padding: 1.5em 0 1.5em 1em;
+}
+
