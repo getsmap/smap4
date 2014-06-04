@@ -74,6 +74,10 @@
 		"modules/Module/LayerTree/LayerTree_conf.js",
 		"modules/Module/LayerTree/LayerTree_lang.js",
 		
+		"modules/Module/Legend/Legend.js",
+		"modules/Module/Legend/Legend_conf.js",
+		"modules/Module/Legend/Legend_lang.js",
+		
 		"modules/Module/Loading/Loading.js",
 		"modules/Module/Loading/Loading_conf.js",
 		"modules/Module/Loading/Loading_lang.js",
@@ -174,8 +178,8 @@
 		"modules/Module/FeatureRequester/FeatureRequester.css",
 		"modules/Module/GetFeatureInfo/GetFeatureInfo.css",
 		"modules/Module/IntroDialog/IntroDialog.css",
-		
 		"modules/Module/LayerTree/LayerTree.css",
+		"modules/Module/Legend/Legend.css",
 		"modules/Module/Loading/Loading.css",
 		"modules/Module/MeasureDialog/MeasureDialog.css",
 		"modules/Module/MousePos/MousePos.css",
