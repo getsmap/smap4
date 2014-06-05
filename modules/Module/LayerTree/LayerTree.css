@@ -134,8 +134,10 @@
 }
 
 .layertree-legend-hover {
-	width: 200px;
-	height: 70px;
+	max-width:200px;
+	min-width:50px;
+	max-height:200px;
+	min-height:50px;
 	position: absolute;
 	z-index: 2000;
 	border: 1px solid #aaa;
