@@ -159,21 +159,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	 */
 	
 	bindAutocompleteToId : function(searchInput) {
-		var startText = this.startText;
-    	$(searchInput).val(startText);
-    	this.searchInput = searchInput;
-		// Set startText on focusout.
-		searchInput.focusout(function() {
-            if ($(this).val()=="") {
-            	$(this).val(startText);
-            }
-        });
-        // On focus - erase all text if entry value equals startText.
-		searchInput.focus(function(e) {
-            if ($(this).val() == startText) {
-                $(this).val("");
-            }
-        });
+    	searchInput.attr("placeholder", this.startText);
 		
 		var autoCompleteScriptUrl = null;
 		
@@ -750,11 +736,6 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		}
 		
 		/**
-	     *  Bind handlers on:
-	     *  	-focus
-	     *  		erase all text if entry value equals the text in the search box.
-	     *  	-focusOut
-	     *  		set startText on focusout.
 	     *  
 	     *  If appendAsOwnDiv is set to true in Search_conf.js, bind another handler on:
 	     *  	-focus 
