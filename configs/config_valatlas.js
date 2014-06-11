@@ -140,7 +140,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -173,7 +173,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -206,7 +206,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -239,7 +239,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -272,7 +272,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -305,7 +305,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -338,7 +338,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -371,7 +371,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -404,7 +404,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -437,7 +437,7 @@ var config = {
 				SRS: '3008'
 			}, 
 			options : {
-				opacity: "0.70",
+				opacity: "0.80",
 				zIndex: 150,
 				isBaseLayer: false,
 				singleTile : true	
@@ -556,7 +556,63 @@ var config = {
 		},
 		
 		
-			
+		{
+			displayName: 'Valdistrikt',
+			name: "valdist",
+			layerType : "wms",
+			dialogContent: "http://xyz.malmo.se/metadata/statistikmetadata.aspx?id=valdist&img=http://xyz.malmo.se/bilder/kartsymboler/valdistrikt.png",
+			category : ["Underlag"],
+			displayInLayerSwitcher: true,
+			URL: "http://xyz.malmo.se/geoserver/wms?",
+			selectAttributes: ["${fid}"],
+			params : {
+				layers: "malmows:SMA_VALDISTRIKT_P",
+				format: "image/png",
+				transparent: "true"
+			}, 
+			options : {
+				isBaseLayer: false,
+				opacity: "0.90",
+				zIndex: 260,
+				singleTile : true
+			},
+			popup :
+				"<div class='popup-header1'>Valdistrikt</div>" +
+				"<div class='popup-text2'>${valdistr_c}</div>" +
+				"<div class='popup-text1'>Valkrets: ${valkrets}</div>",					
+			blixtable : false, 
+			selectable : true,
+			getFeatureInfo: {geometryName: "geom"},
+			geomType : 'point',
+			startVisible : false,
+			legend : {
+				hover: {
+					url: "http://xyz.malmo.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:SMA_VALDISTRIKT_P&version=1.1.1&format=image/png"
+				}
+			},		
+			copyright : [],
+			style: {
+				"default": {externalGraphic: "http://xyz.malmo.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:SMA_VALDISTRIKT_P&version=1.1.1&format=image/png"},
+				"select": {
+					rules: [
+							new OpenLayers.Rule({
+								filter: new OpenLayers.Filter.Comparison({
+									type: OpenLayers.Filter.Comparison.EQUAL_TO
+								}),
+								// if a feature matches the above filter, use this style
+								symbolizer: {
+									//externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
+								}
+							}),
+							new OpenLayers.Rule({								
+								elseFilter: true,
+								// if a feature matches the above filter, use this style
+								symbolizer: {}
+							})
+					]
+				}
+			}
+		},	
 		{
 			displayName: 'Delområden',
 			name: "delomraden",
@@ -574,7 +630,7 @@ var config = {
 			options : {
 				isBaseLayer: false,
 				opacity: "0.90",
-				zIndex: 250,
+				zIndex: 240,
 				singleTile : true
 			},
 			popup :
