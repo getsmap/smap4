@@ -3,7 +3,7 @@ sMap.Lang.lang.GetFeatureInfo = {
 	"sv-SE" : {
 		buttonText : "Markhöjder",
 		headerText : "Höjddata RH2000",
-		descriptionText : "Med detta verktyget klickar du kartan och får reda på höjdvärdet i RH2000. NNH-data med 2m upplösning.",
+		descriptionText : "Med detta verktyget klickar du kartan och får reda på höjdvärdet i RH2000. NH-data med 2m upplösning.",
 		addPointsText : "Behåll gamla punkter",
 		clearButtonText : "Radera alla",
 		addButtonText : "Lägg till",
