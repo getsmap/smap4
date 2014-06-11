@@ -3995,6 +3995,10 @@ var config = {
 			}
 		},
 		{
+			init : sMap.Module.Legend,
+			config : {}
+		},
+		{
 			init: sMap.Module.IntroDialog,
 			config: {
 				dialogBGColor: "#fff",
