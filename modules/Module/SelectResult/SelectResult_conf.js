@@ -9,10 +9,8 @@ sMap.moduleConfig.SelectResult = {
 
 		/*
 		Do not listen to select events originating in these 
-		modules (give full class name: e.g. "sMap.Module.SomeName")
+		modules (give last part of class name: e.g. "MyModule")
 		*/
-
-
 		_noListenMods: [],
 
 		/**

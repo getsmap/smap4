@@ -15327,7 +15327,7 @@ var config = {
 				selectOnDblClick : true,
 				report: true,
 				addToToolsMenu: "adv",
-				_noListenMods: ["sMap.Module.BlixtenPopup2"]
+				_noListenMods: ["BlixtenPopup2"]
 			}
 		},
 		{
@@ -15707,3 +15707,9 @@ if ($.browser.msie && parseInt($.browser.version) < 8) {
 //	toolBarTitleLbl.css("left", "");
 //	toolBarTitleLbl.css("right", "50px");
 //});
+
+
+
+if (document.domain === "localhost") {
+	config.proxyHost = "../../cgi-bin/proxy/proxy.py?url=";
+}

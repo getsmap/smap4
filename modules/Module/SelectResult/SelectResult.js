@@ -141,7 +141,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 	 */
 	select : function(e){
 		// Do not listen to selected events originating in modules specified in this._noListenMods
-		if (e.caller.MODULE_NAME && $.inArray(this._noListenMods) === -1){ // Caller is Select Module and not the resulttable itself
+		if (e.caller.MODULE_NAME && $.inArray(e.caller.MODULE_NAME, this._noListenMods) === -1){ // Caller is Select Module and not the resulttable itself
 			if (selectLayer.features.length > 1 && this.active!==true){
 				this.activate();
 			} else{
