@@ -128,54 +128,56 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 			arr = sMap.config.layers.overlays;
 		for (i=0,len=arr.length; i<len; i++) {
 			t = arr[i];
-			geomType = t.geomType || "polygon";
-			switch (geomType) {
-				case "point":
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						strokeOpacity: .20
-					}
-					break;
-				case "line":
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						strokeOpacity: .20
-					}
-					break;
-				case "polygon":
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						fillOpacity: 0,
-						strokeOpacity: .20
-					}
-					break;
-//				case "mixed":
-//					style = {
-//						strokeWidth: 4,
-//						strokeColor: "#0f0",
-//						fillOpacity: 0,
-//						strokeOpacity: 0.9
-//					}
-				default:
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						fillOpacity: 0,
-						strokeOpacity: .20
-					}
+			if (t.blixtable) {
+				geomType = t.geomType || "polygon";
+				switch (geomType) {
+					case "point":
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							strokeOpacity: .20
+						}
+						break;
+					case "line":
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							strokeOpacity: .20
+						}
+						break;
+					case "polygon":
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							fillOpacity: 0,
+							strokeOpacity: .20
+						}
+						break;
+	//				case "mixed":
+	//					style = {
+	//						strokeWidth: 4,
+	//						strokeColor: "#0f0",
+	//						fillOpacity: 0,
+	//						strokeOpacity: 0.9
+	//					}
+					default:
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							fillOpacity: 0,
+							strokeOpacity: .20
+						}
+				}
+				if (t.style.select) {
+					delete t.style.select.rules;				
+				}
+				delete t.style.rules;
+				t.style = t.style || {};
+				$.extend(true, t.style["default"], style);
+				$.extend(true, t.style["default"], style);
+				$.extend(true, t.style["select"], style);
+				$.extend(true, t.style["select"], style);
 			}
-			if (t.style.select) {
-				delete t.style.select.rules;				
-			}
-			delete t.style.rules;
-			t.style = t.style || {};
-			$.extend(true, t.style["default"], style);
-			$.extend(true, t.style["default"], style);
-			$.extend(true, t.style["select"], style);
-			$.extend(true, t.style["select"], style);
 		}
 	},
 	
