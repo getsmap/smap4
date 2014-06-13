@@ -2991,6 +2991,10 @@ var config = {
 //			config : {}
 //		},
 		{
+			init : sMap.Module.MalmoHeader,
+			config : {}
+		},
+		{
 			init : sMap.Module.Toolbar,
 			config : {
 				side: "right"/*,
