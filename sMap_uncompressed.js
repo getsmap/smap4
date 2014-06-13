@@ -5695,54 +5695,56 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 			arr = sMap.config.layers.overlays;
 		for (i=0,len=arr.length; i<len; i++) {
 			t = arr[i];
-			geomType = t.geomType || "polygon";
-			switch (geomType) {
-				case "point":
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						strokeOpacity: .20
-					}
-					break;
-				case "line":
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						strokeOpacity: .20
-					}
-					break;
-				case "polygon":
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						fillOpacity: 0,
-						strokeOpacity: .20
-					}
-					break;
-//				case "mixed":
-//					style = {
-//						strokeWidth: 4,
-//						strokeColor: "#0f0",
-//						fillOpacity: 0,
-//						strokeOpacity: 0.9
-//					}
-				default:
-					style = {
-						strokeWidth: 12,
-						strokeColor: "#000",
-						fillOpacity: 0,
-						strokeOpacity: .20
-					}
+			if (t.blixtable) {
+				geomType = t.geomType || "polygon";
+				switch (geomType) {
+					case "point":
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							strokeOpacity: .20
+						}
+						break;
+					case "line":
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							strokeOpacity: .20
+						}
+						break;
+					case "polygon":
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							fillOpacity: 0,
+							strokeOpacity: .20
+						}
+						break;
+	//				case "mixed":
+	//					style = {
+	//						strokeWidth: 4,
+	//						strokeColor: "#0f0",
+	//						fillOpacity: 0,
+	//						strokeOpacity: 0.9
+	//					}
+					default:
+						style = {
+							strokeWidth: 12,
+							strokeColor: "#000",
+							fillOpacity: 0,
+							strokeOpacity: .20
+						}
+				}
+				if (t.style.select) {
+					delete t.style.select.rules;				
+				}
+				delete t.style.rules;
+				t.style = t.style || {};
+				$.extend(true, t.style["default"], style);
+				$.extend(true, t.style["default"], style);
+				$.extend(true, t.style["select"], style);
+				$.extend(true, t.style["select"], style);
 			}
-			if (t.style.select) {
-				delete t.style.select.rules;				
-			}
-			delete t.style.rules;
-			t.style = t.style || {};
-			$.extend(true, t.style["default"], style);
-			$.extend(true, t.style["default"], style);
-			$.extend(true, t.style["select"], style);
-			$.extend(true, t.style["select"], style);
 		}
 	},
 	
@@ -5844,8 +5846,8 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 //				var w = ui.size.width,
 //					h = ui.size.height;
 				// Use a timeout so that the DOM is ready (document.ready does not fix it).
-				var code = "var mod = sMap.map.getControlsByClass('" + self.CLASS_NAME + "')[0];mod.updateSize();";
-				setTimeout(code, 200);
+				// var code = "var mod = sMap.map.getControlsByClass('" + self.CLASS_NAME + "')[0];mod.updateSize();";
+				// setTimeout(code, 200);
 			},
 			close: function() {
 				sMap.events.triggerEvent("unselect", this, {}); // Will destroy features in the select layer
@@ -5907,9 +5909,9 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 		this.dialogDiv.append( this.leftDiv ).append( this.rightDiv );
 		this.attrDiv = $("<div id='"+this.prefix+"attrdiv' />");
 		this.rightDiv.append(this.attrDiv);
-		$("#blixtenpopup-rightdiv").width(w-226).height(h-34);
-		$("#blixtenpopup-leftdiv").height(h-34);
-		$("#blixtenpopup-attrdiv").height(h-56);
+		// $("#blixtenpopup-rightdiv").width(w-226).height(h-34);
+		// $("#blixtenpopup-leftdiv").height(h-34);
+		// $("#blixtenpopup-attrdiv").height(h-56);
 	},
 	
 	/**
@@ -6025,9 +6027,12 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 	 * @return {void}
 	 */
 	addRow: function(t) {
+
+		var prefix = this.prefix;
+		var defaultHeaderText = "Övrigt";
 		// Get the color from the category that this layer belongs to.
 		var headerLevel = 1; // The header level that decides the color (0: main header, 1: sub, …)
-		var headerText = t.blixtenPopupHeader || (t.category && t.category.length > headerLevel ? t.category[headerLevel] : null);
+		var headerText = t.blixtenPopupHeader || (t.category && t.category.length > headerLevel ? t.category[headerLevel] : defaultHeaderText);
 		var mainCatConfig = {};
 		if (headerText) {
 			mainCatConfig = t.category && headerText ? this.categories.headers[headerText] || {} : {};
@@ -6035,7 +6040,7 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 		}
 		
 		var row = this.makeRow(t, {
-			className: this.prefix+"row-left",
+			className: prefix+"row-left",
 //			key: this.nameField,
 			label: t.displayName,
 			css: t.css || {
@@ -6043,16 +6048,27 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 			},
 			content: t.content || null // If the row does not get its info from a feature, specify it in the content property
 		});
-		if (!headerText) {
-			this.rowsDiv.append(row); // If row does not belong to any header
-			return;
-		}
+		// if (!headerText) {
+			// this.rowsDiv.append(row); // If row does not belong to any header
+			// return;
+		// }
+
+		var self = this;
+		function makeRowId(ht) {
+			return prefix+"rowheader-"+self._encodeHeader(ht);
+		};
 		
 		// Put the row below the correct header. If the header does not exist, create it.
-		var header = this.rowsDiv.find("#"+this.prefix+"rowheader-"+this._encodeHeader(headerText));
+		var header = this.rowsDiv.find("#"+makeRowId(headerText));
 		if (!header.length) {
-			header = $("<div class='"+this.prefix+"row-left "+this.prefix+"rowheader' id='"+this.prefix+"rowheader-"+encodeURIComponent(headerText)+"'>"+headerText+"</div>");
-			this.rowsDiv.append(header);
+			header = $("<div class='"+prefix+"row-left "+prefix+"rowheader' id='"+makeRowId(headerText)+"'>"+headerText+"</div>");
+			var otherHeader = this.rowsDiv.find("#"+makeRowId(defaultHeaderText)); // "Övrigt" header
+			if ( otherHeader.length ) {
+				otherHeader.before(header)
+			}
+			else {
+				this.rowsDiv.append(header);
+			}
 		}
 		// Avoid reversing the layer order by simply adding rows using header.after()
 		var lastRow = header.nextUntil(".blixtenpopup-rowheader").last();
@@ -6067,11 +6083,11 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 	},
 	
 	_decodeHeader: function(text) {
-		decodeURIComponent(text.replace(/_-pr-_/gi, "%"));
+		return decodeURIComponent(text.replace(/--pr--/gi, "%"));
 	},
 	
 	_encodeHeader: function(text) {
-		encodeURIComponent(text).replace(/%/gi, "_-pr-_");
+		return encodeURIComponent(text).replace(/%/gi, "--pr--");
 	},
 	
 	startingInfo: "<p>Tryck på en rad till vänster för att få mer information om varje enskilt objekt.</p>",
@@ -10184,7 +10200,7 @@ sMap.Lang.lang.GetFeatureInfo = {
 	"sv-SE" : {
 		buttonText : "Markhöjder",
 		headerText : "Höjddata RH2000",
-		descriptionText : "Med detta verktyget klickar du kartan och får reda på höjdvärdet i RH2000. NNH-data med 2m upplösning.",
+		descriptionText : "Med detta verktyget klickar du kartan och får reda på höjdvärdet i RH2000. NH-data med 2m upplösning.",
 		addPointsText : "Behåll gamla punkter",
 		clearButtonText : "Radera alla",
 		addButtonText : "Lägg till",
@@ -17277,21 +17293,8 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	 */
 	
 	bindAutocompleteToId : function(searchInput) {
-		var startText = this.startText;
-    	$(searchInput).val(startText);
-    	this.searchInput = searchInput;
-		// Set startText on focusout.
-		searchInput.focusout(function() {
-            if ($(this).val()=="") {
-            	$(this).val(startText);
-            }
-        });
-        // On focus - erase all text if entry value equals startText.
-		searchInput.focus(function(e) {
-            if ($(this).val() == startText) {
-                $(this).val("");
-            }
-        });
+		// Set watermark text to search field
+    	searchInput.attr("placeholder", this.startText);
 		
 		var autoCompleteScriptUrl = null;
 		
@@ -17868,11 +17871,6 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		}
 		
 		/**
-	     *  Bind handlers on:
-	     *  	-focus
-	     *  		erase all text if entry value equals the text in the search box.
-	     *  	-focusOut
-	     *  		set startText on focusout.
 	     *  
 	     *  If appendAsOwnDiv is set to true in Search_conf.js, bind another handler on:
 	     *  	-focus 
@@ -19193,7 +19191,8 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 	 * @param e
 	 */
 	select : function(e){
-		if (e.caller.MODULE_NAME){ // Caller is Select Module and not the resulttable itself
+		// Do not listen to selected events originating in modules specified in this._noListenMods
+		if (e.caller.MODULE_NAME && $.inArray(e.caller.MODULE_NAME, this._noListenMods) === -1){ // Caller is Select Module and not the resulttable itself
 			if (selectLayer.features.length > 1 && this.active!==true){
 				this.activate();
 			} else{
@@ -19449,6 +19448,14 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 		 * "initialize" and "drawContent" have been called.
 		 */ 
 		activateFromStart : false,
+
+
+		/*
+		Do not listen to select events originating in these 
+		modules (give last part of class name: e.g. "MyModule")
+		*/
+		_noListenMods: [],
+
 		/**
 		 * Default properties
 		 */
@@ -20041,6 +20048,8 @@ sMap.Module.SPrint = OpenLayers.Class(sMap.Module, {
 		// default is otherwise 72.
 		DOTS_PER_INCH: 96,
 		
+		usePrintMask : true,
+		
 		printCopyrightNotice: '<div id="print-dialog-userconditions" class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0" style="width: auto; min-height: 0px; height: 183px;">För utdrag från kartan/flygfotot till tryck eller annan publicering, krävs tillstånd från Malmö Stadsbyggnadskontor. Vid frågor om tillstånd, användningsområden eller kartprodukter kontaktas Stadsbyggnadskontorets kartförsäljning: 040-34 24 35 eller <a href="mailto:sbk.sma@malmo.se?subject=Best%E4lla karta">sbk.sma@malmo.se</a>.<br><strong>Accepterar du villkoren?</strong></div>'
 };
 sMap.Lang.lang.SPrint = {
@@ -20284,6 +20293,7 @@ sMap.Lang.lang.SPrint = {
 				
 				// $(".ui-dialog-titlebar-close", ui.dialog).hide();
 			},
+			beforeClose : Core.bind(this, this.beforeDialogclose),
 			close : Core.bind(this, this.onDialogclose),
 			autoOpen: false
 		});
@@ -20296,6 +20306,23 @@ sMap.Lang.lang.SPrint = {
 		});
 
 		var that = this;
+		$("#sprint_Print_chkUseMask").click(function() {
+			that.toggleMaskEditing();
+		});
+		if(!this.core.module.usePrintMask){
+			$("#sprint_Print_chkUseMask").hide();
+			$("#sprint_Print_chkUseMaskLbl").hide();
+		}
+		$("#sprint_Print_btnDraw").button();
+		$("#sprint_Print_btnDraw").click(function() {
+			that.toggleDraw();
+		});
+		$("#sprint_Print_btnDraw").hide();
+		$("#sprint_Print_btnClear").button();
+		$("#sprint_Print_btnClear").click(function() {
+			that.clearDraw();
+		});
+		$("#sprint_Print_btnClear").hide();
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -20348,7 +20375,110 @@ sMap.Lang.lang.SPrint = {
 		}
 		this.setCurrentScale(); // set scale also
 	};
+	/*
+	 * Toggles draw and clear buttons for print mask
+	 */
+	PrintControlDialog.prototype.toggleMaskEditing = function(){
+		if ($("#sprint_Print_btnDraw").is(":visible")) {
+			$("#sprint_Print_btnDraw").hide();
+			$("#sprint_Print_btnClear").hide();
+			this.maskEditingLayer.setVisibility(false);
+		}else{
+			$("#sprint_Print_btnDraw").show();
+			$("#sprint_Print_btnClear").show();
+			this.addMaskEditingLayer();
+		}
+	};
+	/*
+	 * Adds a vector layer for mask editing with an OL drawfeature control
+	 */
+	PrintControlDialog.prototype.addMaskEditingLayer = function(){
+		if (!this.maskEditingLayer) {
+			this.maskEditingLayer = new OpenLayers.Layer.Vector("sprint_maskeditlayer", {
+				styleMap: new OpenLayers.StyleMap({
+					"default": new OpenLayers.Style({
+						fillOpacity: 0,
+						fillColor: "#FFF",
+						strokeWidth: 1,
+						strokeOpacity: 1,
+						strokeColor: "#F00"
+					}),
+					"temporary": new OpenLayers.Style({
+						fillOpacity: 0,
+						fillColor: "#FFF",
+						strokeWidth: 1,
+						strokeOpacity: 1,
+						strokeColor: "#F00"
+					})
+				})
+			});
+			this.map.addLayer(this.maskEditingLayer);
+			this.maskEditingLayer.events.register("featureadded", this, function(e) {
+				this.toggleDraw();
+			});
+			this.drawPolygon = new OpenLayers.Control.DrawFeature(
+					this.maskEditingLayer, OpenLayers.Handler.Polygon, {
+						title: "Rita",
+						multi: true
+				});
+			this.map.addControl(this.drawPolygon);
+		}
+		else{
+			this.maskEditingLayer.setVisibility(true);
+		}
 		
+	};
+	/*
+	 * Toggles the OL drawfeature control
+	 */
+	PrintControlDialog.prototype.toggleDraw = function(){
+		if (this.drawPolygon.active){
+			this.drawPolygon.deactivate();
+		}
+		else{
+			this.drawPolygon.activate();
+		}
+	};
+	/*
+	 * Clears all drawed features
+	 */
+	PrintControlDialog.prototype.clearDraw = function(){
+		this.maskEditingLayer.removeAllFeatures();
+	};
+	/*
+	 * Adds a vector layer when printing. The layer contains the extent feature minus the drawed features in a white style
+	 */
+	PrintControlDialog.prototype.addMaskLayer = function(){
+		if (this.maskEditingLayer.features.length>0){
+			if (!this.maskLayer) {
+				this.maskLayer = new OpenLayers.Layer.Vector("sprint_masklayer", {
+					styleMap: new OpenLayers.StyleMap({
+						"default": new OpenLayers.Style({
+							fillOpacity: 1,
+							fillColor: "#ffffff",
+							strokeWidth: 1,
+							strokeOpacity: 1,
+							strokeColor: "#ffffff"
+						})
+					})
+				});
+				this.map.addLayer(this.maskLayer);
+			}
+			var maskFeature = this.subtract(this.extentLayer.features[0], this.maskEditingLayer.features);
+			this.maskLayer.addFeatures([maskFeature]);
+		}
+	};
+	
+	PrintControlDialog.prototype.subtract = function(bigFeature, smallFeatures) {
+	    var newPolygon = new OpenLayers.Geometry.Polygon(bigFeature.geometry.components);
+	    var newFeature = new OpenLayers.Feature.Vector(newPolygon);
+	    //Add Inner DONUT HOLES!
+	    for (var i = 0; i<smallFeatures.length;i++){
+	    	newPolygon.addComponent(smallFeatures[i].geometry.components[0].components[0]);
+	    }
+
+	    return newFeature;
+	};
 	PrintControlDialog.prototype.showExtent = function(scale) {
 		if (!scale || typeof(scale) !== "number") {
 			scale = this.printScale || this.map.getScale();
@@ -20538,10 +20668,16 @@ sMap.Lang.lang.SPrint = {
 		    onComplete = options.onComplete || null,
 		    orientation = options.orientation || "Portrait"; // portrait or landscape
 		
+		if ($("#sprint_Print_chkUseMask:checked").val() !== undefined) {
+			this.addMaskLayer();
+		}
+		if (this.maskEditingLayer) {
+			this.maskEditingLayer.setVisibility(false);			
+		}
 		if (this.extentLayer) {
 			this.map.removeLayer(this.extentLayer);			
 		}
-		
+
 		this.service = service;  //K-M
 		var that = this;
 		var map = options.map || this.core.module.map;
@@ -20678,9 +20814,19 @@ sMap.Lang.lang.SPrint = {
 				}
 			});
 		}
+		// Remove the mask
+		if (this.maskLayer) {
+			this.maskLayer.destroyFeatures();
+			this.map.removeLayer(this.maskLayer);	
+			this.maskLayer.destroy();
+			this.maskLayer = null;
+		}
 		// Put it back again
 		if (this.extentLayer) {
 			this.map.addLayer(this.extentLayer);			
+		}
+		if (this.maskEditingLayer) {
+			this.maskEditingLayer.setVisibility(true);			
 		}
 	};
 	/**
@@ -21057,7 +21203,16 @@ sMap.Lang.lang.SPrint = {
 		}
 		return a.href;
 	};
-
+	/*
+	 * Turn off mask editing before close of the dialog
+	 */
+	PrintControlDialog.prototype.beforeDialogclose = function(e) {
+		if (this.maskEditingLayer && this.maskEditingLayer.visibility){
+			$('#sprint_Print_chkUseMask').prop('checked', false);
+			this.toggleMaskEditing();
+		}
+	};
+	
 	PrintControlDialog.prototype.onDialogclose = function(e) {
 		this.core.module.deactivate();
 		//this.core.dialogCloseClicked = true;

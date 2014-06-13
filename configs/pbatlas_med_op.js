@@ -667,8 +667,8 @@ var planApp = {
 
 var config = {
 	
-	
-	jqTheme: "full-gray",
+	jqTheme: "gray-flat",
+	// jqTheme: "full-gray",
 	//jqTheme: "flashy-gray",
 	//jqTheme: "gray-blue",
 	//jqTheme: "orange",

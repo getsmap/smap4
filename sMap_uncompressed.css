@@ -484,23 +484,24 @@ div, span, p, button, label {
 }
 
 .blixtenpopup-div {
-	position: absolute;
-	height: 368px;
-	top: 0px;
+	position: relative;
+	height: 100%;
+	float: left;
 	overflow: visible;
 	background-color: #fff;
-	border: 1px solid #aaa;
+	border: none;
+    margin: 0;
+    padding: 0;
 }
 
 #blixtenpopup-leftdiv {
-	left: 0px;
-	width: 220px;
+	width: 40%;
+    border-right: 1px solid #aaa;
 }
 #blixtenpopup-rightdiv {
-    left: 226px;
-    width: 422px;
     overflow: hidden;
 	z-index: 2;
+    width: 59%;
 }
 #blixtenpopup-rowsdiv-bottom {
     position: relative;
@@ -528,11 +529,9 @@ div, span, p, button, label {
 
 .blixtenpopup-row-left {
 	position: relative;
-    width: 308px;
-    height: auto;
-    max-height: 12px;
-    line-height: 12px;
-    padding: 5px 5px;
+    width: 100%;
+    line-height: 1em;
+    padding: .45em;
     border: 1px solid #aaa;
     border-width: 0 0 1px 0;
     background-color: #fff;
@@ -548,7 +547,6 @@ div, span, p, button, label {
 .blixtenpopup-rowselected {
     background-color: #428bca !important;
     color: #fff;
-    font-weight: bold;
     cursor: pointer;
 }
 .blixtenpopup-leftheaderdiv {
@@ -1022,6 +1020,12 @@ textarea{
 
 #extract-click-dialog td {
 	min-width: 70px;
+}#gfi-list {
+ -moz-user-select: text;
+ -khtml-user-select: text;
+ -webkit-user-select: text;
+ -ms-user-select: text;
+ user-select: text;
 }#introdialog-dialog {}
 
 #introdialog-checkboxdiv {
@@ -1178,8 +1182,10 @@ textarea{
 }
 
 .layertree-legend-hover {
-	width: 200px;
-	height: 70px;
+	max-width:200px;
+	min-width:50px;
+	max-height:200px;
+	min-height:50px;
 	position: absolute;
 	z-index: 2000;
 	border: 1px solid #aaa;

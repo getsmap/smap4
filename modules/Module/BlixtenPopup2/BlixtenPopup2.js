@@ -279,8 +279,8 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 //				var w = ui.size.width,
 //					h = ui.size.height;
 				// Use a timeout so that the DOM is ready (document.ready does not fix it).
-				var code = "var mod = sMap.map.getControlsByClass('" + self.CLASS_NAME + "')[0];mod.updateSize();";
-				setTimeout(code, 200);
+				// var code = "var mod = sMap.map.getControlsByClass('" + self.CLASS_NAME + "')[0];mod.updateSize();";
+				// setTimeout(code, 200);
 			},
 			close: function() {
 				sMap.events.triggerEvent("unselect", this, {}); // Will destroy features in the select layer
@@ -342,9 +342,9 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 		this.dialogDiv.append( this.leftDiv ).append( this.rightDiv );
 		this.attrDiv = $("<div id='"+this.prefix+"attrdiv' />");
 		this.rightDiv.append(this.attrDiv);
-		$("#blixtenpopup-rightdiv").width(w-226).height(h-34);
-		$("#blixtenpopup-leftdiv").height(h-34);
-		$("#blixtenpopup-attrdiv").height(h-56);
+		// $("#blixtenpopup-rightdiv").width(w-226).height(h-34);
+		// $("#blixtenpopup-leftdiv").height(h-34);
+		// $("#blixtenpopup-attrdiv").height(h-56);
 	},
 	
 	/**
@@ -460,9 +460,12 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 	 * @return {void}
 	 */
 	addRow: function(t) {
+
+		var prefix = this.prefix;
+		var defaultHeaderText = "Övrigt";
 		// Get the color from the category that this layer belongs to.
 		var headerLevel = 1; // The header level that decides the color (0: main header, 1: sub, …)
-		var headerText = t.blixtenPopupHeader || (t.category && t.category.length > headerLevel ? t.category[headerLevel] : null);
+		var headerText = t.blixtenPopupHeader || (t.category && t.category.length > headerLevel ? t.category[headerLevel] : defaultHeaderText);
 		var mainCatConfig = {};
 		if (headerText) {
 			mainCatConfig = t.category && headerText ? this.categories.headers[headerText] || {} : {};
@@ -470,7 +473,7 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 		}
 		
 		var row = this.makeRow(t, {
-			className: this.prefix+"row-left",
+			className: prefix+"row-left",
 //			key: this.nameField,
 			label: t.displayName,
 			css: t.css || {
@@ -478,16 +481,27 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 			},
 			content: t.content || null // If the row does not get its info from a feature, specify it in the content property
 		});
-		if (!headerText) {
-			this.rowsDiv.append(row); // If row does not belong to any header
-			return;
-		}
+		// if (!headerText) {
+			// this.rowsDiv.append(row); // If row does not belong to any header
+			// return;
+		// }
+
+		var self = this;
+		function makeRowId(ht) {
+			return prefix+"rowheader-"+self._encodeHeader(ht);
+		};
 		
 		// Put the row below the correct header. If the header does not exist, create it.
-		var header = this.rowsDiv.find("#"+this.prefix+"rowheader-"+this._encodeHeader(headerText));
+		var header = this.rowsDiv.find("#"+makeRowId(headerText));
 		if (!header.length) {
-			header = $("<div class='"+this.prefix+"row-left "+this.prefix+"rowheader' id='"+this.prefix+"rowheader-"+this._encodeHeader(headerText)+"'>"+headerText+"</div>");
-			this.rowsDiv.append(header);
+			header = $("<div class='"+prefix+"row-left "+prefix+"rowheader' id='"+makeRowId(headerText)+"'>"+headerText+"</div>");
+			var otherHeader = this.rowsDiv.find("#"+makeRowId(defaultHeaderText)); // "Övrigt" header
+			if ( otherHeader.length ) {
+				otherHeader.before(header)
+			}
+			else {
+				this.rowsDiv.append(header);
+			}
 		}
 		// Avoid reversing the layer order by simply adding rows using header.after()
 		var lastRow = header.nextUntil(".blixtenpopup-rowheader").last();
@@ -502,11 +516,11 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 	},
 	
 	_decodeHeader: function(text) {
-		decodeURIComponent(text.replace(/--pr--/gi, "%"));
+		return decodeURIComponent(text.replace(/--pr--/gi, "%"));
 	},
 	
 	_encodeHeader: function(text) {
-		encodeURIComponent(text).replace(/%/gi, "--pr--");
+		return encodeURIComponent(text).replace(/%/gi, "--pr--");
 	},
 	
 	startingInfo: "<p>Tryck på en rad till vänster för att få mer information om varje enskilt objekt.</p>",
