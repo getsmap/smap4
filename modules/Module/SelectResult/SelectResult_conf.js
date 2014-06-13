@@ -5,6 +5,16 @@ sMap.moduleConfig.SelectResult = {
 		 * "initialize" and "drawContent" have been called.
 		 */ 
 		activateFromStart : false,
+
+
+		/*
+		Do not listen to select events originating in these 
+		modules (give full class name: e.g. "sMap.Module.SomeName")
+		*/
+
+
+		_noListenMods: [],
+
 		/**
 		 * Default properties
 		 */

@@ -484,7 +484,7 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 		// Put the row below the correct header. If the header does not exist, create it.
 		var header = this.rowsDiv.find("#"+this.prefix+"rowheader-"+this._encodeHeader(headerText));
 		if (!header.length) {
-			header = $("<div class='"+this.prefix+"row-left "+this.prefix+"rowheader' id='"+this.prefix+"rowheader-"+encodeURIComponent(headerText)+"'>"+headerText+"</div>");
+			header = $("<div class='"+this.prefix+"row-left "+this.prefix+"rowheader' id='"+this.prefix+"rowheader-"+this._encodeHeader(headerText)+"'>"+headerText+"</div>");
 			this.rowsDiv.append(header);
 		}
 		// Avoid reversing the layer order by simply adding rows using header.after()
@@ -500,11 +500,11 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 	},
 	
 	_decodeHeader: function(text) {
-		decodeURIComponent(text.replace(/_-pr-_/gi, "%"));
+		decodeURIComponent(text.replace(/--pr--/gi, "%"));
 	},
 	
 	_encodeHeader: function(text) {
-		encodeURIComponent(text).replace(/%/gi, "_-pr-_");
+		encodeURIComponent(text).replace(/%/gi, "--pr--");
 	},
 	
 	startingInfo: "<p>Tryck på en rad till vänster för att få mer information om varje enskilt objekt.</p>",
