@@ -85,6 +85,10 @@
 		"modules/Module/LinkTo/LinkTo.js",
 		"modules/Module/LinkTo/LinkTo_conf.js",
 		"modules/Module/LinkTo/LinkTo_lang.js",
+
+		"modules/Module/MalmoHeader/MalmoHeader.js",
+		"modules/Module/MalmoHeader/MalmoHeader_conf.js",
+		"modules/Module/MalmoHeader/MalmoHeader_lang.js",
 		
 		"modules/Module/MeasureDialog/MeasureDialog.js",
 		"modules/Module/MeasureDialog/MeasureDialog_conf.js",
