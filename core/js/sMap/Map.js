@@ -279,7 +279,8 @@ sMap.Map = OpenLayers.Class({
 		sMap.layer = new sMap.Layer(this.map);
 		
 		sMap.divController = new sMap.DivController(this.map);
-		// Make the map resizable.
+		
+		// Do clever things on resize
 		sMap.divController.bindOnWindowResize();
 		
 		sMap.moduleController = new sMap.ModuleController(this.map);

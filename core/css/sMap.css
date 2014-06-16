@@ -32,9 +32,8 @@ div, span, p, button, label {
 	top: 0px;
 	width: 100%;
 	height: 100%;
-	filter : alpha(opacity=80);
+	background-color: rgba(50, 50, 50, 0.8);
     opacity: 0.8;
-    background: #333;
     z-index: 3000;
 }
 .invisible {
@@ -44,22 +43,19 @@ div, span, p, button, label {
 	-webkit-transition: opacity 1000ms, filter 1000ms;
 }
 
-.smap-init-loading img {
-	position: absolute;
-	left: 470px;
+#smap-initload-cont {
+	position: relative;
+	left: 40%;
 	top: 40%;
-	z-index: 1;
-	display: block;
-}
-.smap-init-loading label {
-	position: absolute;
-	display: block;
-	left: 550px;
-	top: 42%;
 	z-index: 2;
-	color: #fff;
 	font-size: 2em;
-	
+}
+.smap-init-loading img {}
+.smap-init-loading label {
+	color: #fff;
+	position: relative;
+	top: -.9em;
+	margin-left: .3em;
 }
 
 /* All tags with this class will be unselectable */
@@ -81,25 +77,36 @@ div, span, p, button, label {
 	top: 0px;
 	width: 100%;
 	height: 100%;
-	overflow: hidden;
+	overflow: hidden; /* during dev */
 }
 
 #mapDiv {
-	position: absolute;
+	position: relative;
 	left: 0px;
 	top: 0px;
 	width: 100%;
 	height: 100%;
+	float: left;
 }
 
 #sideDivLeft {
-	position: absolute;
+	position: relative;
+	background-color: #fff;
+	z-index: 0;
+	left: 0px;
+	width: 30%;
+	height: 100%;
+	float: left;
+	border: none;
 }
 #sideDivRight {
-	position: absolute;
+	position: relative;
 	background-color: #fff;
-	border-left: 1px solid #aaa;
 	z-index: 0;
+	left: 0px;
+	height: 100%;
+	float: left;
+	border: none;
 }
 
 #toolbarDiv {

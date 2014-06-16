@@ -2990,10 +2990,10 @@ var config = {
 //			init : sMap.Module.LayerLoaderNotifier,
 //			config : {}
 //		},
-		{
-			init : sMap.Module.MalmoHeader,
-			config : {}
-		},
+		// {
+		// 	init : sMap.Module.MalmoHeader,
+		// 	config : {}
+		// },
 		{
 			init : sMap.Module.Toolbar,
 			config : {

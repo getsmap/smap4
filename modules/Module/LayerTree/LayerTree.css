@@ -5,6 +5,23 @@
     padding: 10px;
 }
 
+#sideDivRight {
+    -webkit-transition: all .3s;
+   -moz-transition: all .3s;
+   -o-transition: all .3s;
+   transition: all .3s;
+   right: 0;
+   width: 40%;
+}
+
+#sideDivRight.hidden {
+    left: 50%;
+}
+
+#mapDiv.layertree-width {
+    width: 60%;
+}
+
 
 /* The button in the header of the metadata window. */
 .ltree-btn-miniprint {
@@ -14,7 +31,7 @@
 
 #layertree-expandbutton {
     position: absolute;
-    top: 230px;
+    top: 45%;
     width: 11px;
     height: 22px;
     padding: 5px 8px;
@@ -25,6 +42,7 @@
     opacity: .8;
     cursor: pointer;
     cursor: hand;
+    z-index: 1100;
 }
 
 .lt-expbutton-left {
@@ -44,12 +62,15 @@
 }
 
 .layertree-maindiv {
-    position: absolute;
-    left: 2px;
-    top: 3px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-left: 1px solid #ccc;
+    left: 0;
+    top: 0;
     padding: 0;
     margin: 0;
-    border: none;
     z-index: 0 !important;
 }
 
@@ -62,6 +83,7 @@
     font-size: 0.8em;
     color: #fff;
 	min-height: 20px;
+    width: 100%;
 }
 .headerdiv-left {
 	text-align: right;
@@ -225,3 +247,39 @@
 	margin-left: 3px;
 }
 
+@media (min-width: 300px) {
+    #sideDivRight {
+        width: 50% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 50% !important;
+    }
+}
+
+@media (min-width: 700px) {
+    #sideDivRight {
+        width: 35% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 65% !important;
+    }
+}
+
+@media (min-width: 992px) {
+    #sideDivRight {
+        width: 30% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 70% !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    #sideDivRight {
+        width: 25% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 75% !important;
+    }
+
+}

@@ -44,14 +44,20 @@
 	font-family: Helvetica, arial, sans-serif;
 }
 #searchBox {
+	margin-left: 1em;
+	vertical-align: middle;
+
+}
+#searchBox input {
+	padding-left: .5em;
+	height: 100%;
+	min-height: 2em;
+	width: 16em;
 	transition: width 500ms;
 	-moz-transition: width 500ms; /* Firefox 4 */
 	-webkit-transition: width 500ms; /* Safari and Chrome */
 	-o-transition: width 500ms; /* Opera */
-	line-height: 27px;
-	height: 27px;
-	top: 0px;
 }
-#searchBox:focus {
-	width: 250px !important;
+#searchBox input:focus {
+	width: 18em !important;
 }

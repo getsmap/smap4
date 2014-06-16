@@ -104,14 +104,15 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			height : this.height
 		});
 		this.toolbarDiv = $("<div id='toolbar-maindiv' />");
-		$("#toolbarDiv").append(this.toolbarDiv).css({
-			"line-height" : this.height + "px"
-		});
-		this.toolbarDiv.outerHeight(this.height);
+		$("#toolbarDiv").append(this.toolbarDiv).addClass("ui-widget-header");
+		// .css({
+		// 	"line-height" : this.height + "px"
+		// });
+		// this.toolbarDiv.outerHeight(this.height);
 		this.toolbarDiv.addClass("ui-widget-header");
-		this.toolbarDiv.css({
-			"height" : ($("#toolbarDiv").height()-2) + "px"
-		});
+		// this.toolbarDiv.css({
+		// 	"height" : ($("#toolbarDiv").height()-2) + "px"
+		// });
 		
 		if (this.addLogotype){
 			var logoDiv = $("<div id='toolbar-logo' class='toolbar-logo' ></div>");
@@ -165,24 +166,24 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 	},
 	
 	addtoolentry : function(e) {
-		var entry = $("<input class='toolbar-entry' type='text' />");
+		var entry = $("<div class='toolbar-entry-cont'><input class='toolbar-entry' type='text'></input></div>");
 		entry.data("index", e.index);
 		var margin = e.margin || (this.toolbarDiv.children().length==0 ? this.buttonMarginInitial : this.buttonMargin);
 		
 		this.toolbarDiv.append(entry);
-		if (this.side=="left") {
-			entry.css({
-				"margin-left" : margin+"px",
-				"margin-right" : margin+"px"
-			});
-		}
-		else {
-			entry.css({
-				"margin-right" : margin+"px",
-				"margin-left" : margin+"px"
-			});
-		}
-		entry.css("width", e.width +"px" || entry.css("width"));
+		// if (this.side=="left") {
+		// 	entry.css({
+		// 		"margin-left" : margin+"px",
+		// 		"margin-right" : margin+"px"
+		// 	});
+		// }
+		// else {
+		// 	entry.css({
+		// 		"margin-right" : margin+"px",
+		// 		"margin-left" : margin+"px"
+		// 	});
+		// }
+		// entry.find("input").css("width", e.width +"px" || entry.css("width"));
 		if (e.tagID) {
 			entry.prop("id", e.tagID);
 		}
@@ -260,7 +261,7 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 	 */
 	redrawPosition : function() {
 		var self = this,
-			buttons = self.toolbarDiv.children("div.ui-buttonset, input:text, label, select");
+			buttons = self.toolbarDiv.children("div.ui-buttonset, .toolbar-entry-cont, label, select");
 		
 		if (buttons.length <= 1) {
 			return false;
@@ -361,7 +362,7 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 	 * @returns {void}
 	 */
 	fixCSS : function() {
-		var items = $("#toolbar-maindiv").children("input:text, label, div.ui-buttonset");
+		var items = $("#toolbar-maindiv").children(".toolbar-entry-cont, label, div.ui-buttonset");
 		var self = this;
 		items.each(function() {
 			self.fixTagCSS.call(self, $(this));
@@ -384,9 +385,9 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			var entryExists = this.toolbarDiv.find("input:text").length > 0;
 			
 			// --- For all versions of IE -------------------------
-			if (tagIsEntry) {
-				tag.css("top", "2px");
-			}
+			// if (tagIsEntry) {
+				// tag.css("top", "2px");
+			// }
 			
 			// --- For specific versions of IE ---------------------
 			if (parseInt(sMap.db.browser.version) == 7) {
@@ -402,19 +403,19 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 					else {
 						tag.css("top", "3px");
 					}*/
-					tag.css("top", "3px");
+					// tag.css("top", "3px");
 				}
-				if (tagIsEntry) {
-					tag.css("top", "1px");
-				}
+				// if (tagIsEntry) {
+					// tag.css("top", "1px");
+				// }
 			}
-			else if (parseInt(sMap.db.browser.version) == 8) {
+			// else if (parseInt(sMap.db.browser.version) == 8) {
 				/* No need for entryExists check of using float: left on all entries
 				if (tagIsEntry) {
 					tag.css("top", "1px");
 				}
 				*/
-			}
+			// }
 		}
 	},
 	
@@ -481,42 +482,42 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 				primary : config.iconCSS
 			}
 		});
-		if (this.side=="left") {
-			$(button).css({
-				"left" : margin + "px"
-			});
-			$(buttonLabel).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(button).css({
-				"right" : margin + "px"
-			});
-			$(buttonLabel).css({
-				"margin-right" : margin + "px",
-				"float": "right"
-			});
-			//Adding the search-input screws up things in the GUI, so we must do some tweaks.
-			if ($.browser.msie && parseInt($.browser.version) < 8) {
-//				if( this.toolbarDiv.find("input:text").length > 0 ){
-//					$(buttonLabel).css({
-//						"margin-top": "-25px"
-//					});
-//				}
-			}
-//			else if ( $.browser.mozilla && this.toolbarDiv.find("input:text").length > 0 ) {
-//				$(buttonLabel).css({
-//					"top": "-36px"
-//				});
-//			}
-			else {
-				// Needs some hands-on when adding float right, but not for IE7 surprisingly.
-				$(buttonLabel).css({
-					"margin-top": "3px"
-				});
-			}
-		}
+// 		if (this.side=="left") {
+// 			$(button).css({
+// 				"left" : margin + "px"
+// 			});
+// 			$(buttonLabel).css({
+// 				"margin-left" : margin + "px"
+// 			});
+// 		}
+// 		else {
+// 			$(button).css({
+// 				"right" : margin + "px"
+// 			});
+// 			$(buttonLabel).css({
+// 				"margin-right" : margin + "px",
+// 				"float": "right"
+// 			});
+// 			//Adding the search-input screws up things in the GUI, so we must do some tweaks.
+// 			if ($.browser.msie && parseInt($.browser.version) < 8) {
+// //				if( this.toolbarDiv.find("input:text").length > 0 ){
+// //					$(buttonLabel).css({
+// //						"margin-top": "-25px"
+// //					});
+// //				}
+// 			}
+// //			else if ( $.browser.mozilla && this.toolbarDiv.find("input:text").length > 0 ) {
+// //				$(buttonLabel).css({
+// //					"top": "-36px"
+// //				});
+// //			}
+// 			else {
+// 				// Needs some hands-on when adding float right, but not for IE7 surprisingly.
+// 				$(buttonLabel).css({
+// 					"margin-top": "3px"
+// 				});
+// 			}
+// 		}
 		//this.onTagAdded(b);
 		this.fixCSS();
 	},
@@ -549,16 +550,16 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			g.data("index", config.index);
 		}
 		this.toolbarDiv.append(g);
-		if (this.side=="left") {
-			$(g).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(g).css({
-				"margin-right" : margin + "px"
-			});
-		}
+		// if (this.side=="left") {
+		// 	$(g).css({
+		// 		"margin-left" : margin + "px"
+		// 	});
+		// }
+		// else {
+		// 	$(g).css({
+		// 		"margin-right" : margin + "px"
+		// 	});
+		// }
 		
 		this.fixCSS();
 	},
@@ -669,16 +670,16 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			"display" : "inline"
 		});
 		
-		if (this.side=="left") {
-			$(group).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(group).css({
-				"margin-right" : margin + "px"
-			});
-		}
+		// if (this.side=="left") {
+		// 	$(group).css({
+		// 		"margin-left" : margin + "px"
+		// 	});
+		// }
+		// else {
+		// 	$(group).css({
+		// 		"margin-right" : margin + "px"
+		// 	});
+		// }
 		//this.onTagAdded(group);
 		this.fixCSS();
 
@@ -706,20 +707,20 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 		}
 		group.buttonset();
 		group.data("index", config.index);
-		$(group).css({
-			"position" : "relative",
-			"display" : "inline"
-		});
-		if (this.side=="left") {
-			$(group).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(group).css({
-				"margin-right" : margin + "px"
-			});
-		}
+		// $(group).css({
+		// 	"position" : "relative",
+		// 	"display" : "inline"
+		// });
+		// if (this.side=="left") {
+		// 	$(group).css({
+		// 		"margin-left" : margin + "px"
+		// 	});
+		// }
+		// else {
+		// 	$(group).css({
+		// 		"margin-right" : margin + "px"
+		// 	});
+		// }
 		//this.onTagAdded(group);
 		this.fixCSS();
 	},

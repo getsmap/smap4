@@ -432,9 +432,9 @@ sMap.DivController = OpenLayers.Class({
 	
 	initialize : function(map) {
 		this.map = map;
-		if (sMap.config.minWidth) {
-			$("#smapDiv").css("min-width", sMap.config.minWidth+"px");
-		}
+		// if (sMap.config.minWidth) {
+		// 	$("#smapDiv").css("min-width", sMap.config.minWidth+"px");
+		// }
 	},
 	
 	/**
@@ -445,84 +445,87 @@ sMap.DivController = OpenLayers.Class({
 	 * @returns {void}
 	 */
 	bindOnWindowResize : function() {
-		
+		var self = this;
+		$(window).on("resize", function() {
+			self.map.updateSize();
+		});
 		/**
 		 * JL: Allow elements to adjust when divs have been positioned.
 		 */
-		sMap.events.register("maploaded", this, function() {
-			$(window).resize();
-			$(window).resize(); // One extra for Chrome
+		// sMap.events.register("maploaded", this, function() {
+		// 	$(window).resize();
+		// 	$(window).resize(); // One extra for Chrome
 			
-			if ($.browser.msie && parseInt($.browser.version) < 8) {
-				// Resize not working in IE7 otherwise
-				setTimeout("$(window).resize()", 100);
-			}
+		// 	if ($.browser.msie && parseInt($.browser.version) < 8) {
+		// 		// Resize not working in IE7 otherwise
+		// 		setTimeout("$(window).resize()", 100);
+		// 	}
 
-		});
+		// });
 		
-		var self = this;
+		// var self = this;
 		
-		// On window resize - do this.
-		$(window).resize(function(e) {
-			var mapDiv = $("#mapDiv"),
-				smapDiv = $("#smapDiv"),
-				sideDivLeft = $("#sideDivLeft"),
-				sideDivRight = $("#sideDivRight"),
-				toolbarDiv = $("#toolbarDiv");
-			var availWidth = smapDiv.innerWidth(),
-				availHeight = smapDiv.innerHeight();
+		// // On window resize - do this.
+		// $(window).resize(function(e) {
+		// 	var mapDiv = $("#mapDiv"),
+		// 		smapDiv = $("#smapDiv"),
+		// 		sideDivLeft = $("#sideDivLeft"),
+		// 		sideDivRight = $("#sideDivRight"),
+		// 		toolbarDiv = $("#toolbarDiv");
+		// 	var availWidth = smapDiv.innerWidth(),
+		// 		availHeight = smapDiv.innerHeight();
 			
-			/**
-			 * Check size of divs
-			 */
-			var checkSize = function() {
-				var needToResize = false;
-				var calcHeight = mapDiv.outerHeight() + toolbarDiv.outerHeight(),
-					calcWidth = mapDiv.outerWidth() + (sideDivLeft.is(":visible") ? sideDivLeft.outerWidth() : 0)
-					 + (sideDivRight.is(":visible") ? sideDivRight.outerWidth() : 0);
-				if (availHeight !== calcHeight) {
-					needToResize = true;
-				}
-				if (availWidth !== calcWidth) {
-					needToResize = true;
-				}
-				return needToResize;
-			};
+		// 	/**
+		// 	 * Check size of divs
+		// 	 */
+		// 	var checkSize = function() {
+		// 		var needToResize = false;
+		// 		var calcHeight = mapDiv.outerHeight() + toolbarDiv.outerHeight(),
+		// 			calcWidth = mapDiv.outerWidth() + (sideDivLeft.is(":visible") ? sideDivLeft.outerWidth() : 0)
+		// 			 + (sideDivRight.is(":visible") ? sideDivRight.outerWidth() : 0);
+		// 		if (availHeight !== calcHeight) {
+		// 			needToResize = true;
+		// 		}
+		// 		if (availWidth !== calcWidth) {
+		// 			needToResize = true;
+		// 		}
+		// 		return needToResize;
+		// 	};
 			
-			/**
-			 * Resize divs
-			 */
-			var doResize = function() {
+		// 	/**
+		// 	 * Resize divs
+		// 	 */
+		// 	var doResize = function() {
 				
-				// Available height for everything filling up below toolbarDiv.
-				var height = availHeight - toolbarDiv.outerHeight();
-				$(sideDivLeft).outerHeight(height);
-				$(sideDivRight).outerHeight(height);
-				$(mapDiv).outerHeight(height);
+		// 		// Available height for everything filling up below toolbarDiv.
+		// 		var height = availHeight - toolbarDiv.outerHeight();
+		// 		$(sideDivLeft).outerHeight(height);
+		// 		$(sideDivRight).outerHeight(height);
+		// 		$(mapDiv).outerHeight(height);
 				
-				var mapDivWidth = availWidth - ((sideDivLeft.is(":visible") ? sideDivLeft.outerWidth() : 0) 
-						+ (sideDivRight.is(":visible") ? sideDivRight.outerWidth() : 0));
-				sideDivRight.css("left", mapDivWidth+"px");
-				mapDiv.outerWidth(mapDivWidth);
-				self.map.updateSize();
+		// 		var mapDivWidth = availWidth - ((sideDivLeft.is(":visible") ? sideDivLeft.outerWidth() : 0) 
+		// 				+ (sideDivRight.is(":visible") ? sideDivRight.outerWidth() : 0));
+		// 		sideDivRight.css("left", mapDivWidth+"px");
+		// 		mapDiv.outerWidth(mapDivWidth);
+		// 		self.map.updateSize();
 				
-				// Adjust mapDivs position if not already done (bug in Chrome).
-				if (toolbarDiv.length) {
-					var height = toolbarDiv.data("height");
-					mapDiv.css("top", height+"px");
-				}
+		// 		// Adjust mapDivs position if not already done (bug in Chrome).
+		// 		if (toolbarDiv.length) {
+		// 			var height = toolbarDiv.data("height");
+		// 			mapDiv.css("top", height+"px");
+		// 		}
 				
-				/**
-				 * Trigger event after window was resized so that modules can adapt their
-				 * size AFTER the change has happened.
-				 */
-				//sMap.events.triggerEvent("afterwindowresized", self, {});
-			};
-			var needToResize = checkSize();
-			if (needToResize===true) {
-				doResize();
-			}
-		});
+		// 		/**
+		// 		 * Trigger event after window was resized so that modules can adapt their
+		// 		 * size AFTER the change has happened.
+		// 		 */
+		// 		//sMap.events.triggerEvent("afterwindowresized", self, {});
+		// 	};
+		// 	var needToResize = checkSize();
+		// 	if (needToResize===true) {
+		// 		doResize();
+		// 	}
+		// });
 	},
 	
 	addToolbarDiv : function(e) {
@@ -532,24 +535,24 @@ sMap.DivController = OpenLayers.Class({
 			outerHeight = e.height || 20;
 			//outerWidth = $("#smapDiv").innerWidth();
 		
-		toolbarDiv.data("height", outerHeight); // Store so that resize can move mapdiv down if not already done.
+		// toolbarDiv.data("height", outerHeight); // Store so that resize can move mapdiv down if not already done.
 		
 		// Decrease the height of all other children of smapDiv.
-		var divsToReposition = [ $("#mapDiv"), $("#sideDivLeft"), $("#sideDivRight") ];
-		for (var i=0,len=divsToReposition.length; i<len; i++) {
-			var div = divsToReposition[i];
-			if (div.length) {
-				$(div).css({
-					"top" : sMap.util.trimCSS($(div).css("top")) + outerHeight+"px",
-					"height" : $(div).height() - outerHeight+"px"
-				});
-			}
-		}
-		$("#smapDiv").append(toolbarDiv);
+		// var divsToReposition = [ $("#mapDiv"), $("#sideDivLeft"), $("#sideDivRight") ];
+		// for (var i=0,len=divsToReposition.length; i<len; i++) {
+		// 	var div = divsToReposition[i];
+		// 	if (div.length) {
+		// 		$(div).css({
+		// 			"top" : sMap.util.trimCSS($(div).css("top")) + outerHeight+"px",
+		// 			"height" : $(div).height() - outerHeight+"px"
+		// 		});
+		// 	}
+		// }
+		$("#smapDiv").prepend(toolbarDiv);
 		
 		// Set height
-		$(window).resize(); // Make it possible for modules to adapt to the change
-		toolbarDiv.outerHeight(outerHeight);
+		// $(window).resize(); // Make it possible for modules to adapt to the change
+		// toolbarDiv.outerHeight(outerHeight);
 	},
 	
 	removeToolbarDiv : function(e) {
@@ -581,17 +584,17 @@ sMap.DivController = OpenLayers.Class({
 	removeSideDivLeft : function(e) {
 		if ( $("#sideDivLeft").length==0) return;
 		
-		var outerWidth = $("#sideDivLeft").outerWidth();
+		// var outerWidth = $("#sideDivLeft").outerWidth();
 		
 		$("#sideDivLeft").empty().remove();
 		
 		// Give the remaining width to the map's div.
-		$("#mapDiv").width( $("#mapDiv").width() + outerWidth);
-		$("#mapDiv").css({
-			"position" : "absolute",
-			"left" : "0px"
-		});
-		$(window).resize(); // Make it possible for modules to adapt to the change
+		// $("#mapDiv").width( $("#mapDiv").width() + outerWidth);
+		// $("#mapDiv").css({
+		// 	"position" : "absolute",
+		// 	"left" : "0px"
+		// });
+		// $(window).resize(); // Make it possible for modules to adapt to the change
 	},
 	
 	removeSideDivRight : function(e) {
@@ -610,12 +613,12 @@ sMap.DivController = OpenLayers.Class({
 	hideSideDivRight : function(e) {
 		var sideDivRight = $("#sideDivRight");
 		if ( sideDivRight.length==0) return;
-		var outerWidth = sideDivRight.outerWidth();		
+		// var outerWidth = sideDivRight.outerWidth();		
 		sideDivRight.hide();
 		
 		// Give the remaining width to the map's div.
-		$("#mapDiv").width( $("#mapDiv").width() + outerWidth);
-		$(window).resize(); // Make it possible for modules to adapt to the change
+		// $("#mapDiv").width( $("#mapDiv").width() + outerWidth);
+		// $(window).resize(); // Make it possible for modules to adapt to the change
 	},
 	
 	/**
@@ -632,37 +635,37 @@ sMap.DivController = OpenLayers.Class({
 		var sideDivRight = $("<div id='sideDivRight' />");
 		$("#smapDiv").append(sideDivRight);
 		// Calculate the maximum height the div can have and the position from the top.
-		var remainingHeight=$("#smapDiv").outerHeight(), // Remaining height for the div
-			top = 0;
-		if ( $("#toolbarDiv").length ) {
-			var h = $("#toolbarDiv").outerHeight();
-			remainingHeight -= h;
-			top += h;
-		}
-		var width = e.width || 200,
-			height = e.height || remainingHeight;
+		// var remainingHeight=$("#smapDiv").outerHeight(), // Remaining height for the div
+		// 	top = 0;
+		// if ( $("#toolbarDiv").length ) {
+		// 	var h = $("#toolbarDiv").outerHeight();
+		// 	remainingHeight -= h;
+		// 	top += h;
+		// }
+		// var width = e.width || 200,
+		// 	height = e.height || remainingHeight;
 		
-		var sideDivLeft = $("#sideDivLeft");
+		// var sideDivLeft = $("#sideDivLeft");
 		
-		var mapDivWidth = $("#mapDiv").width();
-		var newMapDivWidth = mapDivWidth - width;
-		$("#mapDiv").width( newMapDivWidth );
+		// var mapDivWidth = $("#mapDiv").width();
+		// var newMapDivWidth = mapDivWidth - width;
+		// $("#mapDiv").width( newMapDivWidth );
 		
-		var left = (sideDivLeft.length ? sideDivLeft.outerWidth() : 0) + $("#mapDiv").outerWidth();
+		// var left = (sideDivLeft.length ? sideDivLeft.outerWidth() : 0) + $("#mapDiv").outerWidth();
 		
-		sideDivRight.css({
-			"position" : "absolute",
-			"left" : left+"px",
-			"top" : top+"px"
-		});
+		// sideDivRight.css({
+		// 	"position" : "absolute",
+		// 	"left" : left+"px",
+		// 	"top" : top+"px"
+		// });
 		
 		// Set outer width and height of the div.
-		sideDivRight.outerWidth(width);
-		sideDivRight.outerHeight(height);
-		if (sMap.events.mapInitiated) {
-			$(window).resize(); // Make it possible for modules to adapt to the change
-			this.map.updateSize();			
-		}
+		// sideDivRight.outerWidth(width);
+		// sideDivRight.outerHeight(height);
+		// if (sMap.events.mapInitiated) {
+		// 	$(window).resize(); // Make it possible for modules to adapt to the change
+		// 	this.map.updateSize();			
+		// }
 	},
 	
 	addSideDivLeft : function(e) {
@@ -671,44 +674,44 @@ sMap.DivController = OpenLayers.Class({
 		var sideDivLeft = $("<div id='sideDivLeft' />");
 		$("#smapDiv").append(sideDivLeft);
 		// Calculate the maximum height the div can have and the position from the top.
-		var remainingHeight=$("#smapDiv").outerHeight(), // Remaining height for the div
-			top = 0;
-		if ( $("#toolbarDiv").length ) {
-			var h = $("#toolbarDiv").outerHeight();
-			remainingHeight -= h;
-			top += h;
-		}
-		var width = e.width || 200,
-			height = e.height || remainingHeight;
-		sideDivLeft.css({
-			"position" : "absolute",
-			"left" : "0px",
-			"top" : top+"px"
-		});
+		// var remainingHeight=$("#smapDiv").outerHeight(), // Remaining height for the div
+		// 	top = 0;
+		// if ( $("#toolbarDiv").length ) {
+		// 	var h = $("#toolbarDiv").outerHeight();
+		// 	remainingHeight -= h;
+		// 	top += h;
+		// }
+		// var width = e.width || 200,
+		// 	height = e.height || remainingHeight;
+		// sideDivLeft.css({
+		// 	"position" : "absolute",
+		// 	"left" : "0px",
+		// 	"top" : top+"px"
+		// });
 		
-		// Set outer width and height of the div.
-		sideDivLeft.outerWidth(width);
-		sideDivLeft.outerHeight(height);
+		// // Set outer width and height of the div.
+		// sideDivLeft.outerWidth(width);
+		// sideDivLeft.outerHeight(height);
 		
-		// Adjust other divs' position accordingly.
-		$("#mapDiv").css({
-			"left" : sMap.util.trimCSS($("#mapDiv").css("left")) + width +"px"
-		});
+		// // Adjust other divs' position accordingly.
+		// $("#mapDiv").css({
+		// 	"left" : sMap.util.trimCSS($("#mapDiv").css("left")) + width +"px"
+		// });
 		
-		var mapDivWidth = $("#mapDiv").width();
-		var newMapDivWidth = mapDivWidth - width;
-		debug.log($("#mapDiv").width() + "->"+newMapDivWidth);
-		$("#mapDiv").width( newMapDivWidth );
+		// var mapDivWidth = $("#mapDiv").width();
+		// var newMapDivWidth = mapDivWidth - width;
+		// debug.log($("#mapDiv").width() + "->"+newMapDivWidth);
+		// $("#mapDiv").width( newMapDivWidth );
 		
-		if ( $("#sideDivRight").length ) {
-			$("#sideDivRight").css({
-				"left" : sMap.util.trimCSS($("#sideDivRight").css("left")) + width +"px"
-			});
-		}
-		if (sMap.events.mapInitiated) {
-			$(window).resize(); // Make it possible for modules to adapt to the change
-			this.map.updateSize();			
-		}
+		// if ( $("#sideDivRight").length ) {
+		// 	$("#sideDivRight").css({
+		// 		"left" : sMap.util.trimCSS($("#sideDivRight").css("left")) + width +"px"
+		// 	});
+		// }
+		// if (sMap.events.mapInitiated) {
+		// 	$(window).resize(); // Make it possible for modules to adapt to the change
+		// 	this.map.updateSize();			
+		// }
 	},
 	
 	CLASS_NAME : "sMap.DivController"
@@ -1874,7 +1877,8 @@ sMap.Layer = OpenLayers.Class({
 		sMap.layer = new sMap.Layer(this.map);
 		
 		sMap.divController = new sMap.DivController(this.map);
-		// Make the map resizable.
+		
+		// Do clever things on resize
 		sMap.divController.bindOnWindowResize();
 		
 		sMap.moduleController = new sMap.ModuleController(this.map);
@@ -10703,7 +10707,9 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
      * Draw the tree based on the config.layers.overlays array.
      * @returns {void}
      */
-	drawContent : function() {},
+	drawContent : function() {
+		$("#mapDiv").addClass("layertree-width");
+	},
 	
 	getNameFromSpanID: function(spanID) {
 		return spanID.replace("layertree-label-", "");
@@ -10804,24 +10810,24 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		
 		this.treeDiv = $("<div id='layertree' />");
 		$(this.div).append(this.treeDiv);
-		this.treeDiv.css("width", this.width+"px");
+		// this.treeDiv.css("width", this.width+"px");
 		
 		/**
 		 * Make the layer tree height adaptive to the window size.
 		 */
-		var onResize = function() {
-			var sideDivHeight = $(self.div).parent().innerHeight();
+		// var onResize = function() {
+		// 	var sideDivHeight = $(self.div).parent().innerHeight();
 			
-			// For some reason the innerHeight does not give enough
-			// space for the module's div (this.div). Therefore,
-			// I remove another 3 px and it seems not to give scrollbars anymore.
-			$(self.div).outerHeight(sideDivHeight-headerHeight-3);
-			var marginTop = 50,
-				headerHeight = $("#layertree-headerdiv").outerHeight();
-			self.treeDiv.outerHeight( sideDivHeight - marginTop );
-		};
-		$(window).resize(onResize);
-		setTimeout('$(window).trigger("resize")', 2000);
+		// 	// For some reason the innerHeight does not give enough
+		// 	// space for the module's div (this.div). Therefore,
+		// 	// I remove another 3 px and it seems not to give scrollbars anymore.
+		// 	$(self.div).outerHeight(sideDivHeight-headerHeight-3);
+		// 	var marginTop = 50,
+		// 		headerHeight = $("#layertree-headerdiv").outerHeight();
+		// 	self.treeDiv.outerHeight( sideDivHeight - marginTop );
+		// };
+		// $(window).resize(onResize);
+		// setTimeout('$(window).trigger("resize")', 2000);
 
 		sideDiv.append(this.div);
 		$(this.div).addClass("layertree-maindiv");
@@ -11004,7 +11010,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			}
 		});
 		this.addItems();		
-		this.treeDiv.height( this.sideDiv.height() - 10 );
+		// this.treeDiv.height( this.sideDiv.height() - 10 );
 		var tree = this.treeDiv.dynatree("getTree");
 		tree.renderInvisibleNodes();
 		
@@ -11071,6 +11077,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			var self = this;
 			btnSlide.click(function(e) {
 				self.toggleSideDiv.call(self, e);
+				return false;
 			});
 		}
 		if (this.turnOffButton) {
@@ -11121,9 +11128,6 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				self.previewPrintLayers();
 			});
 		}
-		div.css({
-			"width": $(this.div).css("width")
-		});
 		if (this.right) {
 			div.addClass("headerdiv-right");
 		}
@@ -11138,24 +11142,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		
 	},
 	
-	afterVisible: function() {
-		if (this.right) {
-			
-		}
-		else {
-			$("#mapDiv").css("left", this.sideDiv.outerWidth() + "px");
-		}
-		$("#mapDiv").width( $("#mapDiv").width() - this.width );			
-		
-		// Remove the toggle button
-		var expandButton = $("#layertree-expandbutton");
-		expandButton.empty().remove();				
-		$(window).resize();
-		$(window).resize(); // Chrome seems to need one more resize...
-		this.map.updateSize();
-	},
-	
-	afterHidden: function() {
+	addToggleButton: function() {
 		var self = this;
 		var expandButton = $("<div id='layertree-expandbutton'>+</div>");
 		$("#mapDiv").append(expandButton);
@@ -11166,16 +11153,15 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			expandButton.addClass("lt-expbutton-left");
 			$("#mapDiv").css("left", "0px");
 		}
-		$("#mapDiv").width( $("#mapDiv").width() + this.width); // sideDiv.outerWidth()
-		
-		// Define click for button which can bring the tree back again.
-		expandButton.click(function() {
-			$(this).hide();
+		expandButton.on("click", function() {
 			self.toggleSideDiv();
+			return false;
 		});
-		$(window).resize(); // Trigger resize so that other elements can adapt.
-		$(window).resize();
-		this.map.updateSize();
+	},
+	
+	removeToggleButton: function() {
+		var expandButton = $("#layertree-expandbutton");
+		expandButton.empty().remove();				
 	},
 	
 	toggleSideDiv: function(e) {
@@ -11185,31 +11171,33 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		if (sideDiv.is(":visible")) {
 			// --- Is going to be hidden ---
 			if (this.right) {
-				sideDiv.animate({"margin-left": w}, this.toggleSpeed, function() {
-					$(this).hide();
-					self.afterHidden();
-				});
-			}
-			else {
-				sideDiv.toggle("slide", function() {
-					self.afterHidden();
-				});
+				sideDiv.addClass("hidden");
+				setTimeout(function() {
+					$("#mapDiv").removeClass("layertree-width");
+					self.map.updateSize();
+					sideDiv.hide();
+					self.addToggleButton();
+					$(window).resize();
+				}, 300);
+
+
+				// sideDiv.animate({"margin-left": w}, this.toggleSpeed, function() {
+				// 	$(this).hide();
+				// 	self.afterHidden();
+				// });
 			}
 		}
 		else {
 			// --- Is going to be shown ---
 			if (this.right) {
-				//$("#mapDiv").width( $("#mapDiv").width() - this.width)
+				this.removeToggleButton();
 				sideDiv.show();
-				$(window).resize(); // Adapt size to show the sideDiv (which is outside view).
-				sideDiv.animate({"margin-left": 0}, this.toggleSpeed, function() {
-					self.afterVisible();
-				});
-			}
-			else {
-				sideDiv.toggle("slide", function() {
-					self.afterVisible();
-				});
+				setTimeout(function() {
+					sideDiv.removeClass("hidden");
+					$("#mapDiv").addClass("layertree-width");
+					// self.map.updateSize();
+					$(window).resize();
+				}, 1);
 			}
 		}
 	},
@@ -12423,6 +12411,121 @@ sMap.Lang.lang.Loading = {
 	en : { 
 		labelText : "Press here",
 		loadingLayers: "Loading layers..."
+	}
+	
+};/**
+ * @author Your Name
+ * @copyright Your office or the organisation that pays you
+ * @license MIT license
+ */
+
+/**
+ * @requires sMap/Module.js
+ */
+
+sMap.Module.MalmoHeader = OpenLayers.Class(sMap.Module, {
+	
+	/**
+	 * The events that this module will listen to. Each event listener
+	 * is connected to a method defined in this module, with the same
+	 * name as the event. When another module triggers this event, the
+	 * method will be called (and other modules which are listening
+	 * to the same event).
+	 * 
+	 * Look at the event listeners as a public API of the module.
+	 */
+	EVENT_LISTENERS : [],
+	
+	/**
+	 * The events triggered from this module. Note that some modules
+	 * both listens to and trigger events.
+	 */
+	EVENT_TRIGGERS : [],
+	
+	initialize : function(options) {
+		options = options || {};
+		
+		this.EVENT_LISTENERS =
+			sMap.Module.MalmoHeader.prototype.EVENT_LISTENERS.concat(
+				sMap.Module.prototype.EVENT_LISTENERS
+        );
+		this.EVENT_TRIGGERS =
+			sMap.Module.MalmoHeader.prototype.EVENT_TRIGGERS.concat(
+				sMap.Module.prototype.EVENT_TRIGGERS
+        );
+		
+		// This allows your control to be extended by sending in a parameter hash object
+		// For example overriding a method in this class or in the parent class (see next step).
+		OpenLayers.Util.applyDefaults(this, options);
+		// This calls the parent class's constructor and allows to
+		// extend it (e.g. override methods).
+		sMap.Module.prototype.initialize.apply(this, [options]);
+		
+	},
+	
+	activate : function() {
+		if (this.active===true) {
+			return false;
+		}
+		// Call the activate method of the parent class
+		return sMap.Module.prototype.activate.apply(
+	            this, arguments);
+	},
+	
+	deactivate : function() {
+		if (this.active!==true) {
+			return false;
+		}
+		// Call the deactivate method of the parent class
+		return sMap.Module.prototype.deactivate.apply(
+	            this, arguments
+	        );
+	},
+	
+	destroy : function() {
+		// Call the destroy method of the parent class
+		return sMap.Module.prototype.destroy.apply(this, arguments);
+	},
+	
+    /**
+     * Called when all modules are initialized, i.e. after initialize.
+     * All initial HTML should be produced from here.
+     * @returns {void}
+     */
+	drawContent : function() {
+
+		var headerHtml = 
+			'<!--[if IE]><meta content="IE=edge" http-equiv="X-UA-Compatible" /><![endif]-->'+
+			'    <!--[if lte IE 8]><script src="//assets.malmo.se/external/v4/html5shiv-printshiv.js" type="text/javascript"></script><![endif]-->'+
+			'    <link href="//assets.malmo.se/external/v4/masthead_standalone.css" media="all" rel="stylesheet" type="text/css"/>'+
+			'    <!--[if lte IE 8]><link href="//assets.malmo.se/external/v4/legacy/ie8.css" media="all" rel="stylesheet" type="text/css"/><![endif]-->'+
+			'    <noscript><link href="//assets.malmo.se/external/v4/icons.fallback.css" rel="stylesheet"></noscript>'+
+			'    <link rel="icon" type="image/x-icon" href="//assets.malmo.se/external/v4/favicon.ico" />'
+		$("head").prepend(headerHtml);
+		$("body").addClass("mf-v4 no-footer");
+		$("body").addClass("test"); // during dev only
+		$("body").append('<script src="//assets.malmo.se/external/v4/masthead_standalone_without_jquery.js"></script>');
+
+	}, 
+	
+	// Class name needed when you want to fetch your module...
+	// should correspond to the real class name.
+	CLASS_NAME : "sMap.Module.MalmoHeader"
+	
+});sMap.moduleConfig.MalmoHeader = {
+		
+		/**
+		 * If true, calls module's methods "activate" after methods
+		 * "initialize" and "drawContent" have been called.
+		 */ 
+		activateFromStart : false
+};
+sMap.Lang.lang.MalmoHeader = {
+	"sv-SE" : {
+		labelText : "Tryck här"
+	},
+	en : { 
+		labelText : "Press here"
 	}
 	
 };/**
@@ -17402,7 +17505,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		
 		if( !self.firstTime ){
 			var optionsMenuDiv = self.optionsMenuDiv,
-				searchInput = $("#searchBox");
+				searchInput = $("#searchBox input");
 					
 			var boxOffset = searchInput.offset(),
 				boxWidth = searchInput.outerWidth(),
@@ -17442,11 +17545,10 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		}
 		sMap.events.triggerEvent("addtoolentry", this, {
 			index : this.toolbarIndex,
-			width : 200,
 			margin: 10,
 			tagID : "searchBox"
 		});
-		var searchBox = $("#searchBox");
+		var searchBox = $("#searchBox input");
 		
 		self.bindAutocompleteToId(searchBox);
 		
@@ -17855,7 +17957,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	changeCat : function(category) {
 		var self = this,
 			catOptions = self.dropDownItems[category],
-			searchBox = $("#searchBox");
+			searchBox = $("#searchBox input");
 		
 		searchBox.val(catOptions.searchBoxText);
 		
@@ -17911,7 +18013,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 			});
 		}
 		else{
-			$('#searchBox').autocomplete(
+			$('#searchBox input').autocomplete(
 				self.autoCompleteScriptUrl,
 		    		{
 			    		width : 300,
@@ -21340,14 +21442,15 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			height : this.height
 		});
 		this.toolbarDiv = $("<div id='toolbar-maindiv' />");
-		$("#toolbarDiv").append(this.toolbarDiv).css({
-			"line-height" : this.height + "px"
-		});
-		this.toolbarDiv.outerHeight(this.height);
+		$("#toolbarDiv").append(this.toolbarDiv).addClass("ui-widget-header");
+		// .css({
+		// 	"line-height" : this.height + "px"
+		// });
+		// this.toolbarDiv.outerHeight(this.height);
 		this.toolbarDiv.addClass("ui-widget-header");
-		this.toolbarDiv.css({
-			"height" : ($("#toolbarDiv").height()-2) + "px"
-		});
+		// this.toolbarDiv.css({
+		// 	"height" : ($("#toolbarDiv").height()-2) + "px"
+		// });
 		
 		if (this.addLogotype){
 			var logoDiv = $("<div id='toolbar-logo' class='toolbar-logo' ></div>");
@@ -21401,24 +21504,24 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 	},
 	
 	addtoolentry : function(e) {
-		var entry = $("<input class='toolbar-entry' type='text' />");
+		var entry = $("<div class='toolbar-entry-cont'><input class='toolbar-entry' type='text'></input></div>");
 		entry.data("index", e.index);
 		var margin = e.margin || (this.toolbarDiv.children().length==0 ? this.buttonMarginInitial : this.buttonMargin);
 		
 		this.toolbarDiv.append(entry);
-		if (this.side=="left") {
-			entry.css({
-				"margin-left" : margin+"px",
-				"margin-right" : margin+"px"
-			});
-		}
-		else {
-			entry.css({
-				"margin-right" : margin+"px",
-				"margin-left" : margin+"px"
-			});
-		}
-		entry.css("width", e.width +"px" || entry.css("width"));
+		// if (this.side=="left") {
+		// 	entry.css({
+		// 		"margin-left" : margin+"px",
+		// 		"margin-right" : margin+"px"
+		// 	});
+		// }
+		// else {
+		// 	entry.css({
+		// 		"margin-right" : margin+"px",
+		// 		"margin-left" : margin+"px"
+		// 	});
+		// }
+		// entry.find("input").css("width", e.width +"px" || entry.css("width"));
 		if (e.tagID) {
 			entry.prop("id", e.tagID);
 		}
@@ -21496,7 +21599,7 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 	 */
 	redrawPosition : function() {
 		var self = this,
-			buttons = self.toolbarDiv.children("div.ui-buttonset, input:text, label, select");
+			buttons = self.toolbarDiv.children("div.ui-buttonset, .toolbar-entry-cont, label, select");
 		
 		if (buttons.length <= 1) {
 			return false;
@@ -21597,7 +21700,7 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 	 * @returns {void}
 	 */
 	fixCSS : function() {
-		var items = $("#toolbar-maindiv").children("input:text, label, div.ui-buttonset");
+		var items = $("#toolbar-maindiv").children(".toolbar-entry-cont, label, div.ui-buttonset");
 		var self = this;
 		items.each(function() {
 			self.fixTagCSS.call(self, $(this));
@@ -21620,9 +21723,9 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			var entryExists = this.toolbarDiv.find("input:text").length > 0;
 			
 			// --- For all versions of IE -------------------------
-			if (tagIsEntry) {
-				tag.css("top", "2px");
-			}
+			// if (tagIsEntry) {
+				// tag.css("top", "2px");
+			// }
 			
 			// --- For specific versions of IE ---------------------
 			if (parseInt(sMap.db.browser.version) == 7) {
@@ -21638,19 +21741,19 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 					else {
 						tag.css("top", "3px");
 					}*/
-					tag.css("top", "3px");
+					// tag.css("top", "3px");
 				}
-				if (tagIsEntry) {
-					tag.css("top", "1px");
-				}
+				// if (tagIsEntry) {
+					// tag.css("top", "1px");
+				// }
 			}
-			else if (parseInt(sMap.db.browser.version) == 8) {
+			// else if (parseInt(sMap.db.browser.version) == 8) {
 				/* No need for entryExists check of using float: left on all entries
 				if (tagIsEntry) {
 					tag.css("top", "1px");
 				}
 				*/
-			}
+			// }
 		}
 	},
 	
@@ -21717,42 +21820,42 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 				primary : config.iconCSS
 			}
 		});
-		if (this.side=="left") {
-			$(button).css({
-				"left" : margin + "px"
-			});
-			$(buttonLabel).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(button).css({
-				"right" : margin + "px"
-			});
-			$(buttonLabel).css({
-				"margin-right" : margin + "px",
-				"float": "right"
-			});
-			//Adding the search-input screws up things in the GUI, so we must do some tweaks.
-			if ($.browser.msie && parseInt($.browser.version) < 8) {
-//				if( this.toolbarDiv.find("input:text").length > 0 ){
-//					$(buttonLabel).css({
-//						"margin-top": "-25px"
-//					});
-//				}
-			}
-//			else if ( $.browser.mozilla && this.toolbarDiv.find("input:text").length > 0 ) {
-//				$(buttonLabel).css({
-//					"top": "-36px"
-//				});
-//			}
-			else {
-				// Needs some hands-on when adding float right, but not for IE7 surprisingly.
-				$(buttonLabel).css({
-					"margin-top": "3px"
-				});
-			}
-		}
+// 		if (this.side=="left") {
+// 			$(button).css({
+// 				"left" : margin + "px"
+// 			});
+// 			$(buttonLabel).css({
+// 				"margin-left" : margin + "px"
+// 			});
+// 		}
+// 		else {
+// 			$(button).css({
+// 				"right" : margin + "px"
+// 			});
+// 			$(buttonLabel).css({
+// 				"margin-right" : margin + "px",
+// 				"float": "right"
+// 			});
+// 			//Adding the search-input screws up things in the GUI, so we must do some tweaks.
+// 			if ($.browser.msie && parseInt($.browser.version) < 8) {
+// //				if( this.toolbarDiv.find("input:text").length > 0 ){
+// //					$(buttonLabel).css({
+// //						"margin-top": "-25px"
+// //					});
+// //				}
+// 			}
+// //			else if ( $.browser.mozilla && this.toolbarDiv.find("input:text").length > 0 ) {
+// //				$(buttonLabel).css({
+// //					"top": "-36px"
+// //				});
+// //			}
+// 			else {
+// 				// Needs some hands-on when adding float right, but not for IE7 surprisingly.
+// 				$(buttonLabel).css({
+// 					"margin-top": "3px"
+// 				});
+// 			}
+// 		}
 		//this.onTagAdded(b);
 		this.fixCSS();
 	},
@@ -21785,16 +21888,16 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			g.data("index", config.index);
 		}
 		this.toolbarDiv.append(g);
-		if (this.side=="left") {
-			$(g).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(g).css({
-				"margin-right" : margin + "px"
-			});
-		}
+		// if (this.side=="left") {
+		// 	$(g).css({
+		// 		"margin-left" : margin + "px"
+		// 	});
+		// }
+		// else {
+		// 	$(g).css({
+		// 		"margin-right" : margin + "px"
+		// 	});
+		// }
 		
 		this.fixCSS();
 	},
@@ -21905,16 +22008,16 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 			"display" : "inline"
 		});
 		
-		if (this.side=="left") {
-			$(group).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(group).css({
-				"margin-right" : margin + "px"
-			});
-		}
+		// if (this.side=="left") {
+		// 	$(group).css({
+		// 		"margin-left" : margin + "px"
+		// 	});
+		// }
+		// else {
+		// 	$(group).css({
+		// 		"margin-right" : margin + "px"
+		// 	});
+		// }
 		//this.onTagAdded(group);
 		this.fixCSS();
 
@@ -21942,20 +22045,20 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 		}
 		group.buttonset();
 		group.data("index", config.index);
-		$(group).css({
-			"position" : "relative",
-			"display" : "inline"
-		});
-		if (this.side=="left") {
-			$(group).css({
-				"margin-left" : margin + "px"
-			});
-		}
-		else {
-			$(group).css({
-				"margin-right" : margin + "px"
-			});
-		}
+		// $(group).css({
+		// 	"position" : "relative",
+		// 	"display" : "inline"
+		// });
+		// if (this.side=="left") {
+		// 	$(group).css({
+		// 		"margin-left" : margin + "px"
+		// 	});
+		// }
+		// else {
+		// 	$(group).css({
+		// 		"margin-right" : margin + "px"
+		// 	});
+		// }
 		//this.onTagAdded(group);
 		this.fixCSS();
 	},

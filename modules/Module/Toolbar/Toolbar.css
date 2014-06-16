@@ -1,28 +1,30 @@
 #toolbar-maindiv {
-	position: absolute;
+	position: relative;
 	left: 0px;
 	top: 0px;
 	width: 100%;
-	font-size: 1.00em;
+	font-size: 1em;
 	line-height: 38px;
 	padding: 0;
 	margin: 0;
 	white-space: nowrap;
-	border-left: none;
-	border-right: none;
+	border: none;
 	z-index: 1;
+	display: table-row;
+	float: right;
 	box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .4);
 }
-
-.toolbar-entry {
+.toolbar-entry-cont {
 	position: relative;
-	font-size: 1.3em;
-	top: 4px;
-	padding: 2px 4px;
-	width: 100px;
-	display: inline;
+	display: table-cell;
 	float: left; /* always float left solves IE problems */
 }
+.toolbar-entry {
+	font-size: 1.3em;
+	line-height: 2.4em;
+	width: 10em;
+}
+
 .toolbar-logo {
 	position: relative;
 	font-size: 1.3em;
@@ -31,13 +33,14 @@
 	float: left; /* always float left solves IE problems */
 }
 .toolbar-title {
-	position: absolute;
+	position: relative;
 	font-size: 14px;
 	padding: 0px 0px 0px 12px;
 	line-height: 36px;
-	display: inline;
 	float: left; /* always float left solves IE problems */
 }
+
+
 
 /* All select tags will get these values */
 #toolbar-maindiv select {
@@ -45,6 +48,15 @@
 	margin-top: 9px;	
 }
 
-.ui-widget-header .ui-button {
+#toolbar-maindiv .ui-button {
+	float: right;
+	padding: .5em 0;
+	border-color: transparent;
+	display: table-cell;
 	overflow: visible !important;
+}
+
+/* Move buttons a bit from the right side */
+#toolbar-maindiv label:first-of-type {
+	margin-right: 2em;
 }

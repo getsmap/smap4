@@ -113,7 +113,9 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
      * Draw the tree based on the config.layers.overlays array.
      * @returns {void}
      */
-	drawContent : function() {},
+	drawContent : function() {
+		$("#mapDiv").addClass("layertree-width");
+	},
 	
 	getNameFromSpanID: function(spanID) {
 		return spanID.replace("layertree-label-", "");
@@ -214,24 +216,24 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		
 		this.treeDiv = $("<div id='layertree' />");
 		$(this.div).append(this.treeDiv);
-		this.treeDiv.css("width", this.width+"px");
+		// this.treeDiv.css("width", this.width+"px");
 		
 		/**
 		 * Make the layer tree height adaptive to the window size.
 		 */
-		var onResize = function() {
-			var sideDivHeight = $(self.div).parent().innerHeight();
+		// var onResize = function() {
+		// 	var sideDivHeight = $(self.div).parent().innerHeight();
 			
-			// For some reason the innerHeight does not give enough
-			// space for the module's div (this.div). Therefore,
-			// I remove another 3 px and it seems not to give scrollbars anymore.
-			$(self.div).outerHeight(sideDivHeight-headerHeight-3);
-			var marginTop = 50,
-				headerHeight = $("#layertree-headerdiv").outerHeight();
-			self.treeDiv.outerHeight( sideDivHeight - marginTop );
-		};
-		$(window).resize(onResize);
-		setTimeout('$(window).trigger("resize")', 2000);
+		// 	// For some reason the innerHeight does not give enough
+		// 	// space for the module's div (this.div). Therefore,
+		// 	// I remove another 3 px and it seems not to give scrollbars anymore.
+		// 	$(self.div).outerHeight(sideDivHeight-headerHeight-3);
+		// 	var marginTop = 50,
+		// 		headerHeight = $("#layertree-headerdiv").outerHeight();
+		// 	self.treeDiv.outerHeight( sideDivHeight - marginTop );
+		// };
+		// $(window).resize(onResize);
+		// setTimeout('$(window).trigger("resize")', 2000);
 
 		sideDiv.append(this.div);
 		$(this.div).addClass("layertree-maindiv");
@@ -414,7 +416,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			}
 		});
 		this.addItems();		
-		this.treeDiv.height( this.sideDiv.height() - 10 );
+		// this.treeDiv.height( this.sideDiv.height() - 10 );
 		var tree = this.treeDiv.dynatree("getTree");
 		tree.renderInvisibleNodes();
 		
@@ -481,6 +483,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			var self = this;
 			btnSlide.click(function(e) {
 				self.toggleSideDiv.call(self, e);
+				return false;
 			});
 		}
 		if (this.turnOffButton) {
@@ -531,9 +534,6 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				self.previewPrintLayers();
 			});
 		}
-		div.css({
-			"width": $(this.div).css("width")
-		});
 		if (this.right) {
 			div.addClass("headerdiv-right");
 		}
@@ -548,24 +548,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		
 	},
 	
-	afterVisible: function() {
-		if (this.right) {
-			
-		}
-		else {
-			$("#mapDiv").css("left", this.sideDiv.outerWidth() + "px");
-		}
-		$("#mapDiv").width( $("#mapDiv").width() - this.width );			
-		
-		// Remove the toggle button
-		var expandButton = $("#layertree-expandbutton");
-		expandButton.empty().remove();				
-		$(window).resize();
-		$(window).resize(); // Chrome seems to need one more resize...
-		this.map.updateSize();
-	},
-	
-	afterHidden: function() {
+	addToggleButton: function() {
 		var self = this;
 		var expandButton = $("<div id='layertree-expandbutton'>+</div>");
 		$("#mapDiv").append(expandButton);
@@ -576,16 +559,15 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			expandButton.addClass("lt-expbutton-left");
 			$("#mapDiv").css("left", "0px");
 		}
-		$("#mapDiv").width( $("#mapDiv").width() + this.width); // sideDiv.outerWidth()
-		
-		// Define click for button which can bring the tree back again.
-		expandButton.click(function() {
-			$(this).hide();
+		expandButton.on("click", function() {
 			self.toggleSideDiv();
+			return false;
 		});
-		$(window).resize(); // Trigger resize so that other elements can adapt.
-		$(window).resize();
-		this.map.updateSize();
+	},
+	
+	removeToggleButton: function() {
+		var expandButton = $("#layertree-expandbutton");
+		expandButton.empty().remove();				
 	},
 	
 	toggleSideDiv: function(e) {
@@ -595,31 +577,33 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		if (sideDiv.is(":visible")) {
 			// --- Is going to be hidden ---
 			if (this.right) {
-				sideDiv.animate({"margin-left": w}, this.toggleSpeed, function() {
-					$(this).hide();
-					self.afterHidden();
-				});
-			}
-			else {
-				sideDiv.toggle("slide", function() {
-					self.afterHidden();
-				});
+				sideDiv.addClass("hidden");
+				setTimeout(function() {
+					$("#mapDiv").removeClass("layertree-width");
+					self.map.updateSize();
+					sideDiv.hide();
+					self.addToggleButton();
+					$(window).resize();
+				}, 300);
+
+
+				// sideDiv.animate({"margin-left": w}, this.toggleSpeed, function() {
+				// 	$(this).hide();
+				// 	self.afterHidden();
+				// });
 			}
 		}
 		else {
 			// --- Is going to be shown ---
 			if (this.right) {
-				//$("#mapDiv").width( $("#mapDiv").width() - this.width)
+				this.removeToggleButton();
 				sideDiv.show();
-				$(window).resize(); // Adapt size to show the sideDiv (which is outside view).
-				sideDiv.animate({"margin-left": 0}, this.toggleSpeed, function() {
-					self.afterVisible();
-				});
-			}
-			else {
-				sideDiv.toggle("slide", function() {
-					self.afterVisible();
-				});
+				setTimeout(function() {
+					sideDiv.removeClass("hidden");
+					$("#mapDiv").addClass("layertree-width");
+					// self.map.updateSize();
+					$(window).resize();
+				}, 1);
 			}
 		}
 	},

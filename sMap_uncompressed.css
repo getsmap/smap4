@@ -32,9 +32,8 @@ div, span, p, button, label {
 	top: 0px;
 	width: 100%;
 	height: 100%;
-	filter : alpha(opacity=80);
+	background-color: rgba(50, 50, 50, 0.8);
     opacity: 0.8;
-    background: #333;
     z-index: 3000;
 }
 .invisible {
@@ -44,22 +43,19 @@ div, span, p, button, label {
 	-webkit-transition: opacity 1000ms, filter 1000ms;
 }
 
-.smap-init-loading img {
-	position: absolute;
-	left: 470px;
+#smap-initload-cont {
+	position: relative;
+	left: 40%;
 	top: 40%;
-	z-index: 1;
-	display: block;
-}
-.smap-init-loading label {
-	position: absolute;
-	display: block;
-	left: 550px;
-	top: 42%;
 	z-index: 2;
-	color: #fff;
 	font-size: 2em;
-	
+}
+.smap-init-loading img {}
+.smap-init-loading label {
+	color: #fff;
+	position: relative;
+	top: -.9em;
+	margin-left: .3em;
 }
 
 /* All tags with this class will be unselectable */
@@ -81,25 +77,36 @@ div, span, p, button, label {
 	top: 0px;
 	width: 100%;
 	height: 100%;
-	overflow: hidden;
+	overflow: hidden; /* during dev */
 }
 
 #mapDiv {
-	position: absolute;
+	position: relative;
 	left: 0px;
 	top: 0px;
 	width: 100%;
 	height: 100%;
+	float: left;
 }
 
 #sideDivLeft {
-	position: absolute;
+	position: relative;
+	background-color: #fff;
+	z-index: 0;
+	left: 0px;
+	width: 30%;
+	height: 100%;
+	float: left;
+	border: none;
 }
 #sideDivRight {
-	position: absolute;
+	position: relative;
 	background-color: #fff;
-	border-left: 1px solid #aaa;
 	z-index: 0;
+	left: 0px;
+	height: 100%;
+	float: left;
+	border: none;
 }
 
 #toolbarDiv {
@@ -1053,6 +1060,23 @@ textarea{
     padding: 10px;
 }
 
+#sideDivRight {
+    -webkit-transition: all .3s;
+   -moz-transition: all .3s;
+   -o-transition: all .3s;
+   transition: all .3s;
+   right: 0;
+   width: 40%;
+}
+
+#sideDivRight.hidden {
+    left: 50%;
+}
+
+#mapDiv.layertree-width {
+    width: 60%;
+}
+
 
 /* The button in the header of the metadata window. */
 .ltree-btn-miniprint {
@@ -1062,7 +1086,7 @@ textarea{
 
 #layertree-expandbutton {
     position: absolute;
-    top: 230px;
+    top: 45%;
     width: 11px;
     height: 22px;
     padding: 5px 8px;
@@ -1073,6 +1097,7 @@ textarea{
     opacity: .8;
     cursor: pointer;
     cursor: hand;
+    z-index: 1100;
 }
 
 .lt-expbutton-left {
@@ -1092,12 +1117,15 @@ textarea{
 }
 
 .layertree-maindiv {
-    position: absolute;
-    left: 2px;
-    top: 3px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-left: 1px solid #ccc;
+    left: 0;
+    top: 0;
     padding: 0;
     margin: 0;
-    border: none;
     z-index: 0 !important;
 }
 
@@ -1110,6 +1138,7 @@ textarea{
     font-size: 0.8em;
     color: #fff;
 	min-height: 20px;
+    width: 100%;
 }
 .headerdiv-left {
 	text-align: right;
@@ -1273,7 +1302,42 @@ textarea{
 	margin-left: 3px;
 }
 
-.legend-container {
+@media (min-width: 300px) {
+    #sideDivRight {
+        width: 50% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 50% !important;
+    }
+}
+
+@media (min-width: 700px) {
+    #sideDivRight {
+        width: 35% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 65% !important;
+    }
+}
+
+@media (min-width: 992px) {
+    #sideDivRight {
+        width: 30% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 70% !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    #sideDivRight {
+        width: 25% !important;
+    }
+    #mapDiv.layertree-width {
+        width: 75% !important;
+    }
+
+}.legend-container {
 	position: absolute;
 	z-index: 1001;
 	left: 0px;
@@ -1997,16 +2061,22 @@ div.olControlMousePosition {
 	font-family: Helvetica, arial, sans-serif;
 }
 #searchBox {
+	margin-left: 1em;
+	vertical-align: middle;
+
+}
+#searchBox input {
+	padding-left: .5em;
+	height: 100%;
+	min-height: 2em;
+	width: 16em;
 	transition: width 500ms;
 	-moz-transition: width 500ms; /* Firefox 4 */
 	-webkit-transition: width 500ms; /* Safari and Chrome */
 	-o-transition: width 500ms; /* Opera */
-	line-height: 27px;
-	height: 27px;
-	top: 0px;
 }
-#searchBox:focus {
-	width: 250px !important;
+#searchBox input:focus {
+	width: 18em !important;
 }.ui-widget-header button {
 	outline: 0;
 }
@@ -2128,30 +2198,32 @@ div.olControlMousePosition {
 #SPrintTabs label {
 	cursor: pointer;
 }#toolbar-maindiv {
-	position: absolute;
+	position: relative;
 	left: 0px;
 	top: 0px;
 	width: 100%;
-	font-size: 1.00em;
+	font-size: 1em;
 	line-height: 38px;
 	padding: 0;
 	margin: 0;
 	white-space: nowrap;
-	border-left: none;
-	border-right: none;
+	border: none;
 	z-index: 1;
+	display: table-row;
+	float: right;
 	box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .4);
 }
-
-.toolbar-entry {
+.toolbar-entry-cont {
 	position: relative;
-	font-size: 1.3em;
-	top: 4px;
-	padding: 2px 4px;
-	width: 100px;
-	display: inline;
+	display: table-cell;
 	float: left; /* always float left solves IE problems */
 }
+.toolbar-entry {
+	font-size: 1.3em;
+	line-height: 2.4em;
+	width: 10em;
+}
+
 .toolbar-logo {
 	position: relative;
 	font-size: 1.3em;
@@ -2160,13 +2232,14 @@ div.olControlMousePosition {
 	float: left; /* always float left solves IE problems */
 }
 .toolbar-title {
-	position: absolute;
+	position: relative;
 	font-size: 14px;
 	padding: 0px 0px 0px 12px;
 	line-height: 36px;
-	display: inline;
 	float: left; /* always float left solves IE problems */
 }
+
+
 
 /* All select tags will get these values */
 #toolbar-maindiv select {
@@ -2174,8 +2247,17 @@ div.olControlMousePosition {
 	margin-top: 9px;	
 }
 
-.ui-widget-header .ui-button {
+#toolbar-maindiv .ui-button {
+	float: right;
+	padding: .5em 0;
+	border-color: transparent;
+	display: table-cell;
 	overflow: visible !important;
+}
+
+/* Move buttons a bit from the right side */
+#toolbar-maindiv label:first-of-type {
+	margin-right: 2em;
 }.toolsmenu-dropdown {
 	border: 1px solid #848484;
 	cursor: pointer;
@@ -2199,7 +2281,9 @@ div.olControlMousePosition {
 }
 
 .toolsmenu-rows label {
-	padding: 7px;	
+	padding: 7px;
+	width: 100% !important;
+	min-width: 10em;
 }
 
 .toolsmenu-rows .ui-button-text {
@@ -2210,7 +2294,7 @@ div.olControlMousePosition {
 	width : auto;
 	color: #666 ;
 	border-width: 0 !important;
-	border-bottom: 1px solid #eee ;
+	border-bottom: 1px solid #eee;
 	-webkit-border-radius: 0px !important;
 	-moz-border-radius: 0px !important;
 	border-radius: 0px !important;
@@ -2219,8 +2303,8 @@ div.olControlMousePosition {
 	z-index: 2;
 }
 .toolsmenu-mainbutton.ui-state-active {
-	background: #fff ;
-	color: #666 ;
+	background: #fff;
+	color: #666;
 	border-bottom: none !important;
 	-webkit-border-radius: 2px 2px 0 0 !important;
 	-moz-border-radius: 2px 2px 0 0 !important;

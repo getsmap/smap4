@@ -21,7 +21,9 @@
 }
 
 .toolsmenu-rows label {
-	padding: 7px;	
+	padding: 7px;
+	width: 100% !important;
+	min-width: 10em;
 }
 
 .toolsmenu-rows .ui-button-text {
@@ -32,7 +34,7 @@
 	width : auto;
 	color: #666 ;
 	border-width: 0 !important;
-	border-bottom: 1px solid #eee ;
+	border-bottom: 1px solid #eee;
 	-webkit-border-radius: 0px !important;
 	-moz-border-radius: 0px !important;
 	border-radius: 0px !important;
@@ -41,8 +43,8 @@
 	z-index: 2;
 }
 .toolsmenu-mainbutton.ui-state-active {
-	background: #fff ;
-	color: #666 ;
+	background: #fff;
+	color: #666;
 	border-bottom: none !important;
 	-webkit-border-radius: 2px 2px 0 0 !important;
 	-moz-border-radius: 2px 2px 0 0 !important;

@@ -268,7 +268,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		
 		if( !self.firstTime ){
 			var optionsMenuDiv = self.optionsMenuDiv,
-				searchInput = $("#searchBox");
+				searchInput = $("#searchBox input");
 					
 			var boxOffset = searchInput.offset(),
 				boxWidth = searchInput.outerWidth(),
@@ -308,11 +308,10 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		}
 		sMap.events.triggerEvent("addtoolentry", this, {
 			index : this.toolbarIndex,
-			width : 200,
 			margin: 10,
 			tagID : "searchBox"
 		});
-		var searchBox = $("#searchBox");
+		var searchBox = $("#searchBox input");
 		
 		self.bindAutocompleteToId(searchBox);
 		
@@ -721,7 +720,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	changeCat : function(category) {
 		var self = this,
 			catOptions = self.dropDownItems[category],
-			searchBox = $("#searchBox");
+			searchBox = $("#searchBox input");
 		
 		searchBox.val(catOptions.searchBoxText);
 		
@@ -777,7 +776,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 			});
 		}
 		else{
-			$('#searchBox').autocomplete(
+			$('#searchBox input').autocomplete(
 				self.autoCompleteScriptUrl,
 		    		{
 			    		width : 300,
