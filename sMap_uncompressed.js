@@ -4458,7 +4458,9 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 				dropDownDiv.hide(); // drop down should start hidden
 			}
 		}
-		
+
+
+		// Make the buttons same width
 		var minWidth=0;
 		buttonDiv.find("div").each(function() {
 			minWidth = Math.max(minWidth,  $(this).width());
@@ -4467,11 +4469,22 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 			$(this).css("min-width", minWidth);
 		});
 
+		// var nrOfBtns = buttonDiv.find("div").length;
+		// var w = this.buttonWidth;
+		// var nrOfBtns=0;
+		// buttonDiv.find("div").each(function() {
+		// 	$(this).width(w);
+		// 	nrOfBtns += 1;
+		// });
+		
 		// this.buttonOuterWidth = w + 2; // button width + total padding (if any) and border (if any...)
 		
 		// buttonDiv.width(nrOfBtns * this.buttonOuterWidth + 10);
 		// // Set the width to the container div explicitly.
 		// $(this.div).width(nrOfBtns * this.buttonOuterWidth + 10);
+		
+		//}
+
 		
 		// ---- Decide the position of drop-down from right. -----
 		
@@ -4481,14 +4494,13 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		var self = this;
 		
 		var n = 0; // Keep track of button number
-		buttonDiv.children().each(function() {
+		buttonDiv.find("div").each(function() {
 			var b = $(this);
 			var right = self.getButtonPosition(b, n);
 			var cat = $(this).prop("id").split(delim)[1];
 			var dropDownDiv = getDropDownDiv(cat);
 			dropDownDiv.css("right", right+"px");
 			n+=1;
-
 		});
 		
 		
@@ -4771,16 +4783,10 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 	 *     The number of buttons to the right of this button.
 	 */
 	getButtonPosition : function(b, buttonNr) {
-		
 		var bPadding = sMap.util.takeAwayPx(b.css("padding-left")) + sMap.util.takeAwayPx(b.css("padding-right"));
-		
-		var bRight = (buttonNr) * this.buttonOuterWidth;
-
+		var bRight = (buttonNr) * b.outerWidth();
 		var totalRight = bRight;
-		
 		return totalRight;
-		
-		
 	},
 	/**
 	 * Listener to the event "switchbaselayerbutton".

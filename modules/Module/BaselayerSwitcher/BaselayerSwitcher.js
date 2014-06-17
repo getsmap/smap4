@@ -525,16 +525,10 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 	 *     The number of buttons to the right of this button.
 	 */
 	getButtonPosition : function(b, buttonNr) {
-		
 		var bPadding = sMap.util.takeAwayPx(b.css("padding-left")) + sMap.util.takeAwayPx(b.css("padding-right"));
-		
 		var bRight = (buttonNr) * b.outerWidth();
-
 		var totalRight = bRight;
-		
 		return totalRight;
-		
-		
 	},
 	/**
 	 * Listener to the event "switchbaselayerbutton".
