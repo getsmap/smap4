@@ -200,19 +200,30 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 				dropDownDiv.hide(); // drop down should start hidden
 			}
 		}
-		
-		var w = this.buttonWidth;
-		var nrOfBtns=0;
+
+
+		// Make the buttons same width
+		var minWidth=0;
 		buttonDiv.find("div").each(function() {
-			$(this).width(w);
-			nrOfBtns += 1;
+			minWidth = Math.max(minWidth,  $(this).width());
 		});
+		buttonDiv.find("div").each(function() {
+			$(this).css("min-width", minWidth);
+		});
+
+		// var nrOfBtns = buttonDiv.find("div").length;
+		// var w = this.buttonWidth;
+		// var nrOfBtns=0;
+		// buttonDiv.find("div").each(function() {
+		// 	$(this).width(w);
+		// 	nrOfBtns += 1;
+		// });
 		
-		this.buttonOuterWidth = w + 2; // button width + total padding (if any) and border (if any...)
+		// this.buttonOuterWidth = w + 2; // button width + total padding (if any) and border (if any...)
 		
-		buttonDiv.width(nrOfBtns * this.buttonOuterWidth + 10);
-		// Set the width to the container div explicitly.
-		$(this.div).width(nrOfBtns * this.buttonOuterWidth + 10);
+		// buttonDiv.width(nrOfBtns * this.buttonOuterWidth + 10);
+		// // Set the width to the container div explicitly.
+		// $(this.div).width(nrOfBtns * this.buttonOuterWidth + 10);
 		
 		//}
 
@@ -225,14 +236,13 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		var self = this;
 		
 		var n = 0; // Keep track of button number
-		buttonDiv.children().each(function() {
+		buttonDiv.find("div").each(function() {
 			var b = $(this);
 			var right = self.getButtonPosition(b, n);
 			var cat = $(this).prop("id").split(delim)[1];
 			var dropDownDiv = getDropDownDiv(cat);
 			dropDownDiv.css("right", right+"px");
 			n+=1;
-
 		});
 		
 		
@@ -518,7 +528,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		var bPadding = sMap.util.takeAwayPx(b.css("padding-left")) + sMap.util.takeAwayPx(b.css("padding-right"));
 		
-		var bRight = (buttonNr) * this.buttonOuterWidth;
+		var bRight = (buttonNr) * b.outerWidth();
 
 		var totalRight = bRight;
 		

@@ -4459,21 +4459,19 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 			}
 		}
 		
-		var w = this.buttonWidth;
-		var nrOfBtns=0;
+		var minWidth=0;
 		buttonDiv.find("div").each(function() {
-			$(this).width(w);
-			nrOfBtns += 1;
+			minWidth = Math.max(minWidth,  $(this).width());
 		});
-		
-		this.buttonOuterWidth = w + 2; // button width + total padding (if any) and border (if any...)
-		
-		buttonDiv.width(nrOfBtns * this.buttonOuterWidth + 10);
-		// Set the width to the container div explicitly.
-		$(this.div).width(nrOfBtns * this.buttonOuterWidth + 10);
-		
-		//}
+		buttonDiv.find("div").each(function() {
+			$(this).css("min-width", minWidth);
+		});
 
+		// this.buttonOuterWidth = w + 2; // button width + total padding (if any) and border (if any...)
+		
+		// buttonDiv.width(nrOfBtns * this.buttonOuterWidth + 10);
+		// // Set the width to the container div explicitly.
+		// $(this.div).width(nrOfBtns * this.buttonOuterWidth + 10);
 		
 		// ---- Decide the position of drop-down from right. -----
 		

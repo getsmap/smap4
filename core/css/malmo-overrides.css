@@ -11,10 +11,10 @@ a {
 	background: #fff !important;
 }
 
-.baselayer-button.ui-state-default { 
+/*.baselayer-button.ui-state-default { 
 	transition: background 400ms, color 400ms;
 	-webkit-transition: background 400ms, color 400ms;
-}
+}*/
 
 .toolsmenu-rows .ui-state-default {
 	background: #fff !important;
@@ -33,7 +33,8 @@ a {
 }
 
 .baselayer-button-clicked {
-	background: #fff !important;	
+	background: #fff !important;
+	background: rgba(255,255,255,.9) !important;
 }
 
 
