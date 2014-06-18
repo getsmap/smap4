@@ -167,7 +167,7 @@ var config = {
 					"<div class='popup-text1'><a href='${url4}' target='_blank'>Läs mer 4</a></div>" +
 					"<div class='popup-text1'><a href='${url5}' target='_blank'>Läs mer 5</a></div>" +
 					"<br>" +
-					"<div class='popup-text1'><a href='http://xyz.malmo.se/urbex/index.htm?p=true&xy=${y};${x}' target='_blank'>Visa snedbild</a></div>" ,	
+					"<div class='popup-text1'><a href='http://xyz.malmo.se/urbex/index.htm?p=true&xy=${east};${north}' target='_blank'>Visa snedbild</a></div>" ,	
 					selectable : true,
 				geomType : 'point',
 				getFeatureInfo: {geometryName: "geom"},
@@ -235,7 +235,7 @@ var config = {
 					"<div class='popup-text1'><a href='${url_4}' target='_blank'>Läs mer</a></div>" +
 					"<div class='popup-text1'><a href='${url_5}' target='_blank'>Läs mer</a></div>" +
 					"<br>" +
-					"<div class='popup-text1'><a href='http://xyz.malmo.se/urbex/index.htm?p=true&xy=${y};${x}' target='_blank'>Visa snedbild</a></div>" ,	
+					"<div class='popup-text1'><a href='http://xyz.malmo.se/urbex/index.htm?p=true&xy=${east};${north}' target='_blank'>Visa snedbild</a></div>" ,	
 					selectable : true,
 				geomType : 'point',
 				getFeatureInfo: {geometryName: "geom"},
