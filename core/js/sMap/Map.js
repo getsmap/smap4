@@ -261,6 +261,7 @@ sMap.Map = OpenLayers.Class({
 			sMap.events.modulesAdded = true;
 			this.checkIfMapLoaded();
 		});
+
 		
 		// For debugging
 		
@@ -370,8 +371,6 @@ sMap.Map = OpenLayers.Class({
                     $(window).resize();
                 }, 1000);
 			}
-			
-			
 		}
 	},
 	
@@ -449,7 +448,6 @@ sMap.Map = OpenLayers.Class({
 	createDivs : function(mapTag) {
 		var mapDiv = $("<div id='mapDiv' />"), // unselectable='on' class='unselectable'
 			smapDiv = $("<div id='smapDiv' />");
-		
 		$(mapTag).append(smapDiv);
 		smapDiv.append(mapDiv);
 	},

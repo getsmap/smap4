@@ -312,7 +312,11 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 			tagID : "searchBox"
 		});
 		var searchBox = $("#searchBox input");
-		
+		// searchBox.on("focus", function() {
+		// 	$(this).parent().addClass("searchBox-focus");
+		// }).on("blur", function() {
+		// 	$(this).parent().removeClass("searchBox-focus");
+		// });
 		self.bindAutocompleteToId(searchBox);
 		
 		//self.handleParams();

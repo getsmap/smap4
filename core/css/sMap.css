@@ -73,11 +73,11 @@ div, span, p, button, label {
 
 #smapDiv {
 	position: absolute;
-	left: 0px;
 	top: 0px;
 	width: 100%;
 	height: 100%;
-	overflow: hidden; /* during dev */
+	overflow: hidden; /* scroll during dev */
+	border-top: 1px solid #ccc;
 }
 
 #mapDiv {

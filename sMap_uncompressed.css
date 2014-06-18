@@ -73,11 +73,11 @@ div, span, p, button, label {
 
 #smapDiv {
 	position: absolute;
-	left: 0px;
 	top: 0px;
 	width: 100%;
 	height: 100%;
-	overflow: hidden; /* during dev */
+	overflow: hidden; /* scroll during dev */
+	border-top: 1px solid #ccc;
 }
 
 #mapDiv {
@@ -1137,6 +1137,7 @@ textarea{
     color: #fff;
 	min-height: 20px;
     width: 100%;
+    padding: .2em 0;
 }
 .headerdiv-left {
 	text-align: right;
@@ -2063,20 +2064,21 @@ div.olControlMousePosition {
 	margin-left: 1em;
 	vertical-align: middle;
 	height: 100%;
+	width: auto;
 }
 #searchBox input {
-	padding-left: .5em;
-	box-sizing: border-box; /*Required to make the entry fill height*/
-	height: 100%;
-	width: 16em;
-	min-height: 2em;
 	transition: width 500ms;
 	-moz-transition: width 500ms; /* Firefox 4 */
 	-webkit-transition: width 500ms; /* Safari and Chrome */
 	-o-transition: width 500ms; /* Opera */
+	padding-left: .5em;
+	box-sizing: border-box; /*Required to make the entry fill height*/
+	height: 100%;
+	width: 18em;
+	min-height: 2em;
 }
 #searchBox input:focus {
-	width: 18em !important;
+	width: 21em;
 }.ui-widget-header button {
 	outline: 0;
 }

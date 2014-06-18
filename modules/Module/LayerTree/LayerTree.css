@@ -84,6 +84,7 @@
     color: #fff;
 	min-height: 20px;
     width: 100%;
+    padding: .2em 0;
 }
 .headerdiv-left {
 	text-align: right;

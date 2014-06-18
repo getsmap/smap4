@@ -1859,6 +1859,7 @@ sMap.Layer = OpenLayers.Class({
 			sMap.events.modulesAdded = true;
 			this.checkIfMapLoaded();
 		});
+
 		
 		// For debugging
 		
@@ -1968,8 +1969,6 @@ sMap.Layer = OpenLayers.Class({
                     $(window).resize();
                 }, 1000);
 			}
-			
-			
 		}
 	},
 	
@@ -2047,7 +2046,6 @@ sMap.Layer = OpenLayers.Class({
 	createDivs : function(mapTag) {
 		var mapDiv = $("<div id='mapDiv' />"), // unselectable='on' class='unselectable'
 			smapDiv = $("<div id='smapDiv' />");
-		
 		$(mapTag).append(smapDiv);
 		smapDiv.append(mapDiv);
 	},
@@ -12510,6 +12508,10 @@ sMap.Module.MalmoHeader = OpenLayers.Class(sMap.Module, {
 		$("body").addClass("test"); // during dev only
 		$("body").append('<script src="//assets.malmo.se/external/v4/masthead_standalone_without_jquery.js"></script>');
 
+		// $("#smapDiv").css({
+		// 	"padding-top": "4em"
+		// });
+
 	}, 
 	
 	// Class name needed when you want to fetch your module...
@@ -17553,7 +17555,11 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 			tagID : "searchBox"
 		});
 		var searchBox = $("#searchBox input");
-		
+		// searchBox.on("focus", function() {
+		// 	$(this).parent().addClass("searchBox-focus");
+		// }).on("blur", function() {
+		// 	$(this).parent().removeClass("searchBox-focus");
+		// });
 		self.bindAutocompleteToId(searchBox);
 		
 		//self.handleParams();
