@@ -91,10 +91,13 @@ sMap.Module.MalmoHeader = OpenLayers.Class(sMap.Module, {
 		$("body").addClass("test"); // during dev only
 		$("body").append('<script src="//assets.malmo.se/external/v4/masthead_standalone_without_jquery.js"></script>');
 
-		$("#smapDiv").css({
-			"top": "3.7em"
 
+		$("#smapDiv").css({
+			"margin-top": "3.7em",
+			"height": "calc(100% - 3.7em)"
 		});
+		// sMap.events.register("modulesadded", this, function() {
+		// });
 
 		// $("#smapDiv").css({
 		// 	"padding-top": "4em"

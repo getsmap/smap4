@@ -633,7 +633,7 @@ sMap.DivController = OpenLayers.Class({
 		if ( $("#sideDivRight").length ) return;
 		
 		var sideDivRight = $("<div id='sideDivRight' />");
-		$("#smapDiv").append(sideDivRight);
+		$("#smap-map-container").append(sideDivRight);
 		// Calculate the maximum height the div can have and the position from the top.
 		// var remainingHeight=$("#smapDiv").outerHeight(), // Remaining height for the div
 		// 	top = 0;
@@ -2045,9 +2045,11 @@ sMap.Layer = OpenLayers.Class({
 	
 	createDivs : function(mapTag) {
 		var mapDiv = $("<div id='mapDiv' />"), // unselectable='on' class='unselectable'
-			smapDiv = $("<div id='smapDiv' />");
+			smapDiv = $("<div id='smapDiv' />"),
+			container = $('<div id="smap-map-container" />');
 		$(mapTag).append(smapDiv);
-		smapDiv.append(mapDiv);
+		smapDiv.append( container );
+		container.append(mapDiv);
 	},
 	
 	/**
@@ -12508,10 +12510,13 @@ sMap.Module.MalmoHeader = OpenLayers.Class(sMap.Module, {
 		$("body").addClass("test"); // during dev only
 		$("body").append('<script src="//assets.malmo.se/external/v4/masthead_standalone_without_jquery.js"></script>');
 
-		$("#smapDiv").css({
-			"top": "3.7em"
 
+		$("#smapDiv").css({
+			"margin-top": "3.7em",
+			"height": "calc(100% - 3.7em)"
 		});
+		// sMap.events.register("modulesadded", this, function() {
+		// });
 
 		// $("#smapDiv").css({
 		// 	"padding-top": "4em"

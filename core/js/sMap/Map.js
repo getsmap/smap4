@@ -447,9 +447,11 @@ sMap.Map = OpenLayers.Class({
 	
 	createDivs : function(mapTag) {
 		var mapDiv = $("<div id='mapDiv' />"), // unselectable='on' class='unselectable'
-			smapDiv = $("<div id='smapDiv' />");
+			smapDiv = $("<div id='smapDiv' />"),
+			container = $('<div id="smap-map-container" />');
 		$(mapTag).append(smapDiv);
-		smapDiv.append(mapDiv);
+		smapDiv.append( container );
+		container.append(mapDiv);
 	},
 	
 	/**

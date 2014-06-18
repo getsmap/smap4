@@ -205,7 +205,7 @@ sMap.DivController = OpenLayers.Class({
 		if ( $("#sideDivRight").length ) return;
 		
 		var sideDivRight = $("<div id='sideDivRight' />");
-		$("#smapDiv").append(sideDivRight);
+		$("#smap-map-container").append(sideDivRight);
 		// Calculate the maximum height the div can have and the position from the top.
 		// var remainingHeight=$("#smapDiv").outerHeight(), // Remaining height for the div
 		// 	top = 0;
