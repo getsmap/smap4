@@ -54,6 +54,7 @@
 	border-color: transparent;
 	display: table-cell;
 	overflow: visible !important;
+	margin: 0 !important;
 }
 
 /* Move buttons a bit from the right side */

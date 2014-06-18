@@ -1067,7 +1067,7 @@ textarea{
    width: 40%;
 }
 
-#sideDivRight.hidden {
+#sideDivRight.ltree-hidden {
     left: 50%;
 }
 
@@ -2076,6 +2076,7 @@ div.olControlMousePosition {
 	height: 100%;
 	width: 18em;
 	min-height: 2em;
+	font-size: 1.5em;
 }
 #searchBox input:focus {
 	width: 21em;
@@ -2255,6 +2256,7 @@ div.olControlMousePosition {
 	border-color: transparent;
 	display: table-cell;
 	overflow: visible !important;
+	margin: 0 !important;
 }
 
 /* Move buttons a bit from the right side */

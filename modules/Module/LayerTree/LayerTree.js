@@ -577,7 +577,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		if (sideDiv.is(":visible")) {
 			// --- Is going to be hidden ---
 			if (this.right) {
-				sideDiv.addClass("hidden");
+				sideDiv.addClass("ltree-hidden");
 				setTimeout(function() {
 					$("#mapDiv").removeClass("layertree-width");
 					self.map.updateSize();
@@ -599,7 +599,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				this.removeToggleButton();
 				sideDiv.show();
 				setTimeout(function() {
-					sideDiv.removeClass("hidden");
+					sideDiv.removeClass("ltree-hidden");
 					$("#mapDiv").addClass("layertree-width");
 					// self.map.updateSize();
 					$(window).resize();
