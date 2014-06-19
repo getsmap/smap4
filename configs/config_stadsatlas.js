@@ -3914,7 +3914,7 @@ if ($.browser.msie && parseInt($.browser.version) < 8) {
 
 config.onConfigLoaded = function(c, onDone) {
 	$.ajax({
-		url: "http://localhost/cgi-bin/wsSmap4/malmo/ipOK.py", //"http://xyz.malmo.se/WS/wsMalmo/ipOK.py",
+		url: "http://xyz.malmo.se/WS/wsMalmo/ipOK.py", //"http://localhost/cgi-bin/wsSmap4/malmo/ipOK.py", //"http://xyz.malmo.se/WS/wsMalmo/ipOK.py",
 		dataType: "json",
 		success: function(data) {
 			data.valid = true;
