@@ -1,0 +1,16 @@
+#mapDiv {
+	height: 100%;
+	min-height: 100%;
+}
+
+#smapDiv {
+	height: 95% !important;
+}
+#smap-map-container {
+	height: 95% !important;
+}
+
+.bLayerSwitcher-dropDown {
+	position: absolute;
+	margin-top: 1.9em;
+}

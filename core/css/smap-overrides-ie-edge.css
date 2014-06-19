@@ -1,0 +1,21 @@
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+	/* IE 10 < */
+	
+	.bLayerSwitcher-dropDown {
+		position: absolute !important;
+		margin-top: 1.9em !important;
+	}
+	
+	#smapDiv {
+		margin-top: 0 !important; /*When adding malmo-header margin-top is not needed in IE*/
+	}
+
+	#searchBox {
+		max-height: 4em;
+		display: inline-block !important;
+	}
+
+	#toolbar-maindiv {
+		display: block !important;
+	}
+}

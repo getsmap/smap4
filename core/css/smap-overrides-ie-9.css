@@ -1,0 +1,8 @@
+.bLayerSwitcher-dropDown {
+	position: absolute;
+	margin-top: 1.9em;
+}
+
+#smapDiv {
+	margin-top: 0 !important; /*When adding malmo-header margin-top is not needed in IE*/
+}
