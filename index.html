@@ -77,10 +77,14 @@
 <link rel="stylesheet" href="sMap_comp.css" type="text/css" />
 <script type="text/javascript" src="sMap_comp.js"></script>
 
-<!--[if IE]>
-<link rel="stylesheet" type="text/css" href="core/css/smap-overrides-ie.css" />
+<link rel="stylesheet" type="text/css" href="core/css/smap-overrides-ie-edge.css" />
+<!--[if lt IE 9]>
+	<link rel="stylesheet" type="text/css" href="core/css/smap-overrides-ie-8.css" />
 <![endif]-->
- 
+<!--[if IE]>
+	<link rel="stylesheet" type="text/css" href="core/css/smap-overrides-ie-9.css" />
+<![endif]-->
+
 <script type="text/javascript">
 $(document).ready(function() {
 	if ($.browser.msie && parseInt($.browser.version) <= 7) {

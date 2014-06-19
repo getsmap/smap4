@@ -107,7 +107,7 @@ sMap.Module.Legend = OpenLayers.Class(sMap.Module, {
 			var layer = e.layer;
 			if (layer && layer.name) {
 				var t = sMap.cmd.getLayerConfig( layer.name );
-				if (!t.legend || !t.legend.hover || !t.legend.hover.url) {
+				if (!t || !t.legend || !t.legend.hover || !t.legend.hover.url) {
 					return;
 				}
 				var src = t.legend.hover.url;

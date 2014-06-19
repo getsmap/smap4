@@ -84,8 +84,9 @@ var config = {
 	projection : "EPSG:3008",
 	//projection : "EPSG:3006",
 	//resolutions : [27.781305, 13.229193, 5.291677, 2.645839], // EPSG:3008
-	resolutions : [27.781305, 13.229193, 5.291677, 2.645839], // EPSG:3008
+	//resolutions : [27.781305, 13.229193, 5.291677, 2.645839], // EPSG:3008
 	//resolutions : [ 200, 100, 50, 25, 10, 5, 2, 1 ], // EPSG:3006
+	resolutions : [67.733504,50.800128,33.866752,25.400064,16.933376,12.700032,8.466688,4.233344,2.116672,1.058336,0.529168,0.26458483,0.132292415], // EPSG:3008
 	
 	// EPSG:3006
 	/*maxExtent : {
@@ -103,10 +104,10 @@ var config = {
 	
 	// EPSG:3008
 	maxExtent : {
-		w : 97000,
-		s : 6148000,
-		e : 139000,
-		n : 6175000
+		w : 104853,
+		s : 6150876,
+		e : 131653,
+		n : 6171076
 	},
 	defaultExtent : {
 		w : 104853,
@@ -313,12 +314,12 @@ var config = {
 				displayInLayerSwitcher: true,
 				//tooltip: "Lorem lopsum Lorem lopsum Lorem lopsum Lorem lopsum Lorem lopsum Lorem lopsum Lorem lopsum",
 				URL: document.location.protocol + "//xyz.malmo.se/data_e/tilecache/malmo/",
-				layer : "malmo_op2012_tagbuller2012",
+				layer : "malmo_karta_tagbuller_verksamhet",
 				layerType : "tilecache",
 				params : {},
 				options : {
-					resolutions : [27.781305, 13.229193, 5.291677, 2.645839], // EPSG:3008
-					maxExtent: new OpenLayers.Bounds(104853,6150876,131653,6171076),	
+					resolutions : [67.733504,50.800128,33.866752,25.400064,16.933376,12.700032,8.466688,4.233344,2.116672,1.058336,0.529168,0.26458483,0.132292415], 
+					maxExtent: new OpenLayers.Bounds(110000,6151000,128100,6169100),	
 					buffer : 0,
 					transitionEffect : null,
 					format : "image/png",
@@ -583,6 +584,26 @@ var config = {
 		],
 		
 		baselayers : [
+			
+			{
+				displayName : "Stadskarta",
+				name : "stadskartan",  // ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto
+				URL: document.location.protocol + "//xyz.malmo.se/data_e/tilecache/malmo/",
+				layer : "malmo_karta_verksamhet",
+				layerType : "tilecache",
+				category : "Karta",
+				options : {
+					resolutions : [67.733504,50.800128,33.866752,25.400064,16.933376,12.700032,8.466688,4.233344,2.116672,1.058336,0.529168,0.26458483,0.132292415], 
+					maxExtent: new OpenLayers.Bounds(97000,6148000,139000,6175000),
+					buffer : 0,
+					transitionEffect : null,
+					format : "image/png",
+					zIndex: 50,
+					isBaseLayer : true,
+					attribution : "<a href='mailto:stadsatlas@malmo.se?subject=Malmö Stadsatlas'>© Stadsbyggnadskontoret, Malmö stad</a>"
+				},
+				copyright : [ "Malmö stadsbyggnadskontor", "mailto:stadsatlas@malmo.se?subject=Stadsatlas" ]
+			},
 			{
 				displayName : "Stadskarta s/v",
 				name : "karta_sv",  // ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto
@@ -603,26 +624,6 @@ var config = {
 				},
 				copyright : [ "Malmö stadsbyggnadskontor", "mailto:stadsatlas@malmo.se?subject=Stadsatlas" ]
 			},
-			{
-				displayName : "Stadskarta",
-				name : "stadskartan",  // ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto
-				URL: document.location.protocol + "//xyz.malmo.se/data_e/tilecache/malmo/",
-				layer : "malmo_karta",
-				layerType : "tilecache",
-				category : "Karta",
-				options : {
-					resolutions : [27.781305, 13.229193, 5.291677, 2.645839, 1.322919],
-					maxExtent: new OpenLayers.Bounds(104853,6150876,131653,6171076),	
-					buffer : 0,
-					transitionEffect : null,
-					format : "image/png",
-					zIndex: 50,
-					isBaseLayer : true,
-					attribution : "<a href='mailto:stadsatlas@malmo.se?subject=Malmö Stadsatlas'>© Stadsbyggnadskontoret, Malmö stad</a>"
-				},
-				copyright : [ "Malmö stadsbyggnadskontor", "mailto:stadsatlas@malmo.se?subject=Stadsatlas" ]
-			},
-		
 			{
 				displayName : "Fotokarta 2013",
 				name : "orto",  /* ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto  */
