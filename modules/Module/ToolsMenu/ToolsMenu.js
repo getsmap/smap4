@@ -184,7 +184,7 @@ sMap.Module.ToolsMenu = OpenLayers.Class(sMap.Module, {
 			$(dropDown).css({
 				"left" : btnOffset.left,
 				"position" : "absolute",
-				"top" :  btnOffset.top + height -3
+				"top" :  btn.position().top + height - 1
 			});		
 			
 		});
