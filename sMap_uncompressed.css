@@ -261,33 +261,6 @@ div, span, p, button, label {
 	width: 100%;
 	height: 100%;
 	font-weight: bold;
-}
-
-
-
-
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-	/* IE 10 < */
-	
-	.bLayerSwitcher-dropDown {
-		position: absolute;
-		margin-top: 1.9em;
-	}
-	
-	#smapDiv {
-		margin-top: 0 !important; /*When adding malmo-header margin-top is not needed in IE*/
-	}
-
-	#searchBox {
-		max-height: 4em;
-		display: inline-block !important;
-	}
-
-	#toolbar-maindiv {
-		display: block !important;
-	}
-
-
 }.aldreboenden-popup {
 	display: block;
 	min-width: 200px;
@@ -2368,3 +2341,43 @@ div.olControlMousePosition {
 .toolsmenu-rows .ui-state-hover
 .toolsmenu-rows .ui-state-active
 */
+body {
+	font-family: "Trebuchet MS",sans-serif !important;	
+}
+
+
+a {
+	outline: none;	
+}
+
+.toolsmenu-dropdown {
+	background: #fff !important;
+}
+
+/*.baselayer-button.ui-state-default { 
+	transition: background 400ms, color 400ms;
+	-webkit-transition: background 400ms, color 400ms;
+}*/
+
+.toolsmenu-rows .ui-state-default {
+	background: #fff !important;
+}
+.toolsmenu-rows .ui-state-hover {
+	background: #F7F7F7 !important;
+}
+.toolsmenu-rows .ui-state-active {
+	background: #3E5F9C !important;
+	color: #fff !important;
+}
+
+.toolsmenu-mainbutton.ui-state-active {
+	background: #fff !important;
+	border-color: #cdcdcd !important;
+}
+
+.baselayer-button-clicked {
+	background: #fff !important;
+	background: rgba(255,255,255,.9) !important;
+}
+
+
