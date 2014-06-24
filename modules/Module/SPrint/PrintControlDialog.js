@@ -98,7 +98,6 @@
 				
 				// $(".ui-dialog-titlebar-close", ui.dialog).hide();
 			},
-			beforeClose : Core.bind(this, this.beforeDialogclose),
 			close : Core.bind(this, this.onDialogclose),
 			autoOpen: false
 		});
@@ -111,23 +110,6 @@
 		});
 
 		var that = this;
-		$("#sprint_Print_chkUseMask").click(function() {
-			that.toggleMaskEditing();
-		});
-		if(!this.core.module.usePrintMask){
-			$("#sprint_Print_chkUseMask").hide();
-			$("#sprint_Print_chkUseMaskLbl").hide();
-		}
-		$("#sprint_Print_btnDraw").button();
-		$("#sprint_Print_btnDraw").click(function() {
-			that.toggleDraw();
-		});
-		$("#sprint_Print_btnDraw").hide();
-		$("#sprint_Print_btnClear").button();
-		$("#sprint_Print_btnClear").click(function() {
-			that.clearDraw();
-		});
-		$("#sprint_Print_btnClear").hide();
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -180,110 +162,7 @@
 		}
 		this.setCurrentScale(); // set scale also
 	};
-	/*
-	 * Toggles draw and clear buttons for print mask
-	 */
-	PrintControlDialog.prototype.toggleMaskEditing = function(){
-		if ($("#sprint_Print_btnDraw").is(":visible")) {
-			$("#sprint_Print_btnDraw").hide();
-			$("#sprint_Print_btnClear").hide();
-			this.maskEditingLayer.setVisibility(false);
-		}else{
-			$("#sprint_Print_btnDraw").show();
-			$("#sprint_Print_btnClear").show();
-			this.addMaskEditingLayer();
-		}
-	};
-	/*
-	 * Adds a vector layer for mask editing with an OL drawfeature control
-	 */
-	PrintControlDialog.prototype.addMaskEditingLayer = function(){
-		if (!this.maskEditingLayer) {
-			this.maskEditingLayer = new OpenLayers.Layer.Vector("sprint_maskeditlayer", {
-				styleMap: new OpenLayers.StyleMap({
-					"default": new OpenLayers.Style({
-						fillOpacity: 0,
-						fillColor: "#FFF",
-						strokeWidth: 1,
-						strokeOpacity: 1,
-						strokeColor: "#F00"
-					}),
-					"temporary": new OpenLayers.Style({
-						fillOpacity: 0,
-						fillColor: "#FFF",
-						strokeWidth: 1,
-						strokeOpacity: 1,
-						strokeColor: "#F00"
-					})
-				})
-			});
-			this.map.addLayer(this.maskEditingLayer);
-			this.maskEditingLayer.events.register("featureadded", this, function(e) {
-				this.toggleDraw();
-			});
-			this.drawPolygon = new OpenLayers.Control.DrawFeature(
-					this.maskEditingLayer, OpenLayers.Handler.Polygon, {
-						title: "Rita",
-						multi: true
-				});
-			this.map.addControl(this.drawPolygon);
-		}
-		else{
-			this.maskEditingLayer.setVisibility(true);
-		}
 		
-	};
-	/*
-	 * Toggles the OL drawfeature control
-	 */
-	PrintControlDialog.prototype.toggleDraw = function(){
-		if (this.drawPolygon.active){
-			this.drawPolygon.deactivate();
-		}
-		else{
-			this.drawPolygon.activate();
-		}
-	};
-	/*
-	 * Clears all drawed features
-	 */
-	PrintControlDialog.prototype.clearDraw = function(){
-		this.maskEditingLayer.removeAllFeatures();
-	};
-	/*
-	 * Adds a vector layer when printing. The layer contains the extent feature minus the drawed features in a white style
-	 */
-	PrintControlDialog.prototype.addMaskLayer = function(){
-		if (this.maskEditingLayer.features.length>0){
-			if (!this.maskLayer) {
-				this.maskLayer = new OpenLayers.Layer.Vector("sprint_masklayer", {
-					styleMap: new OpenLayers.StyleMap({
-						"default": new OpenLayers.Style({
-							fillOpacity: 1,
-							fillColor: "#ffffff",
-							strokeWidth: 1,
-							strokeOpacity: 1,
-							strokeColor: "#ffffff"
-						})
-					})
-				});
-				this.map.addLayer(this.maskLayer);
-			}
-			var maskFeature = this.subtract(this.extentLayer.features[0], this.maskEditingLayer.features);
-			this.maskLayer.addFeatures([maskFeature]);
-		}
-	};
-	
-	PrintControlDialog.prototype.subtract = function(bigFeature, smallFeatures) {
-	    var newPolygon = new OpenLayers.Geometry.Polygon(bigFeature.geometry.components);
-	    var newFeature = new OpenLayers.Feature.Vector(newPolygon);
-	    //Add Inner DONUT HOLES!
-	    for (var i = 0; i<smallFeatures.length;i++){
-	    	newPolygon.addComponent(smallFeatures[i].geometry.components[0].components[0]);
-	    }
-
-	    return newFeature;
-	};
 	PrintControlDialog.prototype.showExtent = function(scale) {
 		if (!scale || typeof(scale) !== "number") {
 			scale = this.printScale || this.map.getScale();
@@ -473,16 +352,10 @@
 		    onComplete = options.onComplete || null,
 		    orientation = options.orientation || "Portrait"; // portrait or landscape
 		
-		if ($("#sprint_Print_chkUseMask:checked").val() !== undefined) {
-			this.addMaskLayer();
-		}
-		if (this.maskEditingLayer) {
-			this.maskEditingLayer.setVisibility(false);			
-		}
 		if (this.extentLayer) {
 			this.map.removeLayer(this.extentLayer);			
 		}
-
+		
 		this.service = service;  //K-M
 		var that = this;
 		var map = options.map || this.core.module.map;
@@ -619,19 +492,9 @@
 				}
 			});
 		}
-		// Remove the mask
-		if (this.maskLayer) {
-			this.maskLayer.destroyFeatures();
-			this.map.removeLayer(this.maskLayer);	
-			this.maskLayer.destroy();
-			this.maskLayer = null;
-		}
 		// Put it back again
 		if (this.extentLayer) {
 			this.map.addLayer(this.extentLayer);			
-		}
-		if (this.maskEditingLayer) {
-			this.maskEditingLayer.setVisibility(true);			
 		}
 	};
 	/**
@@ -1008,16 +871,7 @@
 		}
 		return a.href;
 	};
-	/*
-	 * Turn off mask editing before close of the dialog
-	 */
-	PrintControlDialog.prototype.beforeDialogclose = function(e) {
-		if (this.maskEditingLayer && this.maskEditingLayer.visibility){
-			$('#sprint_Print_chkUseMask').prop('checked', false);
-			this.toggleMaskEditing();
-		}
-	};
-	
+
 	PrintControlDialog.prototype.onDialogclose = function(e) {
 		this.core.module.deactivate();
 		//this.core.dialogCloseClicked = true;
