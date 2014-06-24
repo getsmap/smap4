@@ -98,13 +98,14 @@ sMap.Module.ScaleSelector = OpenLayers.Class(sMap.Module, {
 		var resolutions = this.map.resolutions;
 		var scaleOptions = ""; 
 
-		for(var arrIndex in resolutions){
+		for (var i=0,len=resolutions.length; i<len; i++) {
+		    //(var arrIndex in resolutions){
 			
 			//The default OL DOTS_PER_INCH is 72 therefore it had to be changed to 96 in oder to match 
 			//the scale from this map resolution
 			OpenLayers.DOTS_PER_INCH = 96;
 			
-			var scale = parseInt(Math.round( OpenLayers.Util.getScaleFromResolution(resolutions[arrIndex], "m") ));
+			var scale = parseInt(Math.round( OpenLayers.Util.getScaleFromResolution(resolutions[i], "m") ));
 			scaleOptions =  scaleOptions + "<option value='" + scale + "'>" + "1:" + scale + "</option>";
 		}
 
