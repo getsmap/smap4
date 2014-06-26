@@ -17415,6 +17415,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	bindAutocompleteToId : function(searchInput) {
 		// Set watermark text to search field
     	searchInput.attr("placeholder", this.startText);
+    	searchInput.placeholder();
 		
 		var autoCompleteScriptUrl = null;
 		
