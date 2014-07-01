@@ -103,7 +103,6 @@
     height: auto;
     border: none;
     margin-top: 10px;
-    overflow-y: auto;
 }
 
 /*input.layertree {
@@ -113,6 +112,11 @@
     height: 14px !important;
     display: inline-block;
 }*/
+
+.layertree-maindiv {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 
 .layertree-maindiv .dynatree-checkbox-faded {
     margin-left: 3px;

@@ -255,7 +255,7 @@ var config = {
 //	jqTheme: "orange",
 	jqTheme: "gray-flat",
 	
-	rootURL: "http://www.malmo.se/karta/", 
+	rootURL: "http://www.test.malmo.se/karta/", 
 	//rootURL : document.URL.split("?")[0],
 	//defaultWebParams : "defaultParam=5",
 	

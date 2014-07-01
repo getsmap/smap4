@@ -161,6 +161,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	bindAutocompleteToId : function(searchInput) {
 		// Set watermark text to search field
     	searchInput.attr("placeholder", this.startText);
+    	searchInput.placeholder();
 		
 		var autoCompleteScriptUrl = null;
 		
@@ -240,8 +241,8 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 			else {
 				sMap.events.triggerEvent("addmarkerataddress", this, {
 				    poi : paramsObj.POI,
-				    zoom : paramsObj.ZOOM || this.zoomLevel
-				    //center : paramsObj.CENTER || null    not implemented yet
+					zoom: paramsObj.ZOOM || this.zoomLevel,
+					center: paramsObj.CENTER || null
 				});
 			}
 		}
@@ -489,11 +490,12 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 				poiLayer.setZIndex(699);
 			}
 			if (setCenter === true) {
-                if (feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon"||feature.geometry.CLASS_NAME == "OpenLayers.Geometry.LineString"){
+                if (!e.center && feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon"||feature.geometry.CLASS_NAME == "OpenLayers.Geometry.LineString"){	
                 	sMap.map.zoomToExtent(feature.geometry.getBounds());
                 }
                 else {
-                    sMap.map.setCenter(new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y), theZoom);
+                	var coords = e.center ? (e.center instanceof Array ? e.center : e.center.split(",")) : [feature.geometry.x, feature.geometry.y]
+                    sMap.map.setCenter(new OpenLayers.LonLat(coords), theZoom);
                 }
             }
 						
@@ -657,7 +659,9 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	 * Handle coordinate-search.
 	 */
 	
-	handleCoords : function(userCoordinates){
+	handleCoords : function(userCoordinates, options){
+		options = options || {};
+
 		var self = this;
 		//Allow for both period and comma as decimal-seperator.
 		var theCoords = userCoordinates.replace(",",".");
@@ -705,8 +709,8 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		}
 		
 		sMap.events.triggerEvent("addmarkeratcoords", this, {
-			    coords : diffCoords, //x,y 
-			    zoom : this.zoomLevel,
+			    coords : options.center || diffCoords, //x,y 
+			    zoom : options.zoom || this.zoomLevel,
 			    epsg : theEpsg,
 			    allCoordinates : allCoords
 			    //center : paramsObj.CENTER || null    not implemented yet

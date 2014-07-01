@@ -17088,13 +17088,14 @@ sMap.Module.ScaleSelector = OpenLayers.Class(sMap.Module, {
 		var resolutions = this.map.resolutions;
 		var scaleOptions = ""; 
 
-		for(var arrIndex in resolutions){
+		for (var i=0,len=resolutions.length; i<len; i++) {
+		    //(var arrIndex in resolutions){
 			
 			//The default OL DOTS_PER_INCH is 72 therefore it had to be changed to 96 in oder to match 
 			//the scale from this map resolution
 			OpenLayers.DOTS_PER_INCH = 96;
 			
-			var scale = parseInt(Math.round( OpenLayers.Util.getScaleFromResolution(resolutions[arrIndex], "m") ));
+			var scale = parseInt(Math.round( OpenLayers.Util.getScaleFromResolution(resolutions[i], "m") ));
 			scaleOptions =  scaleOptions + "<option value='" + scale + "'>" + "1:" + scale + "</option>";
 		}
 
@@ -17414,6 +17415,7 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	bindAutocompleteToId : function(searchInput) {
 		// Set watermark text to search field
     	searchInput.attr("placeholder", this.startText);
+    	searchInput.placeholder();
 		
 		var autoCompleteScriptUrl = null;
 		
@@ -17493,8 +17495,8 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 			else {
 				sMap.events.triggerEvent("addmarkerataddress", this, {
 				    poi : paramsObj.POI,
-				    zoom : paramsObj.ZOOM || this.zoomLevel
-				    //center : paramsObj.CENTER || null    not implemented yet
+					zoom: paramsObj.ZOOM || this.zoomLevel,
+					center: paramsObj.CENTER || null
 				});
 			}
 		}
@@ -17742,11 +17744,12 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 				poiLayer.setZIndex(699);
 			}
 			if (setCenter === true) {
-                if (feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon"||feature.geometry.CLASS_NAME == "OpenLayers.Geometry.LineString"){
+                if (!e.center && feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon"||feature.geometry.CLASS_NAME == "OpenLayers.Geometry.LineString"){	
                 	sMap.map.zoomToExtent(feature.geometry.getBounds());
                 }
                 else {
-                    sMap.map.setCenter(new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y), theZoom);
+                	var coords = e.center ? (e.center instanceof Array ? e.center : e.center.split(",")) : [feature.geometry.x, feature.geometry.y]
+                    sMap.map.setCenter(new OpenLayers.LonLat(coords), theZoom);
                 }
             }
 						
@@ -17910,7 +17913,9 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	 * Handle coordinate-search.
 	 */
 	
-	handleCoords : function(userCoordinates){
+	handleCoords : function(userCoordinates, options){
+		options = options || {};
+
 		var self = this;
 		//Allow for both period and comma as decimal-seperator.
 		var theCoords = userCoordinates.replace(",",".");
@@ -17958,8 +17963,8 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		}
 		
 		sMap.events.triggerEvent("addmarkeratcoords", this, {
-			    coords : diffCoords, //x,y 
-			    zoom : this.zoomLevel,
+			    coords : options.center || diffCoords, //x,y 
+			    zoom : options.zoom || this.zoomLevel,
 			    epsg : theEpsg,
 			    allCoordinates : allCoords
 			    //center : paramsObj.CENTER || null    not implemented yet
@@ -20170,8 +20175,6 @@ sMap.Module.SPrint = OpenLayers.Class(sMap.Module, {
 		// default is otherwise 72.
 		DOTS_PER_INCH: 96,
 		
-		usePrintMask : true,
-		
 		printCopyrightNotice: '<div id="print-dialog-userconditions" class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0" style="width: auto; min-height: 0px; height: 183px;">För utdrag från kartan/flygfotot till tryck eller annan publicering, krävs tillstånd från Malmö Stadsbyggnadskontor. Vid frågor om tillstånd, användningsområden eller kartprodukter kontaktas Stadsbyggnadskontorets kartförsäljning: 040-34 24 35 eller <a href="mailto:sbk.sma@malmo.se?subject=Best%E4lla karta">sbk.sma@malmo.se</a>.<br><strong>Accepterar du villkoren?</strong></div>'
 };
 sMap.Lang.lang.SPrint = {
@@ -20415,7 +20418,6 @@ sMap.Lang.lang.SPrint = {
 				
 				// $(".ui-dialog-titlebar-close", ui.dialog).hide();
 			},
-			beforeClose : Core.bind(this, this.beforeDialogclose),
 			close : Core.bind(this, this.onDialogclose),
 			autoOpen: false
 		});
@@ -20428,23 +20430,6 @@ sMap.Lang.lang.SPrint = {
 		});
 
 		var that = this;
-		$("#sprint_Print_chkUseMask").click(function() {
-			that.toggleMaskEditing();
-		});
-		if(!this.core.module.usePrintMask){
-			$("#sprint_Print_chkUseMask").hide();
-			$("#sprint_Print_chkUseMaskLbl").hide();
-		}
-		$("#sprint_Print_btnDraw").button();
-		$("#sprint_Print_btnDraw").click(function() {
-			that.toggleDraw();
-		});
-		$("#sprint_Print_btnDraw").hide();
-		$("#sprint_Print_btnClear").button();
-		$("#sprint_Print_btnClear").click(function() {
-			that.clearDraw();
-		});
-		$("#sprint_Print_btnClear").hide();
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -20497,110 +20482,7 @@ sMap.Lang.lang.SPrint = {
 		}
 		this.setCurrentScale(); // set scale also
 	};
-	/*
-	 * Toggles draw and clear buttons for print mask
-	 */
-	PrintControlDialog.prototype.toggleMaskEditing = function(){
-		if ($("#sprint_Print_btnDraw").is(":visible")) {
-			$("#sprint_Print_btnDraw").hide();
-			$("#sprint_Print_btnClear").hide();
-			this.maskEditingLayer.setVisibility(false);
-		}else{
-			$("#sprint_Print_btnDraw").show();
-			$("#sprint_Print_btnClear").show();
-			this.addMaskEditingLayer();
-		}
-	};
-	/*
-	 * Adds a vector layer for mask editing with an OL drawfeature control
-	 */
-	PrintControlDialog.prototype.addMaskEditingLayer = function(){
-		if (!this.maskEditingLayer) {
-			this.maskEditingLayer = new OpenLayers.Layer.Vector("sprint_maskeditlayer", {
-				styleMap: new OpenLayers.StyleMap({
-					"default": new OpenLayers.Style({
-						fillOpacity: 0,
-						fillColor: "#FFF",
-						strokeWidth: 1,
-						strokeOpacity: 1,
-						strokeColor: "#F00"
-					}),
-					"temporary": new OpenLayers.Style({
-						fillOpacity: 0,
-						fillColor: "#FFF",
-						strokeWidth: 1,
-						strokeOpacity: 1,
-						strokeColor: "#F00"
-					})
-				})
-			});
-			this.map.addLayer(this.maskEditingLayer);
-			this.maskEditingLayer.events.register("featureadded", this, function(e) {
-				this.toggleDraw();
-			});
-			this.drawPolygon = new OpenLayers.Control.DrawFeature(
-					this.maskEditingLayer, OpenLayers.Handler.Polygon, {
-						title: "Rita",
-						multi: true
-				});
-			this.map.addControl(this.drawPolygon);
-		}
-		else{
-			this.maskEditingLayer.setVisibility(true);
-		}
 		
-	};
-	/*
-	 * Toggles the OL drawfeature control
-	 */
-	PrintControlDialog.prototype.toggleDraw = function(){
-		if (this.drawPolygon.active){
-			this.drawPolygon.deactivate();
-		}
-		else{
-			this.drawPolygon.activate();
-		}
-	};
-	/*
-	 * Clears all drawed features
-	 */
-	PrintControlDialog.prototype.clearDraw = function(){
-		this.maskEditingLayer.removeAllFeatures();
-	};
-	/*
-	 * Adds a vector layer when printing. The layer contains the extent feature minus the drawed features in a white style
-	 */
-	PrintControlDialog.prototype.addMaskLayer = function(){
-		if (this.maskEditingLayer.features.length>0){
-			if (!this.maskLayer) {
-				this.maskLayer = new OpenLayers.Layer.Vector("sprint_masklayer", {
-					styleMap: new OpenLayers.StyleMap({
-						"default": new OpenLayers.Style({
-							fillOpacity: 1,
-							fillColor: "#ffffff",
-							strokeWidth: 1,
-							strokeOpacity: 1,
-							strokeColor: "#ffffff"
-						})
-					})
-				});
-				this.map.addLayer(this.maskLayer);
-			}
-			var maskFeature = this.subtract(this.extentLayer.features[0], this.maskEditingLayer.features);
-			this.maskLayer.addFeatures([maskFeature]);
-		}
-	};
-	
-	PrintControlDialog.prototype.subtract = function(bigFeature, smallFeatures) {
-	    var newPolygon = new OpenLayers.Geometry.Polygon(bigFeature.geometry.components);
-	    var newFeature = new OpenLayers.Feature.Vector(newPolygon);
-	    //Add Inner DONUT HOLES!
-	    for (var i = 0; i<smallFeatures.length;i++){
-	    	newPolygon.addComponent(smallFeatures[i].geometry.components[0].components[0]);
-	    }
-
-	    return newFeature;
-	};
 	PrintControlDialog.prototype.showExtent = function(scale) {
 		if (!scale || typeof(scale) !== "number") {
 			scale = this.printScale || this.map.getScale();
@@ -20790,16 +20672,10 @@ sMap.Lang.lang.SPrint = {
 		    onComplete = options.onComplete || null,
 		    orientation = options.orientation || "Portrait"; // portrait or landscape
 		
-		if ($("#sprint_Print_chkUseMask:checked").val() !== undefined) {
-			this.addMaskLayer();
-		}
-		if (this.maskEditingLayer) {
-			this.maskEditingLayer.setVisibility(false);			
-		}
 		if (this.extentLayer) {
 			this.map.removeLayer(this.extentLayer);			
 		}
-
+		
 		this.service = service;  //K-M
 		var that = this;
 		var map = options.map || this.core.module.map;
@@ -20936,19 +20812,9 @@ sMap.Lang.lang.SPrint = {
 				}
 			});
 		}
-		// Remove the mask
-		if (this.maskLayer) {
-			this.maskLayer.destroyFeatures();
-			this.map.removeLayer(this.maskLayer);	
-			this.maskLayer.destroy();
-			this.maskLayer = null;
-		}
 		// Put it back again
 		if (this.extentLayer) {
 			this.map.addLayer(this.extentLayer);			
-		}
-		if (this.maskEditingLayer) {
-			this.maskEditingLayer.setVisibility(true);			
 		}
 	};
 	/**
@@ -21325,16 +21191,7 @@ sMap.Lang.lang.SPrint = {
 		}
 		return a.href;
 	};
-	/*
-	 * Turn off mask editing before close of the dialog
-	 */
-	PrintControlDialog.prototype.beforeDialogclose = function(e) {
-		if (this.maskEditingLayer && this.maskEditingLayer.visibility){
-			$('#sprint_Print_chkUseMask').prop('checked', false);
-			this.toggleMaskEditing();
-		}
-	};
-	
+
 	PrintControlDialog.prototype.onDialogclose = function(e) {
 		this.core.module.deactivate();
 		//this.core.dialogCloseClicked = true;
