@@ -2888,7 +2888,7 @@ var config = {
 				displayName : "Fotokarta 2012",
 				name : "orto",  /* ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto  */
 				URL : document.location.protocol + '//xyz.malmo.se/data_e/tilecache/malmo/',
-				layer : "malmo_ortofoto",
+				layer : "malmo_ortofoto_2012",
 				layerType : "tilecache",
 				category : "Fotokarta",
 				options : {
