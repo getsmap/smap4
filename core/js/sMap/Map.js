@@ -78,6 +78,9 @@ sMap.Map = OpenLayers.Class({
 		
 		
 		this.addLibs();
+
+		sMap.events = new sMap.Events(this, null, null);
+		this.addSmapEventTypes();
 		
 		/*
 		 * Get the configuration file. If no path/URL provided in the parameters,
@@ -154,8 +157,6 @@ sMap.Map = OpenLayers.Class({
 		}
 		this.config = sMap.config;
 		sMap.db.browser = $.browser;
-		sMap.events = new sMap.Events(this, null, null);
-		this.addSmapEventTypes();
 		
 		var ok = this.validateConfig(sMap.config);
 		// Add proxy

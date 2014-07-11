@@ -4124,3 +4124,13 @@ config.onConfigLoaded = function(c, onDone) {
 	});
 };
 
+
+sMap.events.register("maploaded", this, function() {
+	var func = function() {
+		$(".toolbar-entry").off("focus", func);
+		alert("OBS! Det är för närvarande problem med adressdatabasen vilket gör att vissa adresser inte är sökbara.");
+	}
+	$(".toolbar-entry").on("focus", func);
+});
+
+
