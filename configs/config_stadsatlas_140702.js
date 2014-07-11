@@ -34,7 +34,7 @@ var planApp = {
 			},
 			"Förskola & utbildning": {
 				hideCheckbox: true,
-				tooltip: " Förskola & utbildning <br> &nbsp; > Planerade förskolor <br> &nbsp; > Kommunala förskolor <br> &nbsp; > Icke kommunala förskolor <br> &nbsp; > Grundskola <br> &nbsp; > Gymnasieskola <br> &nbsp; > Högskola & universitet <br> &nbsp; > Övriga skolor ",
+				tooltip: " Förskola & utbildning <br> &nbsp; > Kommunala förskolor <br> &nbsp; > Icke kommunala förskolor <br> &nbsp; > Grundskola <br> &nbsp; > Gymnasieskola <br> &nbsp; > Högskola & universitet <br> &nbsp; > Övriga skolor ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
@@ -255,7 +255,7 @@ var config = {
 //	jqTheme: "orange",
 	jqTheme: "gray-flat",
 	
-	rootURL: "http://www.malmo.se/karta/", 
+	rootURL: "http://www.test.malmo.se/karta/", 
 	//rootURL : document.URL.split("?")[0],
 	//defaultWebParams : "defaultParam=5",
 	
@@ -432,67 +432,6 @@ var config = {
 					}
 				}
 			},
-	
-
-			{
-				displayName: 'Planerade förskolor',
-				name: "planfsk",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Förskola & utbildning"],
-				displayInLayerSwitcher: true,
-				URL: "http://xyz.malmo.se/geoserver/wms?",
-				selectAttributes: ["${id}"],
-				params : {
-					layers: "malmows:POI_PLANERADE_FORSKOLOR_PT",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 350,
-					singleTile : false
-				},
-				popup :
-					"<div class='popup-header1'>Planerad förskola</div>" +
-					"<div class='popup-text1'>${namn}</div>"+
-					"<div class='popup-text1'>${adr}</div>"+
-					"<div class='popup-text1'><a href='${url}' target='_blank'>Läs mer</a></div>",
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://xyz.malmo.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:POI_PLANERADE_FORSKOLOR_PT&version=1.1.1&format=image/png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://xyz.malmo.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:POI_PLANERADE_FORSKOLOR_PT&version=1.1.1&format=image/png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
-			},			
-			
 			{
 				displayName: 'Kommunala förskolor',
 				name: "kommunal_forskola",
@@ -510,8 +449,8 @@ var config = {
 				options : {
 					isBaseLayer: false,
 					opacity: "0.90",
-					zIndex: 350,
-					singleTile : true
+					zIndex: 126,
+					singleTile : false
 				},
 				popup :
 					"<div class='popup-header1'>Kommunal förskola</div>" +
@@ -567,11 +506,11 @@ var config = {
 				options : {
 					isBaseLayer: false,
 					opacity: "0.90",
-					zIndex: 350,
-					singleTile : true
+					zIndex: 126,
+					singleTile : false
 				},
 				popup :
-					"<div class='popup-header1'>Icke kommunal förskola</div>" +
+					"<div class='popup-header1'>Kommunal förskola</div>" +
 					"<div class='popup-text1'>${namn}</div>"+
 					"<div class='popup-text1'><a href='${url}' target='_blank'>Läs mer</a></div>",
 				blixtable : false, 
@@ -625,7 +564,7 @@ var config = {
 					isBaseLayer: false,
 					opacity: "0.90",
 					zIndex: 126,
-					singleTile : true
+					singleTile : false
 				},
 				popup :
 					"<div class='popup-header1'>${objekttyp3}</div>" +
@@ -682,7 +621,7 @@ var config = {
 					isBaseLayer: false,
 					opacity: "0.90",
 					zIndex: 126,
-					singleTile : true
+					singleTile : false
 				},
 				popup :
 					"<div class='popup-header1'>${objekttyp3}</div>" +
@@ -739,7 +678,7 @@ var config = {
 					isBaseLayer: false,
 					opacity: "0.90",
 					zIndex: 126,
-					singleTile : true
+					singleTile : false
 				},
 				popup :
 					"<div class='popup-header1'>${objekttyp3}</div>" +
@@ -1698,66 +1637,6 @@ var config = {
 					}
 				}
 			},
-
-			{
-				displayName: 'Stadsdel (gäller tom juni 2013)',
-				name: "stadsdel_tom",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Kommun & politik", "Stadsområden & delområden"],
-				displayInLayerSwitcher: true,
-				URL: "http://xyz.malmo.se/geoserver/wms?",
-				selectAttributes: ["${fid}"],
-				params : {
-					layers: "malmows:SMA_STADSDEL_P",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 126,
-					singleTile : true
-				},
-				popup :
-					"<div class='popup-header1'>Stadsdel</div>" +
-					"<div class='popup-text1'>${sdfname}</div>",
-					selectable : true, getFeatureInfo: {geometryName: "geom"},
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://xyz.malmo.se/bilder/kartsymboler/bb_stadsomr.png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/bb_stadsomr.png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	//externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
-			},
-
-			
 			{
 				displayName: 'Museum & konst',
 				name: "museum",
@@ -2105,17 +1984,16 @@ var config = {
 				}
 			},
 			{
-				displayName: 'Antagna planer',
-				name: "antagna_planer",
+				displayName: 'Handikapptoalett',
+				name: "handikapp",
 				layerType : "wms",
 				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Stadsplanering & trafik", "Stadsplanering & visioner", "Planer"],
+				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
 				displayInLayerSwitcher: true,
-				URL: "http://xyz.malmo.se/geoserver/wms?",
+				URL: "http://geoserver.smap.se/geoserver/wms?",
 				selectAttributes: ["${fid}"],
 				params : {
-					//layers: "malmows:SMA_PLANOMR_P",
-					layers: "malmows:SMA_DP_ADP_YTOR_P",
+					layers: "malmows:V_GK_TOA_HANDIKAPP_PT",
 					format: "image/png",
 					transparent: "true"
 				}, 
@@ -2126,11 +2004,323 @@ var config = {
 					singleTile : false
 				},
 				popup :
-					"<div class='popup-header1'>Detaljplan</div>" +
-					"<div class='popup-text1'><a href='${url}' target='_blank'>${plan}, Läs mer</div>" +
-					"<br>" +
-					"<div class='popup-text1'><a href='http://xyz.malmo.se/urbex/index.htm?p=true&xy=${easting};${northing}' target='_blank'>Visa snedbild</div>",
-					selectable : true, getFeatureInfo: {geometryName: "geom"},
+					"<div class='popup-header1'>Toalett</div>" +
+					"<div class='popup-header3'>${namn}</div>" +
+					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
+					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
+					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
+					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
+					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
+					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",
+				blixtable : false, 
+				selectable : true,
+				getFeatureInfo: {geometryName: "geom"},
+				geomType : 'point',
+				startVisible : false,
+				legend : {
+					hover: {
+						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_HANDIKAPP_PT&version=1.1.1&format=image/png"
+					}
+				},		
+				copyright : [],
+				style: {
+					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_HANDIKAPP_PT&version=1.1.1&format=image/png"},
+					"select": {
+						rules: [
+						        new OpenLayers.Rule({
+						        	filter: new OpenLayers.Filter.Comparison({
+						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
+						        	}),
+						        	// if a feature matches the above filter, use this style
+						        	symbolizer: {
+								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
+							        }
+						        }),
+						        new OpenLayers.Rule({								
+						        	elseFilter: true,
+						           	// if a feature matches the above filter, use this style
+						        	symbolizer: {}
+						        })
+						]
+					}
+				}
+			},
+			{
+				displayName: 'Offentliga toaletter',
+				name: "offentligatoaletter",
+				layerType : "wms",
+				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
+				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
+				displayInLayerSwitcher: true,
+				URL: "http://geoserver.smap.se/geoserver/wms?",
+				selectAttributes: ["${fid}"],
+				params : {
+					layers: "malmows:V_GK_TOA_PT",
+					format: "image/png",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: false,
+					opacity: "0.90",
+					zIndex: 126,
+					singleTile : false
+				},
+				popup :
+					"<div class='popup-header1'>Toalett</div>" +
+					"<div class='popup-header3'>${namn}</div>" +
+					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
+					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
+					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
+					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
+					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
+					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",				
+				blixtable : false, 
+				selectable : true,
+				getFeatureInfo: {geometryName: "geom"},
+				geomType : 'point',
+				startVisible : false,
+				legend : {
+					hover: {
+						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PT&version=1.1.1&format=image/png"
+					}
+				},		
+				copyright : [],
+				style: {
+					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PT&version=1.1.1&format=image/png"},
+					"select": {
+						rules: [
+						        new OpenLayers.Rule({
+						        	filter: new OpenLayers.Filter.Comparison({
+						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
+						        	}),
+						        	// if a feature matches the above filter, use this style
+						        	symbolizer: {
+								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
+							        }
+						        }),
+						        new OpenLayers.Rule({								
+						        	elseFilter: true,
+						           	// if a feature matches the above filter, use this style
+						        	symbolizer: {}
+						        })
+						]
+					}
+				}
+			},
+			{
+				displayName: 'Offentliga toaletter (avgift)',
+				name: "offentligatoaletterAvgift",
+				layerType : "wms",
+				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
+				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
+				displayInLayerSwitcher: true,
+				URL: "http://geoserver.smap.se/geoserver/wms?",
+				selectAttributes: ["${fid}"],
+				params : {
+					layers: "malmows:V_GK_TOA_AVGIFT_PT",
+					format: "image/png",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: false,
+					opacity: "0.90",
+					zIndex: 126,
+					singleTile : false
+				},
+				popup :
+					"<div class='popup-header1'>Toalett</div>" +
+					"<div class='popup-header3'>${namn}</div>" +
+					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
+					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
+					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
+					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
+					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
+					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",				
+				blixtable : false, 
+				selectable : true,
+				getFeatureInfo: {geometryName: "geom"},
+				geomType : 'point',
+				startVisible : false,
+				legend : {
+					hover: {
+						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_AVGIFT_PT&version=1.1.1&format=image/png"
+					}
+				},		
+				copyright : [],
+				style: {
+					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_AVGIFT_PT&version=1.1.1&format=image/png"},
+					"select": {
+						rules: [
+						        new OpenLayers.Rule({
+						        	filter: new OpenLayers.Filter.Comparison({
+						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
+						        	}),
+						        	// if a feature matches the above filter, use this style
+						        	symbolizer: {
+								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
+							        }
+						        }),
+						        new OpenLayers.Rule({								
+						        	elseFilter: true,
+						           	// if a feature matches the above filter, use this style
+						        	symbolizer: {}
+						        })
+						]
+					}
+				}
+			},
+			{
+				displayName: 'Skötbord',
+				name: "skotbord",
+				layerType : "wms",
+				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
+				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
+				displayInLayerSwitcher: true,
+				URL: "http://geoserver.smap.se/geoserver/wms?",
+				selectAttributes: ["${fid}"],
+				params : {
+					layers: "malmows:V_GK_TOA_SKOTBORD_PT",
+					format: "image/png",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: false,
+					opacity: "0.90",
+					zIndex: 126,
+					singleTile : false
+				},
+				popup :
+					"<div class='popup-header1'>Toalett</div>" +
+					"<div class='popup-header3'>${namn}</div>" +
+					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
+					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
+					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
+					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
+					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
+					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",				
+				blixtable : false, 
+				selectable : true,
+				getFeatureInfo: {geometryName: "geom"},
+				geomType : 'point',
+				startVisible : false,
+				legend : {
+					hover: {
+						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_SKOTBORD_PT&version=1.1.1&format=image/png"
+					}
+				},		
+				copyright : [],
+				style: {
+					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_SKOTBORD_PT&version=1.1.1&format=image/png"},
+					"select": {
+						rules: [
+						        new OpenLayers.Rule({
+						        	filter: new OpenLayers.Filter.Comparison({
+						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
+						        	}),
+						        	// if a feature matches the above filter, use this style
+						        	symbolizer: {
+								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
+							        }
+						        }),
+						        new OpenLayers.Rule({								
+						        	elseFilter: true,
+						           	// if a feature matches the above filter, use this style
+						        	symbolizer: {}
+						        })
+						]
+					}
+				}
+			},
+			{
+				displayName: 'PinkIn',
+				name: "pinkin",
+				layerType : "wms",
+				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
+				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
+				displayInLayerSwitcher: true,
+				URL: "http://geoserver.smap.se/geoserver/wms?",
+				selectAttributes: ["${fid}"],
+				params : {
+					layers: "malmows:V_GK_TOA_PISSOAR_PT",
+					format: "image/png",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: false,
+					opacity: "0.90",
+					zIndex: 126,
+					singleTile : false
+				},
+				popup :
+					"<div class='popup-header1'>Toalett</div>" +
+					"<div class='popup-header3'>${namn}</div>" +
+					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
+					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
+					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
+					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
+					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
+					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",	
+				blixtable : false, 
+				selectable : true,
+				getFeatureInfo: {geometryName: "geom"},
+				geomType : 'point',
+				startVisible : false,
+				legend : {
+					hover: {
+						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PISSOAR_PT&version=1.1.1&format=image/png"
+					}
+				},		
+				copyright : [],
+				style: {
+					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PISSOAR_PT&version=1.1.1&format=image/png"},
+					"select": {
+						rules: [
+						        new OpenLayers.Rule({
+						        	filter: new OpenLayers.Filter.Comparison({
+						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
+						        	}),
+						        	// if a feature matches the above filter, use this style
+						        	symbolizer: {
+								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
+							        }
+						        }),
+						        new OpenLayers.Rule({								
+						        	elseFilter: true,
+						           	// if a feature matches the above filter, use this style
+						        	symbolizer: {}
+						        })
+						]
+					}
+				}
+			},
+			{
+				displayName: 'Antagna planer',
+				name: "antagna_planer",
+				layerType : "wms",
+				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
+				category : ["Stadsplanering & trafik", "Stadsplanering & visioner", "Planer"],
+				displayInLayerSwitcher: true,
+				URL: "http://xyz.malmo.se/geoserver/wms?",
+				selectAttributes: ["${fid}"],
+				params : {
+					layers: "malmows:SMA_PLANOMR_P",
+					format: "image/png",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: false,
+					opacity: "0.90",
+					zIndex: 126,
+					singleTile : false
+				},
+				popup :
+					"<div class='popup-header1'>Antagna planer</div>" +
+					"<div class='popup-text1'>${plan}</div>" +
+					"<a href='${url}' class='popup-text1' target='_blank'>Läs mer</a>" +
+					"<div class='popup-text1'>${plan2}</div>" +
+					"<a href='${url2}' class='popup-text1' target='_blank'>Läs mer</a>" +
+					"<div class='popup-text1'>${plan3}</div>" +
+					"<a href='${url3}' class='popup-text1' target='_blank'>Läs mer</a>",					
 				blixtable : false, 
 				selectable : true,
 				getFeatureInfo: {geometryName: "geom"},
@@ -2223,69 +2413,6 @@ var config = {
 					}
 				}
 			},
-
-			{
-				displayName: 'Pågående planprogram',
-				name: "sma_pagaende_planprogam",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Stadsplanering & trafik", "Stadsplanering & visioner", "Planer"],
-				displayInLayerSwitcher: true,
-				URL: "http://xyz.malmo.se/geoserver/wms?",
-				selectAttributes: ["${fid}"],
-				params : {
-					layers: "malmows:SMA_PAGAENDE_PLANPROGRAM_P",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 126,
-					singleTile : false
-				},
-				popup :
-					"<div class='popup-header1'>Pågående planprogram</div>" +
-					"<div class='popup-text1'>${plan}</div>" +
-					"<div class='popup-text1'>${plan2}</div>" +
-					"<div class='popup-text1'>${plan3}</div>" +
-					"<a href='${url}' class='popup-text1' target='_blank'>Läs mer</a>",				
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://xyz.malmo.se/bilder/kartsymboler/bb_pagaendePlanprogram.png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/bb_pagaendePlanprogram.png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	//externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
-			},
-			
-			
-			/*
 			{
 				displayName : 'Översiktsplan 2005',
 				name: "oversiktsplan_2005",
@@ -2321,7 +2448,6 @@ var config = {
 					"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/oversiktsplan.png"}
 				}
 			},			
-*/
 			{
 				displayName: "Arkitektur från 1500-talet",
 				name: "arkitektur1500",
@@ -2696,319 +2822,7 @@ var config = {
 				style: {
 					"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/cykelvag.png"}
 				}
-			},
-			
-			{
-				displayName: 'Handikapptoalett',
-				name: "handikapp",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
-				displayInLayerSwitcher: true,
-				URL: "http://geoserver.smap.se/geoserver/wms?",
-				selectAttributes: ["${fid}"],
-				params : {
-					layers: "malmows:V_GK_TOA_HANDIKAPP_PT",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 126,
-					singleTile : false
-				},
-				popup :
-					"<div class='popup-header1'>Toalett</div>" +
-					"<div class='popup-header3'>${namn}</div>" +
-					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
-					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
-					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
-					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
-					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
-					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_HANDIKAPP_PT&version=1.1.1&format=image/png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_HANDIKAPP_PT&version=1.1.1&format=image/png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
-			},
-			{
-				displayName: 'Offentliga toaletter',
-				name: "offentligatoaletter",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
-				displayInLayerSwitcher: true,
-				URL: "http://geoserver.smap.se/geoserver/wms?",
-				selectAttributes: ["${fid}"],
-				params : {
-					layers: "malmows:V_GK_TOA_PT",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 126,
-					singleTile : false
-				},
-				popup :
-					"<div class='popup-header1'>Toalett</div>" +
-					"<div class='popup-header3'>${namn}</div>" +
-					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
-					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
-					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
-					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
-					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
-					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",				
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PT&version=1.1.1&format=image/png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PT&version=1.1.1&format=image/png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
-			},
-			{
-				displayName: 'Offentliga toaletter (avgift)',
-				name: "offentligatoaletterAvgift",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
-				displayInLayerSwitcher: true,
-				URL: "http://geoserver.smap.se/geoserver/wms?",
-				selectAttributes: ["${fid}"],
-				params : {
-					layers: "malmows:V_GK_TOA_AVGIFT_PT",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 126,
-					singleTile : false
-				},
-				popup :
-					"<div class='popup-header1'>Toalett</div>" +
-					"<div class='popup-header3'>${namn}</div>" +
-					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
-					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
-					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
-					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
-					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
-					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",				
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_AVGIFT_PT&version=1.1.1&format=image/png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_AVGIFT_PT&version=1.1.1&format=image/png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
-			},
-			{
-				displayName: 'Skötbord',
-				name: "skotbord",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
-				displayInLayerSwitcher: true,
-				URL: "http://geoserver.smap.se/geoserver/wms?",
-				selectAttributes: ["${fid}"],
-				params : {
-					layers: "malmows:V_GK_TOA_SKOTBORD_PT",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 126,
-					singleTile : false
-				},
-				popup :
-					"<div class='popup-header1'>Toalett</div>" +
-					"<div class='popup-header3'>${namn}</div>" +
-					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
-					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
-					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
-					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
-					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
-					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",				
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_SKOTBORD_PT&version=1.1.1&format=image/png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_SKOTBORD_PT&version=1.1.1&format=image/png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
-			},
-			{
-				displayName: 'PinkIn',
-				name: "pinkin",
-				layerType : "wms",
-				//dialogContent: "http://xyz.malmo.se/op_data_aug_2013/2_planeringsriktlinjer/1_bebyggelse/blandad_stadsbebyggelse/html/blandad_stadsbebyggelse.htm",
-				category : ["Stadsplanering & trafik", "Skötsel & underhåll", "Offentliga toaletter"],
-				displayInLayerSwitcher: true,
-				URL: "http://geoserver.smap.se/geoserver/wms?",
-				selectAttributes: ["${fid}"],
-				params : {
-					layers: "malmows:V_GK_TOA_PISSOAR_PT",
-					format: "image/png",
-					transparent: "true"
-				}, 
-				options : {
-					isBaseLayer: false,
-					opacity: "0.90",
-					zIndex: 126,
-					singleTile : false
-				},
-				popup :
-					"<div class='popup-header1'>Toalett</div>" +
-					"<div class='popup-header3'>${namn}</div>" +
-					"<span class='popup-text1'>Avgift: </span><span class='popup-text2'>${avgift}</span>" + 
-					"<br /><span class='popup-text1'>Handikapptoalett: </span><span class='popup-text2'>${handikapptoalett}</span>" + 
-					"<br /><span class='popup-text1'>Skötbord: </span><span class='popup-text2'>${skotbord}</span>" + 
-					"<br /><span class='popup-text1'>April-sept: </span><span class='popup-text2'>${oppettider_1}</span>" + 
-					"<br /><span class='popup-text1'>Oktober-mars: </span><span class='popup-text2'>${oppettider_2}</span>" +
-					"<br /><a href='${bild}' class='popup-text1' target='_blank'><img class='popup-img1' src='${bild}' /></a>",	
-				blixtable : false, 
-				selectable : true,
-				getFeatureInfo: {geometryName: "geom"},
-				geomType : 'point',
-				startVisible : false,
-				legend : {
-					hover: {
-						url: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PISSOAR_PT&version=1.1.1&format=image/png"
-					}
-				},		
-				copyright : [],
-				style: {
-					"default": {externalGraphic: "http://geoserver.smap.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:V_GK_TOA_PISSOAR_PT&version=1.1.1&format=image/png"},
-					"select": {
-						rules: [
-						        new OpenLayers.Rule({
-						        	filter: new OpenLayers.Filter.Comparison({
-						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
-						        	}),
-						        	// if a feature matches the above filter, use this style
-						        	symbolizer: {
-								    	externalGraphic: 'http://xyz.malmo.se/rest/2.0/map/img/Generell_select/cirkel_medium_turkos.png'
-							        }
-						        }),
-						        new OpenLayers.Rule({								
-						        	elseFilter: true,
-						           	// if a feature matches the above filter, use this style
-						        	symbolizer: {}
-						        })
-						]
-					}
-				}
 			}
-			
 		],
 		
 		baselayers : [
@@ -3032,8 +2846,6 @@ var config = {
 				},
 				copyright : [ "Malmö stadsbyggnadskontor", "mailto:stadsatlas@malmo.se?subject=Stadsatlas" ]
 			},
-
-
 			{
 				displayName : "Häradskartan&nbsp;1912",
 				name : "malmokarta1912",
@@ -3072,31 +2884,9 @@ var config = {
 				},
 				copyright : [ "Lantmäteriet", "http://www.lantmateriet.se" ]
 			},
-
-			{
-				displayName : "Fotokarta 2013",
-				name : "orto",  /* ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto  */
-				URL : document.location.protocol + '//xyz.malmo.se/data_e/tilecache/malmo/',
-				layer : "malmo_ortofoto",
-				layerType : "tilecache",
-				category : "Fotokarta",
-				options : {
-					resolutions : [27.781305, 13.229193, 5.291677, 2.645839, 1.322919, 0.529168, 0.26458483],
-					maxExtent: new OpenLayers.Bounds(104853,6150876,131653,6171076),
-					//maxExtent: new OpenLayers.Bounds(110000,6151000,128100,6169100),	
-					buffer : 0,
-					transitionEffect : null,
-					format : "image/jpg",
-					zIndex: 50,
-					isBaseLayer : true,
-					attribution : "<a href='http://www.lantmateriet.se' target='_blank'>© Lantmäteriet</a>"
-				},
-				copyright : [ "Lantmäteriet", "http://www.lantmateriet.se" ]
-			},
-
 			{
 				displayName : "Fotokarta 2012",
-				name : "orto_2012",  /* ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto  */
+				name : "orto",  /* ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto  */
 				URL : document.location.protocol + '//xyz.malmo.se/data_e/tilecache/malmo/',
 				layer : "malmo_ortofoto_2012",
 				layerType : "tilecache",
@@ -3113,7 +2903,6 @@ var config = {
 				},
 				copyright : [ "Lantmäteriet", "http://www.lantmateriet.se" ]
 			},
-
 			{
 				displayName : "Fotokarta 2011",
 				name : "orto11",  /* ska ej vara årtal på "name", om vi har med årtal kommer gamla länkar inte funka om vi byter till nytt ortofoto  */
@@ -3201,12 +2990,10 @@ var config = {
 //			init : sMap.Module.LayerLoaderNotifier,
 //			config : {}
 //		},
-
 		{
 			init : sMap.Module.MalmoHeader,
 			config : {}
 		},
-
 		{
 			init : sMap.Module.Toolbar,
 			config : {
@@ -3254,10 +3041,10 @@ var config = {
 				dropDownWidth : 130
 			}
 		},
-		{
-			init : sMap.Module.ScaleBar,
-			config : {}
-		},
+//		{
+//			init : sMap.Module.ScaleBar,
+//			config : {}
+//		},
 		 {
 			init : sMap.Module.ScaleSelector,
 			config : {
@@ -3276,9 +3063,8 @@ var config = {
 				encSpace: "%2b",
 				poiLayer: {
 					popup: "<div class='popup-header1'>${name}</div>" +
-					/*	"<a class='popup-text1' href='${url}' target='_blank'>Läs mer</a><br>" +  */
-						"<a class='popup-text1' href='${url_snedbild}' target='_blank'>Visa snedbild</a><br><br>" +
-						"<div class='popup-text2'>${stadsomr}</div>" + 						
+						"<a class='popup-text1' href='${url}' target='_blank'>Läs mer</a><br>" +
+						"<div class='popup-text2'>${sdf}</div>" + 						
 						"<div class='popup-text2'>${delomr}</div>" + 
 						"<div class='popup-text2'>${fast}</div>" +
 						"<div class='popup-text2'>${iv_siffr}</div>" +
@@ -3358,7 +3144,7 @@ var config = {
 			config: {
 				displayName: "Hjälp",
 				toolbarIndex: 1,
-				content: "http://xyz.malmo.se/stadsatlas/hjalp/hjalp.htm",
+				content: "http://xyz.malmo.se/mkarta/hallbartLarande/informationskarta/hjalp/hjalp.htm",
 				dialog: {
 					title: "Hjälp",
 					width: "720",
@@ -4089,6 +3875,26 @@ var obsLayers = [
 ];
 
 
+var extraModules = [
+		{
+			init : sMap.Module.RedirectClick,
+			config : {
+				displayName : 'Visa Gatuvy',
+				url: "http://sbkspace.malmo.se/cyclomedia/index.htm?posx=${x}&posy=${y}",
+				overrideName: "gatuvy",
+				btnLabel: "Gatuvy",
+		//		btnHover: "Verktyg för att se gatuvy",
+				buttonId: "redirect-gatuvy",
+				buttonCss: "ui-icon-arrowstop-1-e",
+				toolbarIndex : 5,
+				mouseMoveText: "Klicka i kartan för att se gatuvy"				
+			}
+		}
+                    
+];
+
+
+
 
 
 
@@ -4108,18 +3914,20 @@ if ($.browser.msie && parseInt($.browser.version) < 8) {
 
 config.onConfigLoaded = function(c, onDone) {
 	$.ajax({
-		url: "http://xyz.malmo.se/WS/wsMalmo/ipOK.py",
+		url: "http://xyz.malmo.se/WS/wsMalmo/ipOK.py", //"http://localhost/cgi-bin/wsSmap4/malmo/ipOK.py", //"http://xyz.malmo.se/WS/wsMalmo/ipOK.py",
 		dataType: "json",
 		success: function(data) {
-			if (data.valid) {
-				c.layers.overlays = c.layers.overlays.concat(obsLayers);				
+			data.valid = true;
+			if (data.valid && data.valid === true) {
+				c.layers.overlays = c.layers.overlays.concat(obsLayers);
+				c.modules = c.modules.concat(extraModules);
 			}
 		},
 		error: function(a,text,c) {
 			debug.log("Could not fetch IP");
 		},
 		complete: function() {
-			onDone();			
+			onDone();
 		}
 	});
 };

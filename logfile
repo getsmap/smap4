@@ -1,0 +1,124 @@
+LOG:  database system was shut down at 2014-06-27 17:11:35 CEST
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+ERROR:  relation "public.hembygdsgardar_4326" does not exist at character 118
+STATEMENT:  insert into public.cultplaces (the_geom, txt_name, txtarr_categories)
+	select (the_geom, Namn, '{hembygdsgård}')
+	from public.Hembygdsgardar_4326;
+ERROR:  relation "hembygdsgardar_4326" does not exist at character 111
+STATEMENT:  insert into cultplaces (the_geom, txt_name, txtarr_categories)
+	select (the_geom, Namn, '{hembygdsgård}')
+	from Hembygdsgardar_4326;
+ERROR:  relation "hembygdsgardar_4326" does not exist at character 109
+STATEMENT:  insert into cultplaces (the_geom, txt_name, txtarr_categories)
+	select the_geom, Namn, '{hembygdsgård}'
+	from Hembygdsgardar_4326;
+ERROR:  column "namn" does not exist at character 81
+STATEMENT:  insert into cultplaces (the_geom, txt_name, txtarr_categories)
+	select the_geom, Namn, '{hembygdsgård}'
+	from hembygdsgardar_4326;
+ERROR:  column "namn" does not exist at character 81
+STATEMENT:  insert into cultplaces (the_geom, txt_name, txtarr_categories)
+	select the_geom, namn, '{hembygdsgård}'
+	from hembygdsgardar_4326;
+ERROR:  array value must start with "{" or dimension information at character 64
+STATEMENT:  update cultplaces
+	set txtarr_categories = txtarr_categories || 'test'
+	WHERE  ('test' = ANY(txtarr_categories)) IS NOT TRUE;
+ERROR:  array value must start with "{" or dimension information at character 64
+STATEMENT:  update cultplaces
+	set txtarr_categories = txtarr_categories || 'test'
+	where  ('test' = any(txtarr_categories)) is not true;
+ERROR:  syntax error at or near "{" at character 64
+STATEMENT:  update cultplaces
+	set txtarr_categories = txtarr_categories || {'test'}
+	where  ('test' = any(txtarr_categories)) is not true;
+ERROR:  column "txtarr_categories" is of type text[] but expression is of type text at character 43
+HINT:  You will need to rewrite or cast the expression.
+STATEMENT:  update cultplaces
+	set txtarr_categories = txtarr_categories[0]
+	where  ('test' = any(txtarr_categories)) is true;
+ERROR:  syntax error at or near "{" at character 43
+STATEMENT:  update cultplaces
+	set txtarr_categories = {txtarr_categories[0]}
+	where  ('test' = any(txtarr_categories)) is true;
+ERROR:  operator does not exist: unknown | text at character 47
+HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
+STATEMENT:  update cultplaces
+	set txtarr_categories = '{' | txtarr_categories[0] | '}'
+	where  ('test' = any(txtarr_categories)) is true;
+ERROR:  column "txtarr_categories" is of type text[] but expression is of type text at character 43
+HINT:  You will need to rewrite or cast the expression.
+STATEMENT:  update cultplaces
+	set txtarr_categories = '{' || txtarr_categories[0] || '}'
+	where  ('test' = any(txtarr_categories)) is true;
+ERROR:  column "txtarr_categories" is of type text[] but expression is of type text at character 43
+HINT:  You will need to rewrite or cast the expression.
+STATEMENT:  update cultplaces
+	set txtarr_categories = txtarr_categories[0];
+ERROR:  column "textarr_categories" does not exist at character 8
+STATEMENT:  select textarr_categories
+	from cultplaces
+ERROR:  column "textarr_categories" does not exist at character 8
+STATEMENT:  select textarr_categories
+	from cultplaces;
+ERROR:  Geometry type (Polygon) does not match column type (MultiPolygon)
+STATEMENT:  INSERT INTO "public"."kult_byggnader"("name","Kulturen","Byggnadsnr","the_geom") VALUES ('Blekingegrden','En vlbrgad bondefamiljs hem, tidigt 1800-tal.','19',st_geometryfromtext('POLYGON ((13.197762900000169 55.705152199978244,13.197810200000177 55.705140899978282,13.197809000000179 55.705139599978246,13.197937300000209 55.705108499978294,13.197933800000188 55.705104899978267,13.198007600000166 55.705086399978256,13.197964900000187 55.705030199978268,13.197712000000177 55.70509239997822,13.19775650000015 55.705146599978264,13.197758400000176 55.705146199978252,13.197762900000169 55.705152199978244))',-1))
+ERROR:  Geometry type (Polygon) does not match column type (MultiPolygon)
+STATEMENT:  INSERT INTO "public"."kult_markanv"("osm_id","name","type","the_geom") VALUES ('0',NULL,'Grnyta',st_geometryfromtext('POLYGON ((13.197569400000168 55.704457699978292,13.197585444537332 55.7044543503496,13.197540407554133 55.704400531737868,13.197385208157195 55.704442450207381,13.197423500375912 55.704492256618174,13.197569400000168 55.704457699978292))',-1))
+LOG:  received smart shutdown request
+LOG:  autovacuum launcher shutting down
+LOG:  unexpected EOF on client connection with an open transaction
+LOG:  shutting down
+LOG:  database system is shut down
+LOG:  database system was shut down at 2014-07-02 10:23:29 CEST
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+LOG:  automatic analyze of table "kulturkartan.pg_catalog.pg_class" system usage: CPU 0.00s/0.00u sec elapsed 0.10 sec
+LOG:  received smart shutdown request
+LOG:  autovacuum launcher shutting down
+FATAL:  the database system is shutting down
+LOG:  shutting down
+LOG:  database system is shut down
+LOG:  database system was shut down at 2014-07-02 10:42:17 CEST
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+LOG:  automatic analyze of table "kulturkartan.pg_catalog.pg_attribute" system usage: CPU 0.00s/0.01u sec elapsed 0.12 sec
+ERROR:  Geometry type (Polygon) does not match column type (MultiPolygon)
+STATEMENT:  INSERT INTO "public"."kult_byggnader"("name","Kulturen","Byggnadsnr","the_geom") VALUES ('Blekingegården','En välbärgad bondefamiljs hem, tidigt 1800-tal.','19',st_geometryfromtext('POLYGON ((13.197762900000169 55.705152199978244,13.197810200000177 55.705140899978282,13.197809000000179 55.705139599978246,13.197937300000209 55.705108499978294,13.197933800000188 55.705104899978267,13.198007600000166 55.705086399978256,13.197964900000187 55.705030199978268,13.197712000000177 55.70509239997822,13.19775650000015 55.705146599978264,13.197758400000176 55.705146199978252,13.197762900000169 55.705152199978244))',-1))
+ERROR:  Geometry type (Polygon) does not match column type (MultiPolygon)
+STATEMENT:  INSERT INTO "public"."kult_markanv"("osm_id","name","type","the_geom") VALUES ('0',NULL,'Grönyta',st_geometryfromtext('POLYGON ((13.197569400000168 55.704457699978292,13.197585444537332 55.7044543503496,13.197540407554133 55.704400531737868,13.197385208157195 55.704442450207381,13.197423500375912 55.704492256618174,13.197569400000168 55.704457699978292))',-1))
+ERROR:  geometry requires more points
+HINT:  "....196103099957641 55.704635989669107)" <-- parse error at position 51 within geometry
+STATEMENT:  INSERT INTO "public"."kult_gangnat"("Kommentar","the_geom") VALUES (NULL,st_geometryfromtext('LINESTRING (13.196103099957641 55.704635989669107)',-1))
+LOG:  automatic analyze of table "kulturkartan.public.kult_byggnader2" system usage: CPU 0.00s/0.00u sec elapsed 0.03 sec
+ERROR:  Geometry type (Polygon) does not match column type (MultiPolygon)
+STATEMENT:  INSERT INTO "public"."kult_byggnader"("name","Kulturen","Byggnadsnr","the_geom") VALUES ('Blekingegården','En välbärgad bondefamiljs hem, tidigt 1800-tal.','19',st_geometryfromtext('POLYGON ((13.197762900000169 55.705152199978244,13.197810200000177 55.705140899978282,13.197809000000179 55.705139599978246,13.197937300000209 55.705108499978294,13.197933800000188 55.705104899978267,13.198007600000166 55.705086399978256,13.197964900000187 55.705030199978268,13.197712000000177 55.70509239997822,13.19775650000015 55.705146599978264,13.197758400000176 55.705146199978252,13.197762900000169 55.705152199978244))',-1))
+ERROR:  Geometry type (Polygon) does not match column type (MultiPolygon)
+STATEMENT:  INSERT INTO "public"."kult_markanv"("osm_id","name","type","the_geom") VALUES ('0',NULL,'Grönyta',st_geometryfromtext('POLYGON ((13.197569400000168 55.704457699978292,13.197585444537332 55.7044543503496,13.197540407554133 55.704400531737868,13.197385208157195 55.704442450207381,13.197423500375912 55.704492256618174,13.197569400000168 55.704457699978292))',-1))
+ERROR:  geometry requires more points
+HINT:  "....196103099957641 55.704635989669107)" <-- parse error at position 51 within geometry
+STATEMENT:  INSERT INTO "public"."kult_gangnat"("Kommentar","the_geom") VALUES (NULL,st_geometryfromtext('LINESTRING (13.196103099957641 55.704635989669107)',-1))
+LOG:  automatic analyze of table "kulturkartan.pg_catalog.pg_type" system usage: CPU 0.00s/0.00u sec elapsed 0.07 sec
+LOG:  automatic vacuum of table "kulturkartan.pg_catalog.pg_attribute": index scans: 1
+	pages: 0 removed, 58 remain
+	tuples: 168 removed, 2443 remain
+	buffer usage: 81 hits, 24 misses, 23 dirtied
+	avg read rate: 3.682 MB/s, avg write rate: 3.528 MB/s
+	system usage: CPU 0.00s/0.00u sec elapsed 0.05 sec
+ERROR:  relation "kult_vagnat" already exists
+STATEMENT:  CREATE TABLE "public"."kult_vagnat"("id" serial PRIMARY KEY)
+LOG:  automatic analyze of table "kulturkartan.pg_catalog.pg_attribute" system usage: CPU 0.00s/0.01u sec elapsed 0.08 sec
+LOG:  automatic analyze of table "kulturkartan.pg_catalog.pg_class" system usage: CPU 0.00s/0.00u sec elapsed 0.02 sec
+LOG:  automatic vacuum of table "kulturkartan.pg_catalog.pg_statistic": index scans: 1
+	pages: 0 removed, 23 remain
+	tuples: 48 removed, 418 remain
+	buffer usage: 87 hits, 1 misses, 13 dirtied
+	avg read rate: 0.319 MB/s, avg write rate: 4.141 MB/s
+	system usage: CPU 0.00s/0.00u sec elapsed 0.02 sec
+LOG:  automatic analyze of table "kulturkartan.public.cultplaces" system usage: CPU 0.00s/0.01u sec elapsed 0.05 sec
+LOG:  automatic analyze of table "kulturkartan.public.cultplaces" system usage: CPU 0.00s/0.02u sec elapsed 0.05 sec
+LOG:  autovacuum launcher shutting down
+LOG:  received smart shutdown request
+LOG:  shutting down
+LOG:  database system is shut down
