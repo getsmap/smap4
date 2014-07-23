@@ -255,7 +255,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 	},
 	
@@ -284,7 +284,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 		
 	},
@@ -602,7 +602,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 			// 'add' let's listener know if the selection was added to previous
 			// selection without comparing the arrays above.
 			add : add,
-			xy: options.xy || (this.handlers.click && this.handlers.click.evt ? this.handlers.click.evt.xy : null)
+			xy: options.xy || (this.handlers.click && this.handlers.click.evt && this.handlers.click.active ? this.handlers.click.evt.xy : null)
 		});
 	},
 	/**
