@@ -52,7 +52,11 @@ sMap.Module.SelectTool = OpenLayers.Class(sMap.Module, {
 		if (this.active===true) {
 			return false;
 		}
-		sMap.events.triggerEvent("selectboxmode", this, {});
+		if (!this.dialogDiv){
+			this.dialogDiv = this.makeSelectDialog();
+			this.addDialogContent(this.dialogDiv);
+		}
+		this.dialogDiv.dialog("open");
 		// Call the activate method of the parent class
 		return sMap.Module.prototype.activate.apply(
 	            this, arguments);
@@ -62,7 +66,12 @@ sMap.Module.SelectTool = OpenLayers.Class(sMap.Module, {
 		if (this.active!==true) {
 			return false;
 		}
-		sMap.events.triggerEvent("selectclickmode", this, {});
+		if (this.dialogDiv && this.dialogDiv.dialog("isOpen") === true) {
+			return this.dialogDiv.dialog("close");
+		} else {
+			sMap.events.triggerEvent("selectclickmode", this, {});
+			$("#sel-click").prop("checked", true).button('refresh');
+		}
 		// Call the deactivate method of the parent class
 		return sMap.Module.prototype.deactivate.apply(
 	            this, arguments
@@ -85,12 +94,67 @@ sMap.Module.SelectTool = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent(eventChooser, this, {
 			index : this.toolbarIndex,
 			label : eventChooser=="addtomenu" ? this.lang.buttonText : null,
-			hoverText : this.lang.buttonText,
-			iconCSS : "btnselectbox", 
+			hoverText : this.lang.hoverText,
+			iconCSS : "btnselectbox", //"ui-icon-arrowthick-1-nw",
 			tagID : "button-selecttool"
 		});
 	}, 
-	
+	/**
+	 * Make the dialog to which all html is added.
+	 */
+	makeSelectDialog : function() {
+		var dialogDiv = $("<div id='selectDialogDiv' />");
+		this.dialogDiv = dialogDiv;
+		var self = this;
+		dialogDiv.dialog({
+			autoOpen : false,
+			title : this.lang.dialogTitle,
+			position : this.dialogStartPosition,
+			width : this.width,
+			height : this.height,
+			resizable : true,
+			close : function() {
+				// Deactivate module
+				self.deactivate.call(self);
+			},
+			open : null
+		});
+
+		return dialogDiv;
+	},
+	/**
+	 * Construct the dialog content
+	 * @param dialogDiv
+	 */
+	addDialogContent : function(dialogDiv) {
+		var self = this;
+		var helptext = $("<div>"+this.lang.helptext+"</div><br />");
+		dialogDiv.append(helptext);
+		var divhtml = "<span id='sel-digidiv'> <input type='radio' id='sel-click' name='radio' checked='checked' value='sel'><label for='sel-click'>"+this.lang.clickButtonText+"</label>"+
+		   "<input type='radio' id='sel-box' name='radio'><label for='sel-box' value='box'>"+this.lang.boxButtonText+"</label></span>",
+			digidiv = $(divhtml);
+		digidiv.buttonset();
+		digidiv.change(function(){
+			self.toggleSelect();
+		});
+		dialogDiv.append(digidiv);
+		var clearbutton = $("<button id='sel-clear'>"+this.lang.clearButtonText+"</button>");
+		clearbutton.click(function() {
+			sMap.events.triggerEvent("unselect", self, {});
+		});
+		clearbutton.button();
+		dialogDiv.append(clearbutton);
+	},
+	toggleSelect: function(){
+		var state = $("#sel-digidiv :radio:checked").attr('id');
+		if (state==="sel-click"){
+			sMap.events.triggerEvent("selectclickmode", self, {});
+		}
+		else
+		{
+			sMap.events.triggerEvent("selectboxmode", self, {});
+		}
+	},
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
 	CLASS_NAME : "sMap.Module.SelectTool"

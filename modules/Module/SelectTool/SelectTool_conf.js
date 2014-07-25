@@ -9,5 +9,11 @@ sMap.moduleConfig.SelectTool = {
 		 * Default properties
 		 */
 		toolbarIndex : 11,
-		addToToolsMenu : false
+		addToToolsMenu : false,
+		/**
+		 * Dialog size and position
+		 */
+		dialogStartPosition : [50, 30],
+		width : 360,
+		height : 140
 };
