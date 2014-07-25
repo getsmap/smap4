@@ -72,6 +72,9 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			this.exportExtentLayer.destroy();
 			this.exportExtentLayer = null;
 		}
+		if (this.dialogDiv && this.dialogDiv.dialog("isOpen") === true) {
+			return this.dialogDiv.dialog("close");
+		}
 		// Call the deactivate method of the parent class
 		return sMap.Module.prototype.deactivate.apply(
 	            this, arguments
