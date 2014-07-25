@@ -21,7 +21,7 @@ sMap.moduleConfig.SelectResult = {
 		/**
 		 * Dialog start position and size
 		 */
-		dialogStartPosition : [50,150],
+		dialogStartPosition : [50,170],
 		height : 500,
 		width: 360,
 		/**

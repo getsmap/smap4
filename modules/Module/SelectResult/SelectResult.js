@@ -154,7 +154,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 	 * @param e
 	 */
 	unselect : function(e){
-		if (e.caller.CLASS_NAME== "OpenLayers.Popup.FramedCloud"){ // When unselecting from the popup
+		if (e.caller.CLASS_NAME== "OpenLayers.Popup.FramedCloud" || e.caller.CLASS_NAME=="sMap.Module.SelectTool"){ // When unselecting from the popup
 				this.populateGrid(selectLayer.features);
 		}
 	},
@@ -211,7 +211,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 							add : true // Add to current selection.
 						});
 					}
-					self.zoomFeatures();
+					//self.zoomFeatures(); //unwanted behaviour //K-M
 				}
 				else {
 					sMap.events.triggerEvent("unselect", this, {
