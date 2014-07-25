@@ -65,6 +65,11 @@ sMap.Module.Login2 = OpenLayers.Class(sMap.Module, {
 		if (this.active!==true) {
 			return false;
 		}
+		if (this.dialogDiv && this.dialogDiv.dialog("isOpen") === true) {
+			return this.dialogDiv.dialog("close");
+		}else{
+			this.clearCache();
+		}
 		// Call the deactivate method of the parent class
 		return sMap.Module.prototype.deactivate.apply(
 	            this, arguments
@@ -114,6 +119,13 @@ sMap.Module.Login2 = OpenLayers.Class(sMap.Module, {
 		iFrame.attr("src", this.loginScriptURL);
 		dialogDiv.append(iFrame);
 		return dialogDiv;
+	},
+	/**
+	 * clear local cache
+	 */
+	clearCache : function(){
+		alert('clearCache!!');
+		OpenLayers.Control.CacheWrite.clearCache();
 	},
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
