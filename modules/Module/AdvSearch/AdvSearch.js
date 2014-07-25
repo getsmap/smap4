@@ -397,7 +397,7 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 				tempFlt[i] = new OpenLayers.Filter.Comparison({
 					type : OpenLayers.Filter.Comparison.LIKE,
 					property : property[i], 
-					matchCase : false,
+					//matchCase : false,
 					value : "*" + fobject + "*"
 				});
 				break;
@@ -555,7 +555,7 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 						$.each(self.globalLayers, function(k,val){
 							var tempParam = this.params && this.params.layers ? this.params.layers : null;
 							tempParam = this.getFeatureInfo && this.getFeatureInfo.layers ? this.getFeatureInfo.layers : tempParam;
-							tempParam = tempParam.indexOf(":")>0 ? tempParam.replace(":",",") : tempParam;
+							tempParam = tempParam.indexOf(":")>0 ? tempParam.replace(/:/g,",") : tempParam;
 							tempParam = $.inArray(typeName,tempParam.split(","));
 							if (tempParam>-1){
 								rightLayer = this;
