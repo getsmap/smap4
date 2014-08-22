@@ -18459,7 +18459,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 	},
 	
@@ -18488,7 +18488,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 		
 	},
@@ -18806,7 +18806,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 			// 'add' let's listener know if the selection was added to previous
 			// selection without comparing the arrays above.
 			add : add,
-			xy: options.xy || (this.handlers.click && this.handlers.click.evt ? this.handlers.click.evt.xy : null)
+			xy: options.xy || (this.handlers.click && this.handlers.click.evt && this.handlers.click.active ? this.handlers.click.evt.xy : null)
 		});
 	},
 	/**
@@ -19332,7 +19332,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 	 * @param e
 	 */
 	unselect : function(e){
-		if (e.caller.CLASS_NAME== "OpenLayers.Popup.FramedCloud"){ // When unselecting from the popup
+		if (e.caller.CLASS_NAME== "OpenLayers.Popup.FramedCloud" || e.caller.CLASS_NAME=="sMap.Module.SelectTool"){ // When unselecting from the popup
 				this.populateGrid(selectLayer.features);
 		}
 	},
@@ -19389,7 +19389,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 							add : true // Add to current selection.
 						});
 					}
-					self.zoomFeatures();
+					//self.zoomFeatures(); //unwanted behaviour //K-M
 				}
 				else {
 					sMap.events.triggerEvent("unselect", this, {
@@ -19591,7 +19591,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 		/**
 		 * Dialog start position and size
 		 */
-		dialogStartPosition : [50,150],
+		dialogStartPosition : [50,170],
 		height : 500,
 		width: 360,
 		/**
@@ -19710,7 +19710,11 @@ sMap.Module.SelectTool = OpenLayers.Class(sMap.Module, {
 		if (this.active===true) {
 			return false;
 		}
-		sMap.events.triggerEvent("selectboxmode", this, {});
+		if (!this.dialogDiv){
+			this.dialogDiv = this.makeSelectDialog();
+			this.addDialogContent(this.dialogDiv);
+		}
+		this.dialogDiv.dialog("open");
 		// Call the activate method of the parent class
 		return sMap.Module.prototype.activate.apply(
 	            this, arguments);
@@ -19720,7 +19724,12 @@ sMap.Module.SelectTool = OpenLayers.Class(sMap.Module, {
 		if (this.active!==true) {
 			return false;
 		}
-		sMap.events.triggerEvent("selectclickmode", this, {});
+		if (this.dialogDiv && this.dialogDiv.dialog("isOpen") === true) {
+			return this.dialogDiv.dialog("close");
+		} else {
+			sMap.events.triggerEvent("selectclickmode", this, {});
+			$("#sel-click").prop("checked", true).button('refresh');
+		}
 		// Call the deactivate method of the parent class
 		return sMap.Module.prototype.deactivate.apply(
 	            this, arguments
@@ -19743,12 +19752,67 @@ sMap.Module.SelectTool = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent(eventChooser, this, {
 			index : this.toolbarIndex,
 			label : eventChooser=="addtomenu" ? this.lang.buttonText : null,
-			hoverText : this.lang.buttonText,
-			iconCSS : "btnselectbox", 
+			hoverText : this.lang.hoverText,
+			iconCSS : "btnselectbox", //"ui-icon-arrowthick-1-nw",
 			tagID : "button-selecttool"
 		});
 	}, 
-	
+	/**
+	 * Make the dialog to which all html is added.
+	 */
+	makeSelectDialog : function() {
+		var dialogDiv = $("<div id='selectDialogDiv' />");
+		this.dialogDiv = dialogDiv;
+		var self = this;
+		dialogDiv.dialog({
+			autoOpen : false,
+			title : this.lang.dialogTitle,
+			position : this.dialogStartPosition,
+			width : this.width,
+			height : this.height,
+			resizable : true,
+			close : function() {
+				// Deactivate module
+				self.deactivate.call(self);
+			},
+			open : null
+		});
+
+		return dialogDiv;
+	},
+	/**
+	 * Construct the dialog content
+	 * @param dialogDiv
+	 */
+	addDialogContent : function(dialogDiv) {
+		var self = this;
+		var helptext = $("<div>"+this.lang.helptext+"</div><br />");
+		dialogDiv.append(helptext);
+		var divhtml = "<span id='sel-digidiv'> <input type='radio' id='sel-click' name='radio' checked='checked' value='sel'><label for='sel-click'>"+this.lang.clickButtonText+"</label>"+
+		   "<input type='radio' id='sel-box' name='radio'><label for='sel-box' value='box'>"+this.lang.boxButtonText+"</label></span>",
+			digidiv = $(divhtml);
+		digidiv.buttonset();
+		digidiv.change(function(){
+			self.toggleSelect();
+		});
+		dialogDiv.append(digidiv);
+		var clearbutton = $("<button id='sel-clear'>"+this.lang.clearButtonText+"</button>");
+		clearbutton.click(function() {
+			sMap.events.triggerEvent("unselect", self, {});
+		});
+		clearbutton.button();
+		dialogDiv.append(clearbutton);
+	},
+	toggleSelect: function(){
+		var state = $("#sel-digidiv :radio:checked").attr('id');
+		if (state==="sel-click"){
+			sMap.events.triggerEvent("selectclickmode", self, {});
+		}
+		else
+		{
+			sMap.events.triggerEvent("selectboxmode", self, {});
+		}
+	},
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
 	CLASS_NAME : "sMap.Module.SelectTool"
@@ -19764,14 +19828,32 @@ sMap.Module.SelectTool = OpenLayers.Class(sMap.Module, {
 		 * Default properties
 		 */
 		toolbarIndex : 11,
-		addToToolsMenu : false
+		addToToolsMenu : false,
+		/**
+		 * Dialog size and position
+		 */
+		dialogStartPosition : [50, 30],
+		width : 360,
+		height : 140
 };
 sMap.Lang.lang.SelectTool = {
 	"sv-SE" : {
-		buttonText : "Välj objekt"
+		buttonText : "Välj objekt",
+		hoverText : "Välj objekt avancerat",
+		dialogTitle : "Välj objekt",
+		helptext : "Håll ner Shift + Ctrl vid klick och Ctrl vid rektangel för att lägga till befintligt urval",
+		clickButtonText : "klicka",
+		boxButtonText : "rektangel",
+		clearButtonText : "Rensa urval"
 	},
 	en : { 
-		buttonText : "Select objects"
+		buttonText : "Select objects",
+		hoverText : "Advanced select objects",
+		dialogTitle : "Select objects",
+		helptext : "Press Shift + Ctrl in click mode and just Ctrl in box mode to add to current selection",
+		clickButtonText : "click",
+		boxButtonText : "box",
+		clearButtonText : "Clear selection"
 	}
 	
 };/**

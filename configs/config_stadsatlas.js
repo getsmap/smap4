@@ -20,35 +20,35 @@ var planApp = {
 			
 			"Bibliotek": {
 				hideCheckbox: true,
-				tooltip: " Bibliotek",
+				// tooltip: " Bibliotek",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
 			},
 			"Bo & bygga": {
 				hideCheckbox: true,
-				tooltip: " Offentliga toaletter <br> &nbsp; > Fastigheter <br> &nbsp; > Kvarter",
+				// tooltip: " Offentliga toaletter <br> &nbsp; > Fastigheter <br> &nbsp; > Kvarter",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
 			},
 			"Förskola & utbildning": {
 				hideCheckbox: true,
-				tooltip: " Förskola & utbildning <br> &nbsp; > Planerade förskolor <br> &nbsp; > Kommunala förskolor <br> &nbsp; > Icke kommunala förskolor <br> &nbsp; > Grundskola <br> &nbsp; > Gymnasieskola <br> &nbsp; > Högskola & universitet <br> &nbsp; > Övriga skolor ",
+				// tooltip: " Förskola & utbildning <br> &nbsp; > Planerade förskolor <br> &nbsp; > Kommunala förskolor <br> &nbsp; > Icke kommunala förskolor <br> &nbsp; > Grundskola <br> &nbsp; > Gymnasieskola <br> &nbsp; > Högskola & universitet <br> &nbsp; > Övriga skolor ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
 			},
 			"Idrott & fritid": {
 				hideCheckbox: true,
-				tooltip: " Idrott & fritid <br> &nbsp; > Bad <br> &nbsp; > Golfbanor <br> &nbsp; > Fritidsgårdar & mötesplatser <br> &nbsp; > Idrottsplatser <br> &nbsp; > Ishallar  <br> &nbsp; > Ridsport  <br> &nbsp; > Sporthallar  <br> &nbsp; > Utegym  <br> &nbsp; > Spontanidrottsplats  <br> &nbsp; > Temalekplatser  <br> &nbsp; > Lekplatser  ",
+				// tooltip: " Idrott & fritid <br> &nbsp; > Bad <br> &nbsp; > Golfbanor <br> &nbsp; > Fritidsgårdar & mötesplatser <br> &nbsp; > Idrottsplatser <br> &nbsp; > Ishallar  <br> &nbsp; > Ridsport  <br> &nbsp; > Sporthallar  <br> &nbsp; > Utegym  <br> &nbsp; > Spontanidrottsplats  <br> &nbsp; > Temalekplatser  <br> &nbsp; > Lekplatser  ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
 			},
 			"Kommun & politik": {
 				hideCheckbox: true,
-				tooltip: " Kommun & politik <br> <i> Förvaltningar & myndigheter </i> <br> &nbsp; > Förvaltningar & myndigheter <br> &nbsp; > Medborgarkontor <br> <i> Stadsområden & delområden </i> <br> &nbsp; > Delområden <br> &nbsp; > Stadsområden ",
+				// tooltip: " Kommun & politik <br> <i> Förvaltningar & myndigheter </i> <br> &nbsp; > Förvaltningar & myndigheter <br> &nbsp; > Medborgarkontor <br> <i> Stadsområden & delområden </i> <br> &nbsp; > Delområden <br> &nbsp; > Stadsområden ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {
@@ -72,28 +72,28 @@ var planApp = {
 			},	
 			"Kultur & nöje": {
 				hideCheckbox: true,
-				tooltip: " Kultur & nöje <br> &nbsp; > Museum & konst <br> &nbsp; > Teater & musik ",
+				// tooltip: " Kultur & nöje <br> &nbsp; > Museum & konst <br> &nbsp; > Teater & musik ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
 			},
 			"Miljö & hållbarhet": {
 				hideCheckbox: true,
-				tooltip: " Miljö & hållbarhet <br> &nbsp; > Återvinningscentral <br> &nbsp; > Återvinningsstation ",
+				// tooltip: " Miljö & hållbarhet <br> &nbsp; > Återvinningscentral <br> &nbsp; > Återvinningsstation ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
 			},
 			"Omsorg, vård & stöd": {
 				hideCheckbox: true,
-				tooltip: "Omsorg, vård & stöd <br> &nbsp; > Sjukhus <br> &nbsp; > Ungdomsmottagning <br> &nbsp; > Vårdcentral ",
+				// tooltip: "Omsorg, vård & stöd <br> &nbsp; > Sjukhus <br> &nbsp; > Ungdomsmottagning <br> &nbsp; > Vårdcentral ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {}
 			},
 			"Stadsplanering & trafik": {
 				hideCheckbox: true,
-				tooltip: " Stadsplanering & trafik <br> <i> Skötsel & underhåll </i> <br> &nbsp; > Handikapptoalett <br> &nbsp; > Offentliga toaletter <br> &nbsp; > Offentliga toaletter (avgift) <br> &nbsp; > Skötbord <br> &nbsp; > PinkIn <br> <i> Stadsplanering & visioner </i> <br> &nbsp; > Antagna planer <br> &nbsp; > Pågående planer <br> &nbsp; > Översiktsplan 2005 <br> &nbsp; > Arkitektur från 1500-talet <br> &nbsp; > Arkitektur från 1800-talet <br> &nbsp; > Arkitektur från 1900-talet <br> &nbsp; > Arkitektur från 2000-talet <br> <i> Trafik & hållbart resande </i> <br> &nbsp; > Buss & Tåg <br> &nbsp; > Busstationer <br> &nbsp; > Tågstationer <br> &nbsp; > Cykelpumpar <br> &nbsp; > Cykelvägar ",
+				// tooltip: " Stadsplanering & trafik <br> <i> Skötsel & underhåll </i> <br> &nbsp; > Handikapptoalett <br> &nbsp; > Offentliga toaletter <br> &nbsp; > Offentliga toaletter (avgift) <br> &nbsp; > Skötbord <br> &nbsp; > PinkIn <br> <i> Stadsplanering & visioner </i> <br> &nbsp; > Antagna planer <br> &nbsp; > Pågående planer <br> &nbsp; > Översiktsplan 2005 <br> &nbsp; > Arkitektur från 1500-talet <br> &nbsp; > Arkitektur från 1800-talet <br> &nbsp; > Arkitektur från 1900-talet <br> &nbsp; > Arkitektur från 2000-talet <br> <i> Trafik & hållbart resande </i> <br> &nbsp; > Buss & Tåg <br> &nbsp; > Busstationer <br> &nbsp; > Tågstationer <br> &nbsp; > Cykelpumpar <br> &nbsp; > Cykelvägar ",
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {
