@@ -8247,7 +8247,7 @@ var config = {
 			init: sMap.Module.Blixten,
 			config: {
 				toolbarIndex: 0,
-				margin: 406
+				margin: 390
 			}
 		},
 		{

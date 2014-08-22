@@ -482,22 +482,23 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 				primary : config.iconCSS
 			}
 		});
-// 		if (this.side=="left") {
-// 			$(button).css({
-// 				"left" : margin + "px"
-// 			});
-// 			$(buttonLabel).css({
-// 				"margin-left" : margin + "px"
-// 			});
-// 		}
-// 		else {
-// 			$(button).css({
-// 				"right" : margin + "px"
-// 			});
-// 			$(buttonLabel).css({
-// 				"margin-right" : margin + "px",
-// 				"float": "right"
-// 			});
+		if (this.side=="left") {
+			$(button).css({
+				"left" : margin + "px"
+			});
+			$(buttonLabel).css({
+				"margin-left" : margin + "px"
+			});
+		}
+		else {
+			$(button).css({
+				"right" : margin + "px"
+			});
+			$(buttonLabel).css({
+				"margin-right" : margin + "px",
+				"float": "right"
+			});
+		}
 // 			//Adding the search-input screws up things in the GUI, so we must do some tweaks.
 // 			if ($.browser.msie && parseInt($.browser.version) < 8) {
 // //				if( this.toolbarDiv.find("input:text").length > 0 ){

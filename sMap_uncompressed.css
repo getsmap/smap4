@@ -2254,11 +2254,10 @@ div.olControlMousePosition {
 	float: left; /* always float left solves IE problems */
 }
 .toolbar-title {
-	position: relative;
+	position: absolute;
 	font-size: 14px;
-	padding: 0px 0px 0px 12px;
-	line-height: 36px;
-	float: left; /* always float left solves IE problems */
+	right: 80px;
+	top: 2px;
 }
 
 
@@ -2275,7 +2274,7 @@ div.olControlMousePosition {
 	border-color: transparent;
 	display: table-cell;
 	overflow: visible !important;
-	margin: 0 !important;
+	margin: 0;
 }
 
 /* Move buttons a bit from the right side */

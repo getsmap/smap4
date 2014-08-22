@@ -21468,18 +21468,18 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 		var margin = e.margin || (this.toolbarDiv.children().length==0 ? this.buttonMarginInitial : this.buttonMargin);
 		
 		this.toolbarDiv.append(entry);
-		// if (this.side=="left") {
-		// 	entry.css({
-		// 		"margin-left" : margin+"px",
-		// 		"margin-right" : margin+"px"
-		// 	});
-		// }
-		// else {
-		// 	entry.css({
-		// 		"margin-right" : margin+"px",
-		// 		"margin-left" : margin+"px"
-		// 	});
-		// }
+		if (this.side=="left") {
+			entry.css({
+				"margin-left" : margin+"px",
+				"margin-right" : margin+"px"
+			});
+		}
+		else {
+			entry.css({
+				"margin-right" : margin+"px",
+				"margin-left" : margin+"px"
+			});
+		}
 		// entry.find("input").css("width", e.width +"px" || entry.css("width"));
 		if (e.tagID) {
 			entry.prop("id", e.tagID);
@@ -21779,22 +21779,23 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 				primary : config.iconCSS
 			}
 		});
-// 		if (this.side=="left") {
-// 			$(button).css({
-// 				"left" : margin + "px"
-// 			});
-// 			$(buttonLabel).css({
-// 				"margin-left" : margin + "px"
-// 			});
-// 		}
-// 		else {
-// 			$(button).css({
-// 				"right" : margin + "px"
-// 			});
-// 			$(buttonLabel).css({
-// 				"margin-right" : margin + "px",
-// 				"float": "right"
-// 			});
+		if (this.side=="left") {
+			$(button).css({
+				"left" : margin + "px"
+			});
+			$(buttonLabel).css({
+				"margin-left" : margin + "px"
+			});
+		}
+		else {
+			$(button).css({
+				"right" : margin + "px"
+			});
+			$(buttonLabel).css({
+				"margin-right" : margin + "px",
+				"float": "right"
+			});
+		}
 // 			//Adding the search-input screws up things in the GUI, so we must do some tweaks.
 // 			if ($.browser.msie && parseInt($.browser.version) < 8) {
 // //				if( this.toolbarDiv.find("input:text").length > 0 ){
