@@ -171,18 +171,18 @@ sMap.Module.Toolbar = OpenLayers.Class(sMap.Module, {
 		var margin = e.margin || (this.toolbarDiv.children().length==0 ? this.buttonMarginInitial : this.buttonMargin);
 		
 		this.toolbarDiv.append(entry);
-		// if (this.side=="left") {
-		// 	entry.css({
-		// 		"margin-left" : margin+"px",
-		// 		"margin-right" : margin+"px"
-		// 	});
-		// }
-		// else {
-		// 	entry.css({
-		// 		"margin-right" : margin+"px",
-		// 		"margin-left" : margin+"px"
-		// 	});
-		// }
+		if (this.side=="left") {
+			entry.css({
+				"margin-left" : margin+"px",
+				"margin-right" : margin+"px"
+			});
+		}
+		else {
+			entry.css({
+				"margin-right" : margin+"px",
+				"margin-left" : margin+"px"
+			});
+		}
 		// entry.find("input").css("width", e.width +"px" || entry.css("width"));
 		if (e.tagID) {
 			entry.prop("id", e.tagID);
