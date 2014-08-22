@@ -695,7 +695,7 @@ var config = {
 //	proxyHost: "http://localhost/cgi-bin/proxy.py?url=",
 //	proxyHost : "http://xyz.malmo.se/myproxy/proxy.py?url=",
 //	proxyHost : "../../cgi-bin/proxy/proxy.py?url=",
-	proxyHost : "http://sbkvmgeoserver.malmo.se/cgi-bin/proxy/proxy.py?url=",
+	proxyHost : "http://xyz.malmo.se/myproxy/proxy.py?url=",
 
 	iFrame : false,
 	

@@ -3342,7 +3342,7 @@ var config = {
 			init : sMap.Module.RedirectClick,			
 			config : {
 				displayName : 'Snedbild',
-				addToToolsMenu: "toolsmenu",
+				//addToToolsMenu: "toolsmenu",
 				toolbarIndex: 4,
 				url: "http://xyz.malmo.se/urbex/index.htm?p=true&xy=${x};${y}",
 				overrideName: "snedbild",
@@ -3958,23 +3958,7 @@ var obsLayers = [
 	}
 ];
 
-var secretModules = [
-		{
-			init : sMap.Module.RedirectClick,			
-			config : {
-				displayName : 'Gatuvy',
-				addToToolsMenu: "toolsmenu",
-				toolbarIndex: 4,
-				url: "http://sbkspace.malmo.se/cyclomedia/index.htm?posx=${x}&posy=${y}",
-				overrideName: "gatuvy",
-				btnLabel: "Gatuvy",
-				buttonId: "redirect-gatuvy",
-				buttonCss: "ui-icon-arrowstop-1-e",
-				mouseMoveText: "Klicka i kartan för att se gatuvy"
-			}
-		}
 
-];
 
 
 
@@ -3998,8 +3982,7 @@ config.onConfigLoaded = function(c, onDone) {
 		dataType: "json",
 		success: function(data) {
 			if (data.valid) {
-				c.layers.overlays = c.layers.overlays.concat(obsLayers);
-				c.modules = c.modules.concat(secretModules);
+				c.layers.overlays = c.layers.overlays.concat(obsLayers);				
 			}
 		},
 		error: function(a,text,c) {

@@ -150,7 +150,7 @@ var planApp = {
 				expand: false,
 				cssClass: "mainheader",
 				subheaders: {
-					"Bränder 2013": {
+					"Bränder 2012": {
 						hideCheckbox: true,
 						startVisible : true,
 						cssClass: "subheader",
@@ -159,7 +159,7 @@ var planApp = {
 						tooltip: " <i> Skötsel & underhåll </i> <br> &nbsp; > Handikapptoalett <br> &nbsp; > Offentliga toaletter <br> &nbsp; > Offentliga toaletter (avgift) <br> &nbsp; > Skötbord <br> &nbsp; > PinkIn",
 						subheaders: {}
 					},
-					"Olyckor 2013": {
+					"Olyckor 2012": {
 						hideCheckbox: true,
 						startVisible : true,
 						cssClass: "subheader",
@@ -168,7 +168,7 @@ var planApp = {
 						tooltip: " <i> Skötsel & underhåll </i> <br> &nbsp; > Handikapptoalett <br> &nbsp; > Offentliga toaletter <br> &nbsp; > Offentliga toaletter (avgift) <br> &nbsp; > Skötbord <br> &nbsp; > PinkIn",
 						subheaders: {}
 					},
-					"Skador 2013": {
+					"Skador 2012": {
 						hideCheckbox: true,
 						startVisible : true,
 						cssClass: "subheader",
@@ -350,12 +350,12 @@ var config = {
 				startVisible : false,
 				legend : {
 					hover: {
-						url: "http://xyz.malmo.se/bilder/kartsymboler/bb_fastigheterhoover.png"
+						url: "http://xyz.malmo.se/bilder/kartsymboler/bb_fastighet.png"
 					}
 				},		
 				copyright : [],
 				style: {
-					"default": {externalGraphic: "http://xyz.malmo.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:SMA_SUM_FASTYTA_P&version=1.1.1&format=image/png&rule=1"},
+					"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/bb_fastighet.png"},
 					"select": {
 						rules: [
 						        new OpenLayers.Rule({
@@ -406,12 +406,12 @@ var config = {
 				startVisible : false,
 				legend : {
 					hover: {
-						url: "http://xyz.malmo.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:SMA_SUM_KVARTER_P&version=1.1.1&format=image/png&rule=2"
+						url: "http://xyz.malmo.se/bilder/kartsymboler/bb_kvarter.png"
 					}
 				},		
 				copyright : [],
 				style: {
-					"default": {externalGraphic: "http://xyz.malmo.se/geoserver/wms?request=GetLegendGraphic&layer=malmows:SMA_SUM_KVARTER_P&version=1.1.1&format=image/png&rule=2"},
+					"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/bb_kvarter.png"},
 					"select": {
 						rules: [
 						        new OpenLayers.Rule({
@@ -3342,7 +3342,7 @@ var config = {
 			init : sMap.Module.RedirectClick,			
 			config : {
 				displayName : 'Snedbild',
-				addToToolsMenu: "toolsmenu",
+				//addToToolsMenu: "toolsmenu",
 				toolbarIndex: 4,
 				url: "http://xyz.malmo.se/urbex/index.htm?p=true&xy=${x};${y}",
 				overrideName: "snedbild",
@@ -3485,7 +3485,7 @@ var obsLayers = [
 		displayName : "Bränder",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/brander.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default20.png",
-		category : ["Bränder, olyckor & skador *", "Bränder 2013"],
+		category : ["Bränder, olyckor & skador *", "Bränder 2012"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3511,7 +3511,7 @@ var obsLayers = [
 		displayName : "Fotgängare",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/olyckor.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default23.png",
-		category : ["Bränder, olyckor & skador *", "Olyckor 2013"],
+		category : ["Bränder, olyckor & skador *", "Olyckor 2012"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3536,7 +3536,7 @@ var obsLayers = [
 		displayName : "Cykel",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/olyckor.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default22.png",
-		category : ["Bränder, olyckor & skador *", "Olyckor 2013"],
+		category : ["Bränder, olyckor & skador *", "Olyckor 2012"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3561,7 +3561,7 @@ var obsLayers = [
 		displayName : "Motorfordon",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/olyckor.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default21.png",
-		category : ["Bränder, olyckor & skador *", "Olyckor 2013"],
+		category : ["Bränder, olyckor & skador *", "Olyckor 2012"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3586,7 +3586,7 @@ var obsLayers = [
 		displayName : "Statistikområde, Totalt",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tot.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default19.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Totalt"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Totalt"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3611,7 +3611,7 @@ var obsLayers = [
 		displayName : "Delområde, Totalt",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tot.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default18.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Totalt"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Totalt"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3636,7 +3636,7 @@ var obsLayers = [
 		displayName : "Stadsdel, Totalt",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tot.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default17.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Totalt"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Totalt"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3657,11 +3657,37 @@ var obsLayers = [
 		}
 	},
 	{
+		name : "s_trend_tot",
+		displayName : "Trend, Totalt",
+		layerType : "wms",
+		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tot.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default16.png",
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Totalt"],
+		displayInLayerSwitcher: true,
+		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
+		params : {
+			layers: '16', 
+			format: 'image/png',
+			transparent: 'true',
+			SRS: '3008'
+		}, 
+		options : {
+			isBaseLayer: false,
+			singleTile : true
+		},
+		selectable : false,
+		geomType : 'polygon',
+		startVisible : false,
+		copyright : [],
+		style: {
+			"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/noImg.png"}			
+		}
+	}, 
+	{
 		name : "s_so_tra",
 		displayName : "Statistikområde, Trafik",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tra.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default15.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Trafik"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Trafik"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3686,7 +3712,7 @@ var obsLayers = [
 		displayName : "Delmoråde, Trafik",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tra.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default14.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Trafik"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Trafik"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3711,7 +3737,7 @@ var obsLayers = [
 		displayName : "Stadsdel, Trafik",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tra.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default13.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Trafik"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Trafik"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3732,11 +3758,37 @@ var obsLayers = [
 		}
 	},
 	{
+		name : "s_trend_tra",
+		displayName : "Trend, Trafik",
+		layerType : "wms",
+		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_tra.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default12.png",
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Trafik"],
+		displayInLayerSwitcher: true,
+		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
+		params : {
+			layers: '12', 
+			format: 'image/png',
+			transparent: 'true',
+			SRS: '3008'
+		}, 
+		options : {
+			isBaseLayer: false,
+			singleTile : true
+		},
+		selectable : false,
+		geomType : 'polygon',
+		startVisible : false,
+		copyright : [],
+		style: {
+			"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/noImg.png"}			
+		}
+	}, 
+	{
 		name : "s_so_bos",
 		displayName : "Statistikområde, Bostad",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_bos.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default11.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Bostad"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Bostad"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3761,7 +3813,7 @@ var obsLayers = [
 		displayName : "Delområde, Bostad",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_bos.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default10.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Bostad"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Bostad"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3786,7 +3838,7 @@ var obsLayers = [
 		displayName : "Stadsdel, Bostad",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_bos.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default9.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Bostad"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Bostad"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3807,11 +3859,37 @@ var obsLayers = [
 		}
 	},
 	{
+		name : "s_trend_bos",
+		displayName : "Trend, Bostad",
+		layerType : "wms",
+		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_bos.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default8.png",
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Bostad"],
+		displayInLayerSwitcher: true,
+		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
+		params : {
+			layers: '8', 
+			format: 'image/png',
+			transparent: 'true',
+			SRS: '3008'
+		}, 
+		options : {
+			isBaseLayer: false,
+			singleTile : true
+		},
+		selectable : false,
+		geomType : 'polygon',
+		startVisible : false,
+		copyright : [],
+		style: {
+			"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/noImg.png"}			
+		}
+	}, 
+	{
 		name : "s_so_arb",
 		displayName : "Statistikområde, Arbete",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_arb.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default7.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Arbete"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Arbete"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3836,7 +3914,7 @@ var obsLayers = [
 		displayName : "Delområde, Arbete",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_arb.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default6.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Arbete"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Arbete"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3861,7 +3939,7 @@ var obsLayers = [
 		displayName : "Stadsdel, Arbete",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_arb.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default5.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Arbete"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Arbete"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3882,11 +3960,37 @@ var obsLayers = [
 		}
 	},
 	{
+		name : "s_trend_arb",
+		displayName : "Trend, Arbete",
+		layerType : "wms",
+		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_arb.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default4.png",
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Arbete"],
+		displayInLayerSwitcher: true,
+		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
+		params : {
+			layers: '4', 
+			format: 'image/png',
+			transparent: 'true',
+			SRS: '3008'
+		}, 
+		options : {
+			isBaseLayer: false,
+			singleTile : true
+		},
+		selectable : false,
+		geomType : 'polygon',
+		startVisible : false,
+		copyright : [],
+		style: {
+			"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/noImg.png"}			
+		}
+	}, 
+	{
 		name : "s_so_idr",
 		displayName : "Statistikområde, Idrott",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_idr.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default3.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Idrott"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Idrott"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3911,7 +4015,7 @@ var obsLayers = [
 		displayName : "Delområde, Idrott",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_idr.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default2.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Idrott"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Idrott"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3936,7 +4040,7 @@ var obsLayers = [
 		displayName : "Stadsdel, Idrott",
 		layerType : "wms",
 		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_idr.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default1.png",
-		category : ["Bränder, olyckor & skador *", "Skador 2013", "Idrott"],
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Idrott"],
 		displayInLayerSwitcher: true,
 		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
 		params : {
@@ -3955,26 +4059,36 @@ var obsLayers = [
 		style: {
 			"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/noImg.png"}			
 		}
+	},
+	{
+		name : "s_trend_idr",
+		displayName : "Trend, Idrott",
+		layerType : "wms",
+		dialogContent: "http://xyz.malmo.se/stadsatlas/legend/obs/skador_idr.htm?img=http://xyz.malmo.se/arcgisoutput/malmo_obs_MapServer/wms/default0.png",
+		category : ["Bränder, olyckor & skador *", "Skador 2012", "Idrott"],
+		displayInLayerSwitcher: true,
+		URL: "http://xyz.malmo.se/ArcGIS/services/malmo_obs/MapServer/WMSServer?",
+		params : {
+			layers: '0', 
+			format: 'image/png',
+			transparent: 'true',
+			SRS: '3008'
+		}, 
+		options : {
+			isBaseLayer: false,
+			singleTile : true
+		},
+		selectable : false,
+		geomType : 'polygon',
+		startVisible : false,
+		copyright : [],
+		style: {
+			"default": {externalGraphic: "http://xyz.malmo.se/bilder/kartsymboler/noImg.png"}			
+		}
 	}
 ];
 
-var secretModules = [
-		{
-			init : sMap.Module.RedirectClick,			
-			config : {
-				displayName : 'Gatuvy',
-				addToToolsMenu: "toolsmenu",
-				toolbarIndex: 4,
-				url: "http://sbkspace.malmo.se/cyclomedia/index.htm?posx=${x}&posy=${y}",
-				overrideName: "gatuvy",
-				btnLabel: "Gatuvy",
-				buttonId: "redirect-gatuvy",
-				buttonCss: "ui-icon-arrowstop-1-e",
-				mouseMoveText: "Klicka i kartan för att se gatuvy"
-			}
-		}
 
-];
 
 
 
@@ -3998,8 +4112,7 @@ config.onConfigLoaded = function(c, onDone) {
 		dataType: "json",
 		success: function(data) {
 			if (data.valid) {
-				c.layers.overlays = c.layers.overlays.concat(obsLayers);
-				c.modules = c.modules.concat(secretModules);
+				c.layers.overlays = c.layers.overlays.concat(obsLayers);				
 			}
 		},
 		error: function(a,text,c) {
