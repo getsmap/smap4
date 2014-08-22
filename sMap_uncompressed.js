@@ -5552,9 +5552,9 @@ sMap.Module.Blixten = OpenLayers.Class(sMap.Module, {
 };
 sMap.Lang.lang.Blixten = {
 	"sv-SE" : {
-		toolButtonText : "Sök i kartan",
-		dialogTitle: "Sök i kartan",
-		introText1: "<p>\"Sök i kartan\” hämtar information inom en angiven cirkel. Sökningen träffar alla översiktsplanelager och riksintressen.</p>" + 
+		toolButtonText : "Sök i ÖP",
+		dialogTitle: "Sök i ÖP",
+		introText1: "<p>\"Sök i ÖP\” hämtar information inom en angiven cirkel. Sökningen träffar alla översiktsplanelager och riksintressen.</p>" + 
 			"<p>Därutöver hämtas följande underlag: naturvårdsplan, naturreservat uppmärksamhetsavstånd kring farliga verksamheter, skyddsområde för grundvattentäkt, gasledning, kraftledningar.</p>" +
 			"<p>Ställ in önskad radie och klicka därefter i kartan.</p>",
 		introText2: "",
