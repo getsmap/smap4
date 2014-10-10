@@ -228,15 +228,29 @@ sMap.WebParams = OpenLayers.Class({
 		if (paramsObj.OL) {
 			var olArr = paramsObj.OL instanceof Array ? paramsObj.OL : paramsObj.OL.split(","),
 				arrLayersToAdd = [];
-			for (var i=0,len=olArr.length; i<len; i++) {
-				var layerName = olArr[i];
-				var t = sMap.cmd.getLayerConfig(layerName);
-				if (!t) {
-					debug.warn(sMap.lang.errWebParamLayerNotFound);
-				}
-				else {
-					t.startVisible = true;					
+			if (paramsObj.OL == "all"){
+				for (var i=0,len=sMap.config.layers.overlays.length; i<len; i++){
+					var t = sMap.config.layers.overlays[i];
+					t.startVisible = true;	
+					if (paramsObj.BUFFER){
+						t.options.buffer = paramsObj.BUFFER;
+					}
 					arrLayersToAdd.push(t);
+				}
+			} else {
+				for (var i=0,len=olArr.length; i<len; i++) {
+					var layerName = olArr[i];
+					var t = sMap.cmd.getLayerConfig(layerName);
+					if (!t) {
+						debug.warn(sMap.lang.errWebParamLayerNotFound);
+					}
+					else {
+						t.startVisible = true;	
+						if (paramsObj.BUFFER){
+							t.options.buffer = paramsObj.BUFFER;
+						}
+						arrLayersToAdd.push(t);
+					}
 				}
 			}
 			sMap.layer.addOverlays(arrLayersToAdd);
@@ -260,10 +274,11 @@ sMap.WebParams = OpenLayers.Class({
 		 */
 		if (!paramsObj.ZOOM && !paramsObj.CENTER) {
 			var b = sMap.config.defaultExtent;
-			if (b)
+			if (b){
 				this.map.zoomToExtent(new OpenLayers.Bounds(b.w, b.s, b.e, b.n), false);
-			else
+			} else {
 				this.map.zoomToMaxExtent();
+			}
 		}
 	},
 	
