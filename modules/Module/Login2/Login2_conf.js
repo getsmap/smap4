@@ -6,5 +6,5 @@ sMap.moduleConfig.Login2 = {
 		 */ 
 		activateFromStart : false,
 		toolbarIndex : 0,
-		loginScriptURL: "http://10.3.1.222/sbkqgis2/cgi-bin/ikarta/login.html"
+		loginScriptURL: "http://[servername]/sbkqgis2/cgi-bin/ikarta/login.html"
 };

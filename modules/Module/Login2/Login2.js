@@ -1,7 +1,7 @@
 /**
  * @author Karl-Magnus Jönsson
  * @copyright Kristianstads kommun
- * @license MIT license
+ * @license Apache 2 license
  */
 
 /**
@@ -56,6 +56,7 @@ sMap.Module.Login2 = OpenLayers.Class(sMap.Module, {
 			this.dialogDiv = this.makeLoginDialog();
 		}
 		this.dialogDiv.dialog("open");
+		//this.bindBtnSubmit();
 		// Call the activate method of the parent class
 		return sMap.Module.prototype.activate.apply(
 	            this, arguments);
@@ -66,10 +67,13 @@ sMap.Module.Login2 = OpenLayers.Class(sMap.Module, {
 			return false;
 		}
 		if (this.dialogDiv && this.dialogDiv.dialog("isOpen") === true) {
-			return this.dialogDiv.dialog("close");
-		}else{
-			this.clearCache();
+			// this.dialogDiv.dialog('close');
 		}
+		if (this.dialogDiv) {
+			this.dialogDiv.dialog('destroy').remove();
+			this.dialogDiv = null;
+		}
+		this.clearCache();
 		// Call the deactivate method of the parent class
 		return sMap.Module.prototype.deactivate.apply(
 	            this, arguments
@@ -115,17 +119,35 @@ sMap.Module.Login2 = OpenLayers.Class(sMap.Module, {
 			},
 			open : null
 		});
-		var iFrame = $('<iframe width="100%" height="145px" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0"></iframe>'); // scrolling='no'
+		var iFrame = $('<iframe id="loginiframe" width="100%" height="145px" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0"></iframe>'); // scrolling='no'
 		iFrame.attr("src", this.loginScriptURL);
 		dialogDiv.append(iFrame);
 		return dialogDiv;
 	},
+	// bindBtnSubmit : function(){
+		// var self = this,
+			// iframe = $("#loginiframe"),
+			// btn = iframe.contents().find("#loginbtn");
+		// btn.button();
+		// btn.click(function(){
+			// self.clearCache();
+		// });
+	// },
 	/**
 	 * clear local cache
 	 */
 	clearCache : function(){
-		alert('clearCache!!');
-		OpenLayers.Control.CacheWrite.clearCache();
+		var map = this.map,
+			layer = {};
+		for (var i=0;i<map.layers.length;i++){
+			layer = map.layers[i];
+			var	t = sMap.cmd.getLayerConfig(layer.name);
+			if (!layer.isBaseLayer && layer.CLASS_NAME != "OpenLayers.Layer.Vector"){
+				if (t.restricted == "t"){
+					layer.redraw(true);
+				}
+			}
+		}
 	},
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
