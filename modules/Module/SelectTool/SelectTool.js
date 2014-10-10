@@ -1,7 +1,7 @@
 /**
  * @author Karl-Magnus Jönsson
  * @copyright Kristianstads kommun
- * @license MIT license
+ * @license Apache 2 license
  */
 
 /**
