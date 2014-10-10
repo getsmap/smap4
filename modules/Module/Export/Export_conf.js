@@ -23,30 +23,48 @@ sMap.moduleConfig.Export = {
 		 * Paths to the export scripts and settings for the export routines
 		 */
 		exportRoutines : {
-			visibleLayers : {
-				name: "Tända lager, dxf",
-				url:"http://sbkqgis/cgi-bin/postgis2dxf.php?",
-				addVisibleLayers : true,
-				addBaseLayer : false
-			},
-			basemap : {
-				name: "Baskartan, dxf",
-				url:"http://sbkqgis/cgi-bin/baskartan2dxf.php?",
-				addVisibleLayers : true,
-				addBaseLayer : false
-			},
-			baselayer : {
-				name: "Bakgrundskarta, tiff",
-				url:"http://sbkqgis/cgi-bin/baselayer2tiff.php?",
-				addVisibleLayers : false,
-				addBaseLayer : true
-			},
-			heights : {
-				name: "Höjddata, csv",
-				url:"http://sbkqgis/cgi-bin/nh2csv.php?",
-				addVisibleLayers : false,
-				addBaseLayer : false
-			},
+			exportRoutines : {
+//				visibleLayers : {
+//					name: "Tända lager, dxf",
+//					url:"http://[servername]/wkartor/export/?",
+//					addVisibleLayers : true,
+//					addBaseLayer : false
+//				},
+//				baseMap : {
+//					name: "Baskarta, dxf",
+//					url:"http://[servername]/wkartor/export/?",
+//					layerlist : "adress_,gatunamn_,symbol_,trad_,agaoslagsgrans_,inhagnad_,stodmur_,stig_,hojdkurvor_gen,byggnad_,byggnadssymbol_,byggnadsdetalj_,skarmtak_,vagkant_,jarnvag_,slant_,konstruktion_,idrottsplats_",
+//					addVisibleLayers : false,
+//					addBaseLayer : false
+//				},
+//				visibleLayersTiff : {
+//					name: "Tända lager, tiff",
+//					url:"http://[servername]/wkartor/export/?",
+//					addVisibleLayers : true,
+//					addBaseLayer : true,
+//					emptyBaseLayer : true
+//				},
+//				visibleLayersBaselayerTiff : {
+//					name: "Tända lager + bakgrund, tiff",
+//					url:"http://[servername]/wkartor/export/?",
+//					addVisibleLayers : true,
+//					addBaseLayer : true
+//				},
+//				baseMaptiff : {
+//					name: "Baskarta, tiff",
+//					url:"http://[servername]/wkartor/export/?",
+//					layerlist : "adress_,gatunamn_,symbol_,trad_,agaoslagsgrans_,inhagnad_,stodmur_,stig_,hojdkurvor_gen,byggnad_,byggnadssymbol_,byggnadsdetalj_,skarmtak_,vagkant_,jarnvag_,slant_,konstruktion_,idrottsplats_",
+//					addVisibleLayers : false,
+//					addBaseLayer : true,
+//					emptyBaseLayer : true
+//				},
+//				baselayerTiff : {
+//					name: "Endast bakgrund, tiff",
+//					url:"http://[servername]/wkartor/export/?",
+//					addVisibleLayers : false,
+//					addBaseLayer : true
+//				}
+			}
 		},
 		/**
 		 * Available coordinate reference system

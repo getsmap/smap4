@@ -1,7 +1,7 @@
 /**
  * @author Karl-Magnus Jönsson
  * @copyright Kristianstads kommun
- * @license MIT license
+ * @license Apache 2 license
  */
 
 /**
@@ -72,6 +72,7 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			this.exportExtentLayer.destroy();
 			this.exportExtentLayer = null;
 		}
+		$('#export_result').prop('src', "about:blank");
 		if (this.dialogDiv && this.dialogDiv.dialog("isOpen") === true) {
 			return this.dialogDiv.dialog("close");
 		}
@@ -169,6 +170,8 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 		});
 		button.button();
 		dialogDiv.append(button);
+		var iframe = $('<iframe name="export_result" id="export_result" src="about:blank" frameborder="0" scrolling="no" width=210 height=100></iframe>');
+		dialogDiv.append(iframe);
 	},
 	/**
 	 * Adds a vector layer for export extent with an OL drawfeature control
@@ -233,21 +236,28 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 		var map = this.map,
 			extent = map.getExtent(),
 			routine = this.exportRoutines[$("#export-selectRoutine").val()],
-			url = routine.url;
+			url = routine.url + "L=";
+		if (routine.layerlist){
+			url += routine.layerlist;
+		}
 		if (routine.addVisibleLayers){
-			var visibleLayerNames = "",
+			var t = {},
+				visibleLayerNames = "",
 				layercount = 0,
 				layer = {};
 			for (var i=0;i<map.layers.length;i++){
 				layer = map.layers[i];
+				t = sMap.cmd.getLayerConfig(layer.name);
 				if (layer.visibility && layer.displayInLayerSwitcher && !layer.isBaseLayer && layer.CLASS_NAME != "OpenLayers.Layer.Vector"){
-					var t = sMap.cmd.getLayerConfig(layer.name);
-					visibleLayerNames += t.resource ? t.resource.replace(",","+") + "+" : "";  //replace
+					if (layercount > 0){
+						visibleLayerNames += ",";
+					}
+					visibleLayerNames += t.getFeatureInfo.layers ? t.getFeatureInfo.layers : layer.name;//layer.name;//t.resource ? t.resource.replace(",","+") + "+" : "";  //replace
 					layercount++;
 				}
 			}
 			if (visibleLayerNames){
-				url += "pglayers="+visibleLayerNames;
+				url += visibleLayerNames;
 			}
 			if (layercount > this.maxlayers) {
 				alert('För många lager! Det går endast att exportera ' + this.maxlayers + ' lager samtidigt');
@@ -255,18 +265,21 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			}
 		}
 		if (routine.addBaseLayer){
-			url += "blayer="+map.baseLayer.name;
+			if (routine.emptyBaseLayer){
+				url += "&BL=";
+			} else{
+			url += "&BL="+map.baseLayer.name;
+			}
 		}
 		if(this.exportExtentLayer && this.exportExtentLayer.features.length>0){
 			extent = this.exportExtentLayer.features[0].geometry.bounds;
 		}
-		url += "&minx=" + extent.left;
-		url += "&miny=" + extent.bottom;
-		url += "&maxx=" + extent.right;
-		url += "&maxy=" + extent.top;
-		url += "&cs=" + $("#export-crsSelectTag").val();
-		//alert('Export ' + url);
-		window.open(url,"_blank");
+		url += "&B=" + extent.left;
+		url += "," + extent.bottom;
+		url += "," + extent.right;
+		url += "," + extent.top;
+		url += "&C=" + $("#export-crsSelectTag").val();
+		$('#export_result').prop('src', url);
 	},
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
