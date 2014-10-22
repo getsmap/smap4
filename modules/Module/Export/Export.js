@@ -236,6 +236,7 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 		var map = this.map,
 			extent = map.getExtent(),
 			routine = this.exportRoutines[$("#export-selectRoutine").val()],
+			crs = $("#export-crsSelectTag").val(),
 			url = routine.url + "L=";
 		if (routine.layerlist){
 			url += routine.layerlist;
@@ -272,13 +273,18 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			}
 		}
 		if(this.exportExtentLayer && this.exportExtentLayer.features.length>0){
-			extent = this.exportExtentLayer.features[0].geometry.bounds;
+			var newFeature = this.exportExtentLayer.features[0].clone();
+			extent = newFeature.geometry.getBounds();
+		}
+		if (this.map.projection != crs){
+			extent.transform(this.map.projection,crs);
 		}
 		url += "&B=" + extent.left;
 		url += "," + extent.bottom;
 		url += "," + extent.right;
 		url += "," + extent.top;
-		url += "&C=" + $("#export-crsSelectTag").val();
+		url += "&C=" + crs;
+		//alert(url);
 		$('#export_result').prop('src', url);
 	},
 	// Class name needed when you want to fetch your module...
