@@ -76,6 +76,10 @@ sMap.Map = OpenLayers.Class({
 	initialize : function(mapTag, config) {
 		this.mapTag = mapTag || null; // required
 		
+		function isIE11() {
+			return !(window.ActiveXObject) && "ActiveXObject" in window;
+		}
+		$.browser.msie = $.browser.msie || isIE11();
 		
 		this.addLibs();
 		
