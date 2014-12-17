@@ -138,7 +138,7 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 
 		// Set the global variable that some unkown magical desktop application can read
 		window.EDPget = arr.join(this.options.idSeparator);
-		console.log(window.EDPget);
+		// console.log(window.EDPget);
 
 	},
 
