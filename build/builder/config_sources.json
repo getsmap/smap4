@@ -93,6 +93,10 @@
 		"modules/Module/MeasureDialog/MeasureDialog.js",
 		"modules/Module/MeasureDialog/MeasureDialog_conf.js",
 		"modules/Module/MeasureDialog/MeasureDialog_lang.js",
+
+		"modules/Module/MiljoReda/MiljoReda.js",
+		"modules/Module/MiljoReda/MiljoReda_conf.js",
+		"modules/Module/MiljoReda/MiljoReda_lang.js",
 		
 		"modules/Module/MousePos/MousePos.js",
 		"modules/Module/MousePos/MousePos_conf.js",

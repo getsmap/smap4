@@ -3965,7 +3965,7 @@ var secretModules = [
 				displayName : 'Gatuvy',
 				addToToolsMenu: "toolsmenu",
 				toolbarIndex: 4,
-				url: "http://sbkspace.malmo.se/cyclomedia/index.htm?posx=${x}&posy=${y}",
+				url: "http://sbkvmgeoserver.malmo.se/cyclomedia/index.html?posx=${x}&posy=${y}",
 				overrideName: "gatuvy",
 				btnLabel: "Gatuvy",
 				buttonId: "redirect-gatuvy",

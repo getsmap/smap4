@@ -377,7 +377,7 @@ sMap.Module.FeatureRequester = OpenLayers.Class(sMap.Module, {
 		this.typeNameTolayerName = {}; // Reset
 		for (var i=0,len=layers.length; i<len; i++) {
 			var layer = layers[i];
-			var t = sMap.cmd.getLayerConfig(layer.name);
+			var t = sMap.cmd.getLayerConfig(layer.name) || layer;
 			
 			// If a getFeatureInfo object was given - create our
 			// own request (GET) with our own URL.

@@ -5412,6 +5412,70 @@ var config = {
 			},
 
 			{
+				displayName : 'Pågående planprogram',
+				name: "sma_pagaende_planprogram_p",
+				layerType : "wms",
+				dialogContent: "http://sbkspace.malmo.se/metadata/metadata.aspx?id=sma_pagaende_planprogram_p",
+				category : ["PLANERA & BYGGA","Planera"],
+				displayInLayerSwitcher: true,
+				URL: "http://sbkvmgeoserver.sbkmalmo.local:8080/geoserver/malmows/wms?",
+				selectAttributes: ["${plan}"],
+				params : {
+					layers: "malmows:SMA_PAGAENDE_PLANPROGRAM_P",
+					format: "image/png",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: false,
+					opacity: "0.55",
+					zIndex: 150,
+					ratio: 1,
+					singleTile : true
+				},
+				popup :
+					"<div class='popup-header1'>Pågående planprogram</div>" +
+					"<div class='popup-text1'><a href='${url}' target='_blank'>${plan} Visa...</a></div>" +
+					"<div class='popup-text1'>Handläggare: ${handlaggare}</div>" +
+					"<br>" +
+					"<div class='popup-text1'><a href='${url_snedbi}' target='_blank'>Visa snedbild</a></div>",
+				selectable : true, getFeatureInfo: {geometryName: "geom"},
+				geomType : 'area',
+				startVisible : false,
+				legend : {
+					hover: {
+						url: "http://sbkvmgeoserver.sbkmalmo.local/bilder/planera/Pagaendeplanprogramhoover.png"
+					}
+				},		
+				copyright : [],
+				style: {
+					"default": {externalGraphic: "http://sbkvmgeoserver.sbkmalmo.local/bilder/planera/Pagaendeplanprogram.png"},
+					"select": {
+						rules: [
+						        new OpenLayers.Rule({
+						        	filter: new OpenLayers.Filter.Comparison({
+						        		type: OpenLayers.Filter.Comparison.EQUAL_TO
+						        	}),
+						        	// if a feature matches the above filter, use this style
+						        	symbolizer: {
+							        	fillColor: "#00FFFF",
+										fillOpacity: 0.3,
+							        	strokeColor: "#00FFFF",
+							        	strokeWidth: 3
+							        }
+						        }),
+						        new OpenLayers.Rule({
+						        	elseFilter: true,
+						        	// if a feature matches the above filter, use this style
+						        	symbolizer: {}
+						        })
+						]
+					}
+				}
+			},
+			
+
+			
+			{
 				displayName : 'Sammanhållen bebyggelse',
 				name: "ul_bestammelser_sammanhallen_bebyggelse",
 				layerType : "wms",
@@ -15172,6 +15236,52 @@ var config = {
 			copyright : [ "Lantmäteriet", "http://www.lantmateriet.se" ]
 		},	
 
+		{
+				displayName : 'Malmö 1973',
+				name: "malmo_orto_1973",
+				layerType : "wms",
+				category : "Fotokarta",
+				URL: "http://kartor.malmo.se:8080/geoserver/malmows/wms?",
+				params : {
+					layers: "malmows:malmo_orto_1973",
+					format: "image/jpeg",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: true,
+					opacity: "0.85",
+					zIndex: 50,
+					ratio: 1,
+					transitionEffect: 'resize',
+					singleTile : true
+				},
+				geomType : 'area',
+				startVisible : false
+		},				
+		
+		{
+				displayName : 'Malmö 1960',
+				name: "malmo_orto_1960",
+				layerType : "wms",
+				category : "Fotokarta",
+				URL: "http://kartor.malmo.se:8080/geoserver/malmows/wms?",
+				params : {
+					layers: "malmows:malmo_orto_1960",
+					format: "image/jpeg",
+					transparent: "true"
+				}, 
+				options : {
+					isBaseLayer: true,
+					opacity: "0.85",
+					zIndex: 50,
+					ratio: 1,
+					transitionEffect: 'resize',
+					singleTile : true
+				},
+				geomType : 'area',
+				startVisible : false
+			},
+		
 
 		{
 			displayName : "Malmö 1938-1947",
