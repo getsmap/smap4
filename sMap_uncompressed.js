@@ -13700,7 +13700,7 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 		key: "objectid",
 
 		layer: {
-			// format: new OpenLayers.Format.GeoJSON(),
+			format: new OpenLayers.Format.GeoJSON(),
 			layerType: "VECTOR",
 			protocol: new OpenLayers.Protocol.WFS({
 				url: "http://sbkvmgeoserver.malmo.se:8080/geoserver/wfs",
@@ -13806,7 +13806,7 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 
 		// Set the global variable that some unkown magical desktop application can read
 		window.EDPget = arr.join(this.options.idSeparator);
-		// console.log(window.EDPget);
+		console.log(window.EDPget);
 
 	},
 
@@ -13840,36 +13840,94 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 					type: OpenLayers.Filter.Logical.OR,
 					filters: filters
 			});
-			// var writer = new OpenLayers.Format.Filter.v1_1_0();
-			// filter = new OpenLayers.Format.XML().write(writer.write(filter));
+			var writer = new OpenLayers.Format.Filter.v1_1_0();
+			filter = new OpenLayers.Format.XML().write(writer.write(filter));
 			var t = this.options.layer;
 			// t.params.filter = filter;
+			
 
-			t.filter = filter;
-
-			this._layer = new OpenLayers.Layer.Vector(t.name, {
-				strategies: [new OpenLayers.Strategy.BBOX()],
-				protocol: t.protocol
-			});
-			this._layer.filter = filter;
-
+			this._layer = new OpenLayers.Layer.Vector(t.name);
+			this._layer.zIndex = 900;
 			this._layer.displayName = t.displayName;
 			this._layer.selectable = t.selectable;
-
-			// this._layer = new OpenLayers.Layer.WMS(
-			// 	t.name,
-			// 	t.URL,
-			// 	t.params,
-			// 	t.options
-			// );
 			sMap.config.layers.overlays.push(this.options.layer);
+			this.map.addLayer(this._layer);
+
+
+			$.ajax({
+				url: sMap.config.proxyHost ? sMap.config.proxyHost + t.protocol.url : t.protocol.url,
+				context: this,
+				dataType: "text",
+				type: "POST",
+				data: {
+					typeName: t.protocol.featureNS+":"+t.protocol.featureType,
+					service: "WFS",
+					version: "1.1.0",
+					request: "GetFeature",
+					srsName: this.map.projection,
+					format: "text/geojson",
+					maxFeatures: 10000,
+					filter: filter,
+					outputFormat: "json"
+				},
+				success: function(data) {
+					var olFormat = t.format;
+					var fs = olFormat.read(data);
+					// if (t.shiftCoords) {
+					// 	for (i=0,len=fs.length; i<len; i++) {
+					// 		// Due to new (?) standards (adopted by OL but not WFS), lat comes before long in geojson.
+					// 		f = fs[i];
+					// 		x = f.geometry.x;
+					// 		y = f.geometry.y;
+					// 		f.geometry.x = y;
+					// 		f.geometry.y = x;
+					// 	}							
+					// }
+					// if (t.transformFrom) {
+					// 	var fromepsg = new OpenLayers.Projection(t.transformFrom),
+					// 		toepsg = new OpenLayers.Projection(this.map.projection);
+					// 	for (i=0,len=fs.length; i<len; i++) {
+					// 		// transform with proj4js
+					// 		f = fs[i];
+					// 		f.geometry.transform(fromepsg,toepsg);
+					// 	}							
+					// }
+					this._layer.addFeatures(fs);
+					sMap.events.triggerEvent("vectorloaded", this, {
+						layerName: this._layer.name
+					});
+				},
+				error: function(a,b,c) {},
+				complete: function() {}
+			});
+
+			// t.filter = filter;
+
+			// this._layer = new OpenLayers.Layer.Vector(t.name, {
+			// 	strategies: [new OpenLayers.Strategy.BBOX()],
+			// 	protocol: t.protocol
+			// });
+			// this._layer.filter = filter;
+			
+			// this._layer.zIndex = 900;
+
+			// this._layer.displayName = t.displayName;
+			// this._layer.selectable = t.selectable;
+
+			// // this._layer = new OpenLayers.Layer.WMS(
+			// // 	t.name,
+			// // 	t.URL,
+			// // 	t.params,
+			// // 	t.options
+			// // );
+			// sMap.config.layers.overlays.push(this.options.layer);
 			// this.map.addLayer(this._layer);
 
 			// sMap.events.triggerEvent("addlayerwithconfig", this, {
 			// 	config: this.options.layer
 			// });
 			
-			sMap.cmd.addlayer({layer: this._layer});
+			//sMap.cmd.addlayer({layer: this._layer});
 		}
 	},
 	
