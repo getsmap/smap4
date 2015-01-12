@@ -229,9 +229,9 @@ var config = {
 		n : 6171076
 	},
 	
-//	proxyHost: "http://kartor.smap.se/cgi-bin/proxy/proxy.py?url=",
+	proxyHost: "http://kartor.smap.se/cgi-bin/proxy/proxy.py?url=",
 //	proxyHost: "../../cgi-bin/proxy.py?url=",
-	proxyHost : "http://xyz.malmo.se/myproxy/proxy.py?url=",
+//	proxyHost : "http://xyz.malmo.se/myproxy/proxy.py?url=",
 	iFrame : false,
 
 	jqTheme: "gray-flat",
@@ -8183,8 +8183,8 @@ var config = {
 			config : {
 				toolbarIndex : 0,
 				dropDownOption: false,
-				autoCompleteScriptUrl : "http://xyz.malmo.se/myproxy/proxy.py?url=" + "http://xyz.malmo.se/WS/mKarta/autocomplete.ashx?",
-				searchScriptUrl : "http://xyz.malmo.se/WS/mKarta/sokexakt.ashx"
+				autoCompleteScriptUrl : "http://kartor.malmo.se/WS/search-1.0/autocomplete.ashx?",
+				searchScriptUrl : "http://kartor.malmo.se/WS/search-1.0/sokexakt.ashx"
 			}
 		},
 		/*{

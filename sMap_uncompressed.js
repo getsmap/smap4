@@ -5413,11 +5413,15 @@ sMap.Module.Blixten = OpenLayers.Class(sMap.Module, {
 			layersDict = {}; // Gives easy access to layer config from wms layer name
 		
 		var onDone = function(layersArr, layersDict) {
-			url = "http://geoserver.smap.se/geoserver/wfs";
+			// url = "http://geoserver.smap.se/geoserver/wfs";
+			
+			var o = layersDict[layersArr[0]];
+			url = o.URL.split("?")[0];
+
 			var layersString = layersArr.join();
 			$.extend(paramsObj, {typename: layersString});
 			$.ajax({
-				url: sMap.config.proxyHost + encodeURIComponent(url),
+				url: self.useProxy ? sMap.config.proxyHost + encodeURIComponent(url) : url,
 				type: "POST",
 				dataType: "text",
 				data: paramsObj,
@@ -5426,7 +5430,9 @@ sMap.Module.Blixten = OpenLayers.Class(sMap.Module, {
 					debug.log("Erroneous response from WMS-request: "+textStatus);
 				},
 				success: function(data) {
-					var format = new OpenLayers.Format.GeoJSON();
+					var format = new OpenLayers.Format.GeoJSON({
+						ignoreExtraDims: true
+					});
 					var fs = format.read(data);
 					
 					// Create a layerName for the features so it can be handled by BlixtenPopup
