@@ -544,7 +544,7 @@ var planApp = {
 var config = {
 	
 	
-	jqTheme: "gray-flat",
+	jqTheme: "full-gray",
 	//jqTheme: "flashy-gray",
 	//jqTheme: "gray-blue",
 	//jqTheme: "orange",
@@ -9258,7 +9258,3 @@ if ($.browser.msie && parseInt($.browser.version) < 8) {
 //	toolBarTitleLbl.css("left", "");
 //	toolBarTitleLbl.css("right", "50px");
 //});
-
-if (document.domain === "localhost") {
-	config.proxyHost = "../../cgi-bin/proxy/proxy.py?url=";
-}
