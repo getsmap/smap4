@@ -29,7 +29,7 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 
 	options: {
 		idSeparator: ",",
-		key: "objid",
+		key: "objectid",
 
 		layer: {
 			format: new OpenLayers.Format.GeoJSON(),
@@ -133,7 +133,7 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 		for (var i=0,len=fs.length; i<len; i++) {
 			f = fs[i];
 			props = f.attributes || {};
-			arr.push(props.objid);
+			arr.push(props.objectid);
 		}
 
 		// Set the global variable that some unkown magical desktop application can read
