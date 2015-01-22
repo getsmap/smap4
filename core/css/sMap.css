@@ -20,7 +20,7 @@ div, span, p, button, label {
    user-select: none;
 }
 
-.olFramedCloudPopupContent, .olFramedCloudPopupContent > * {
+.olFramedCloudPopupContent, .olFramedCloudPopupContent > *, iframe, iframe > * {
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;
