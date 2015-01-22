@@ -20,6 +20,14 @@ div, span, p, button, label {
    user-select: none;
 }
 
+.olFramedCloudPopupContent, .olFramedCloudPopupContent > * {
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	-o-user-select: text;
+	user-select: text;  
+}
+
 #canvasLoader {
 	position: absolute;
 	display: block;
@@ -198,10 +206,6 @@ div, span, p, button, label {
 .smapCursorHand, img.smapCursorHand, div.smapCursorHand {
 	cursor: hand;
 }
-
-/*.olFramedCloudPopupContent img {
-	width: 100%;
-}*/
 
 .ui-dialog {
 	box-shadow: rgba(20, 20, 20, 0.3) 5px 5px 20px 1px;
