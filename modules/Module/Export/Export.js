@@ -154,14 +154,20 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			selectCRS.append(option);
 		}
 		dialogDiv.append(selectCRS);
-		dialogDiv.append("<BR /><BR />");
+		dialogDiv.append("<BR /><BR />"+this.lang.lblExtent+"<BR />");
 		
-		var extbtn = $("<button id='export-extent'>"+this.lang.btnExtent+"</button>");
-		extbtn.button();
-		extbtn.click(function() {
-			self.toggleDraw();
+		var polybtn = $("<button id='export-polyextent'>"+this.lang.btnPoly+"</button>");
+		polybtn.button();
+		polybtn.click(function() {
+			self.toggleDraw("poly");
 		});
-		dialogDiv.append(extbtn);
+		dialogDiv.append(polybtn);
+		var boxbtn = $("<button id='export-boxextent'>"+this.lang.btnBox+"</button>");
+		boxbtn.button();
+		boxbtn.click(function() {
+			self.toggleDraw("box");
+		});
+		dialogDiv.append(boxbtn);
 		dialogDiv.append("<BR /><BR />");
 		
 		var button = $("<button id='export-submit'>"+this.lang.btnExport+"</button>");
@@ -198,30 +204,79 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			});
 			this.map.addLayer(this.exportExtentLayer);
 			this.exportExtentLayer.events.register("featureadded", this, function(e) {
-				this.toggleDraw();
+				this.toggleDraw("finished");
 			});
 			this.drawPolygon = new OpenLayers.Control.DrawFeature(
-					this.exportExtentLayer, OpenLayers.Handler.RegularPolygon, {
+					this.exportExtentLayer, OpenLayers.Handler.Polygon, {  //RegularPolygon
+						title: "Rita",
+						multi: false
+				});
+			this.map.addControl(this.drawPolygon);
+			this.drawRegularPolygon = new OpenLayers.Control.DrawFeature(
+					this.exportExtentLayer, OpenLayers.Handler.RegularPolygon, {  //RegularPolygon
+						title: "Rita",
+						multi: false,
 						handlerOptions: {
                             sides: 4,
                             irregular: true
                         }
 				});
-			this.map.addControl(this.drawPolygon);
+			this.map.addControl(this.drawRegularPolygon);
 		}
 	},
 	/**
 	 * Toggles the OL drawfeature control
 	 */
-	toggleDraw : function(){
+	toggleDraw : function(btnclicked){
 		this.addExportExtentLayer();
-		if (this.drawPolygon.active){
-			this.drawPolygon.deactivate();
+		switch(btnclicked){
+			case "poly":
+				if (this.drawPolygon.active){
+					this.deactivatePoly();
+				}else{
+					if (this.drawRegularPolygon.active){
+							this.deactivateBox();
+					}
+					this.activatePoly();
+					this.clearDraw();
+				}
+				break;
+			case "box":
+				if (this.drawRegularPolygon.active){
+					this.deactivateBox();
+				}else{
+					if (this.drawPolygon.active){
+						this.deactivatePoly();
+					}
+					this.activateBox();
+					this.clearDraw();
+				}
+				break;
+			case "finished" :
+				if (this.drawPolygon.active){
+					this.deactivatePoly();
+				}
+				if (this.drawRegularPolygon.active){
+					this.deactivateBox();
+				}
+				break;
 		}
-		else{
-			this.drawPolygon.activate();
-			this.clearDraw();
-		}
+	},
+	activatePoly : function(){
+		this.drawPolygon.activate();
+		$('#export-polyextent').addClass('ui-state-focus');
+	},
+	deactivatePoly : function(){
+		this.drawPolygon.deactivate();
+		$('#export-polyextent').removeClass('ui-state-focus');
+	},
+	activateBox : function(){
+		this.drawRegularPolygon.activate();
+		$('#export-boxextent').addClass('ui-state-focus');
+	},
+	deactivateBox : function(){
+		this.drawRegularPolygon.deactivate();
+		$('#export-boxextent').removeClass('ui-state-focus');
 	},
 	/**
 	 * Clears all drawed features
@@ -253,7 +308,16 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 					if (layercount > 0){
 						visibleLayerNames += ",";
 					}
-					visibleLayerNames += t.getFeatureInfo.layers ? t.getFeatureInfo.layers : layer.name;//layer.name;//t.resource ? t.resource.replace(",","+") + "+" : "";  //replace
+					if (t.exportlayers) {
+						visibleLayerNames += t.exportlayers;
+					} else {
+						if (t.getFeatureInfo){
+							visibleLayerNames += t.getFeatureInfo.layers ? t.getFeatureInfo.layers : t.params.layers;
+						}
+						else{
+							visibleLayerNames += t.params.layers ? t.params.layers : layer.name;
+						}
+					}
 					layercount++;
 				}
 			}
@@ -272,17 +336,32 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			url += "&BL="+map.baseLayer.name;
 			}
 		}
+		if (routine.format){
+			url += "&FF="+routine.format;
+		}
 		if(this.exportExtentLayer && this.exportExtentLayer.features.length>0){
 			var newFeature = this.exportExtentLayer.features[0].clone();
 			extent = newFeature.geometry.getBounds();
+			var fv = newFeature.geometry.getVertices();
+			if (fv.length>0){
+				url += "&BP=";
+				for (var i=0;i<fv.length;i++){
+					url += i!=0 ? "," : "";
+					if (this.map.projection != crs && routine.addBaseLayer){
+						fv[i].transform(this.map.projection,crs);
+					}
+					url += Math.round(fv[i].x) + "," + Math.round(fv[i].y);
+				}
+			}
+		}else{
+			if (this.map.projection != crs && routine.addBaseLayer){
+				extent.transform(this.map.projection,crs);
+			}
+			url += "&B=" + Math.round(extent.left);
+			url += "," + Math.round(extent.bottom);
+			url += "," + Math.round(extent.right);
+			url += "," + Math.round(extent.top);
 		}
-		if (this.map.projection != crs){
-			extent.transform(this.map.projection,crs);
-		}
-		url += "&B=" + extent.left;
-		url += "," + extent.bottom;
-		url += "," + extent.right;
-		url += "," + extent.top;
 		url += "&C=" + crs;
 		//alert(url);
 		$('#export_result').prop('src', url);

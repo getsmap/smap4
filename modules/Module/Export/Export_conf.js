@@ -18,18 +18,24 @@ sMap.moduleConfig.Export = {
 		 */
 		dialogStartPosition : [300, 100],
 		width : 240,
-		height : 400,
+		height : 410,
 		/**
 		 * Paths to the export scripts and settings for the export routines
 		 */
 		exportRoutines : {
-			exportRoutines : {
 //				visibleLayers : {
 //					name: "Tända lager, dxf",
 //					url:"http://[servername]/wkartor/export/?",
 //					addVisibleLayers : true,
 //					addBaseLayer : false
 //				},
+				// visibleLayersShape : {
+					// name: "Tända lager, shape",
+					// url:"http://ikarta.kristianstad.se/wkartor/export/?",
+					// addVisibleLayers : true,
+					// addBaseLayer : false,
+					// format : "shp"
+				// },
 //				baseMap : {
 //					name: "Baskarta, dxf",
 //					url:"http://[servername]/wkartor/export/?",
@@ -64,7 +70,6 @@ sMap.moduleConfig.Export = {
 //					addVisibleLayers : false,
 //					addBaseLayer : true
 //				}
-			}
 		},
 		/**
 		 * Available coordinate reference system

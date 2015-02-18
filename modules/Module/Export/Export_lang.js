@@ -9,7 +9,9 @@ sMap.Lang.lang.Export = {
 		lblRoutine : "Exportrutin: ",
 		lblCRS : "Koordinatsystem: ",
 		lblEmail : "e-post",
-		btnExtent : "Avgränsa område"
+		lblExtent : "Avgränsa område med:",
+		btnPoly : "Polygon",
+		btnBox : "Ruta"
 	},
 	en : { 
 		buttonText : "Export",
@@ -20,7 +22,9 @@ sMap.Lang.lang.Export = {
 		lblRoutine : "Export routine: ",
 		lblCRS : "Coordinate system: ",
 		lblEmail : "email",
-		btnExtent : "Select area"
+		lblExtent : "Select area by:",
+		btnPoly : "Polygon",
+		btnBox : "Box"
 	}
 	
 };
