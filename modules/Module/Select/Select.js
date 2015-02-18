@@ -255,7 +255,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 	},
 	
@@ -284,7 +284,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : false//dialogIfMany //  !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 		
 	},
@@ -349,7 +349,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 	 */
 	select : function(e) {
 		var features = e.features;
-		
+		var xy = e.xy ? e.xy : null;
 		if (!features.length) {
 			return false;
 		}
@@ -385,7 +385,8 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		}
 		else {
 			this.selectFeatures(features, {
-				add : e.add
+				add : e.add,
+				xy : xy
 			});
 		}
 		debug.log("Number of selected features: " + this.selectLayer.features.length);
@@ -768,6 +769,9 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 					 */
 					var c = f.geometry.getCentroid();
 					var px = self.map.getViewPortPxFromLonLat(new OpenLayers.LonLat(c.x, c.y));
+					if (!self.fitBoundsIfNotContained){
+						px = self.handlers.click && self.handlers.click.evt && self.handlers.click.active ? self.handlers.click.evt.xy : null;
+					}
 					self.selectFeatures([f], {
 						add : options.add,
 						xy: new OpenLayers.Pixel(px.x, px.y)
