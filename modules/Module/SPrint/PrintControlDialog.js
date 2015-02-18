@@ -25,37 +25,39 @@
 		var service = print ? "Print_" : "Export_";
 		
 		var self = this;
-		
-		
-		$("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
-			title: "Användarvillkor",
-			autoOpen: true,
-			modal: true,
-			close: function() {
-				$(this).dialog("destroy").empty().remove();
-				
-			},
-			buttons: [
-			          {
-			        	  text: "Nej",
-			        	  click: function() {
-				        	  	$(this).dialog("close");
-				          	}
-			          },
-			          {
-			        	  text: "Jag accepterar",
-			        	  click: function() {
-			        	  		$(this).dialog("close");
-				        	  	self.print(service, printFormat, {
-				        	  		orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-									format: $(".sprint-paperformat:visible").val() || "A4"
-				        	  	});
-			          		}
-			          }
-			]
+		// Vill man ha dialogen ta bort detta och lägg till det nedan
+		self.print(service, printFormat, {
+			orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+			format: $(".sprint-paperformat:visible").val() || "A4"
 		});
 		
-		
+		// $("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
+			// title: "Användarvillkor",
+			// autoOpen: true,
+			// modal: true,
+			// close: function() {
+				// $(this).dialog("destroy").empty().remove();
+				
+			// },
+			// buttons: [
+			          // {
+			        	  // text: "Nej",
+			        	  // click: function() {
+				        	  	// $(this).dialog("close");
+				          	// }
+			          // },
+			          // {
+			        	  // text: "Jag accepterar",
+			        	  // click: function() {
+			        	  		// $(this).dialog("close");
+				        	  	// self.print(service, printFormat, {
+				        	  		// orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+									// format: $(".sprint-paperformat:visible").val() || "A4"
+				        	  	// });
+			          		// }
+			          // }
+			// ]
+		// });
 	};
 	
 	/**
@@ -85,19 +87,21 @@
 		this.dialog.dialog({
 			title : 'Utskrift',
 			width : 370,
+			position : {my: "right", at : "right" },
 			resizable : false,
 			closeOnEscape : false,
 			open : function(e, ui) {
 				self.updateScales();
 				self.showExtent();
 				self.setCurrentScale();
-				self.map.events.register("zoomend", self, self.setCurrentScale);
-				self.map.events.register("changebaselayer", self, self.updateScales);
+				//self.map.events.register("zoomend", self, self.setCurrentScale);
+				//self.map.events.register("changebaselayer", self, self.updateScales);
 				self.map.events.register("zoomend", self, self.showExtent);
 				self.map.events.register("moveend", self, self.showExtent);
 				
 				// $(".ui-dialog-titlebar-close", ui.dialog).hide();
 			},
+			beforeClose : Core.bind(this, this.beforeDialogclose),
 			close : Core.bind(this, this.onDialogclose),
 			autoOpen: false
 		});
@@ -110,6 +114,23 @@
 		});
 
 		var that = this;
+		$("#sprint_Print_chkUseMask").click(function() {
+			that.toggleMaskEditing();
+		});
+		if(!this.core.module.usePrintMask){
+			$("#sprint_Print_chkUseMask").hide();
+			$("#sprint_Print_chkUseMaskLbl").hide();
+		}
+		$("#sprint_Print_btnDraw").button();
+		$("#sprint_Print_btnDraw").click(function() {
+			that.toggleDraw();
+		});
+		$("#sprint_Print_btnDraw").hide();
+		$("#sprint_Print_btnClear").button();
+		$("#sprint_Print_btnClear").click(function() {
+			that.clearDraw();
+		});
+		$("#sprint_Print_btnClear").hide();
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -151,7 +172,7 @@
 	PrintControlDialog.prototype.updateScales = function() {
 		$(".sprint-selectscale").empty();
 		var scale, option, res,
-			resolutions = this.map.baseLayer.resolutions || this.map.resolutions || [];
+			resolutions = this.core.module.printResolutions || this.map.resolutions || [];//this.map.baseLayer.resolutions || this.map.resolutions || [];
 		for (var i=0,len=resolutions.length; i<len; i++) {
 			res = resolutions[i];
 			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
@@ -160,9 +181,146 @@
 				$(this).append(option.clone());
 			});
 		}
-		this.setCurrentScale(); // set scale also
+		//this.setCurrentScale(); // set scale also
 	};
+	/*
+	 * Toggles draw and clear buttons for print mask
+	 */
+	PrintControlDialog.prototype.toggleMaskEditing = function(){
+		if ($("#sprint_Print_btnDraw").is(":visible")) {
+			$("#sprint_Print_btnDraw").hide();
+			$("#sprint_Print_btnClear").hide();
+			this.maskEditingLayer.setVisibility(false);
+		}else{
+			$("#sprint_Print_btnDraw").show();
+			$("#sprint_Print_btnClear").show();
+			this.addMaskEditingLayer();
+		}
+	};
+	/*
+	 * Adds a vector layer for mask editing with an OL drawfeature control
+	 */
+	PrintControlDialog.prototype.addMaskEditingLayer = function(){
+		if (!this.maskEditingLayer) {
+			this.maskEditingLayer = new OpenLayers.Layer.Vector("sprint_maskeditlayer", {
+				styleMap: new OpenLayers.StyleMap({
+					"default": new OpenLayers.Style({
+						fillOpacity: 0,
+						fillColor: "#FFF",
+						strokeWidth: 1,
+						strokeOpacity: 1,
+						strokeColor: "#F00"
+					}),
+					"temporary": new OpenLayers.Style({
+						fillOpacity: 0,
+						fillColor: "#FFF",
+						strokeWidth: 1,
+						strokeOpacity: 1,
+						strokeColor: "#F00"
+					})
+				})
+			});
+			this.map.addLayer(this.maskEditingLayer);
+			this.maskEditingLayer.events.register("featureadded", this, function(e) {
+				this.toggleDraw();
+				this.centerAndFitExtent(e.feature);
+			});
+			this.drawPolygon = new OpenLayers.Control.DrawFeature(
+					this.maskEditingLayer, OpenLayers.Handler.Polygon, {
+						title: "Rita",
+						multi: true
+				});
+			this.map.addControl(this.drawPolygon);
+		}
+		else{
+			this.maskEditingLayer.setVisibility(true);
+		}
 		
+	};
+	/*
+	 * Toggles the OL drawfeature control
+	 */
+	PrintControlDialog.prototype.toggleDraw = function(){
+		if (this.drawPolygon.active){
+			this.drawPolygon.deactivate();
+		}
+		else{
+			this.drawPolygon.activate();
+		}
+	};
+	/*
+	 * Clears all drawed features
+	 */
+	PrintControlDialog.prototype.clearDraw = function(){
+		this.maskEditingLayer.removeAllFeatures();
+	};
+	/*
+	 * Adds a vector layer when printing. The layer contains the extent feature minus the drawed features in a white style
+	 */
+	PrintControlDialog.prototype.addMaskLayer = function(){
+		if (this.maskEditingLayer.features.length>0){
+			if (!this.maskLayer) {
+				this.maskLayer = new OpenLayers.Layer.Vector("sprint_masklayer", {
+					styleMap: new OpenLayers.StyleMap({
+						"default": new OpenLayers.Style({
+							fillOpacity: 1,
+							fillColor: "#ffffff",
+							strokeWidth: 1,
+							strokeOpacity: 1,
+							strokeColor: "#ffffff"
+						})
+					})
+				});
+				this.map.addLayer(this.maskLayer);
+			}
+			var P = OpenLayers.Geometry.Point,
+				ext = this.map.maxExtent,
+				geomPolygon = new OpenLayers.Geometry.Polygon(
+				[new OpenLayers.Geometry.LinearRing(
+					[new P(ext.left, ext.bottom), new P(ext.right, ext.bottom), new P(ext.right, ext.top), new P(ext.left, ext.top), new P(ext.left, ext.bottom)] 
+				)]
+			);
+			var extPolygon = new OpenLayers.Feature.Vector(geomPolygon);
+			var maskFeature = this.subtract(extPolygon, this.maskEditingLayer.features); //this.extentLayer.features[0]
+			this.maskLayer.addFeatures([maskFeature]);
+		}
+	};
+	
+	PrintControlDialog.prototype.subtract = function(bigFeature, smallFeatures) {
+	    var newPolygon = new OpenLayers.Geometry.Polygon(bigFeature.geometry.components);
+	    var newFeature = new OpenLayers.Feature.Vector(newPolygon);
+	    //Add Inner DONUT HOLES!
+	    for (var i = 0; i<smallFeatures.length;i++){
+	    	newPolygon.addComponent(smallFeatures[i].geometry.components[0].components[0]);
+	    }
+
+	    return newFeature;
+	};
+	PrintControlDialog.prototype.centerAndFitExtent = function(feature) {
+		var bounds = feature.geometry.getBounds(),
+			c = bounds.getCenterLonLat(),
+			fw = bounds.getWidth(),
+			fh = bounds.getHeight();
+		this.map.setCenter([c.lon,c.lat]);
+		var format = $(".sprint-paperformat:visible").val() || "A4",
+			portrait = $(".sprint-orientation:visible:checked").val(),
+			isPrint = $("#sprint_Print_btnPrint").is(":visible") ? "p" : "x";
+		portrait = portrait.toUpperCase() === "PORTRAIT" ? "p" : "l"; //p or l
+		var layout = this.core.module.layoutSizes[format + "_" + portrait + "_" + isPrint];
+		var scalex = fw*72/(layout.w*0.0254);
+		var scaley = fh*72/(layout.h*0.0254);
+		var maxscale = (scalex > scaley) ? scalex : scaley;
+		var scale, res, scaleres,
+			resolutions = this.core.module.printResolutions || this.map.resolutions || [];//this.map.baseLayer.resolutions || this.map.resolutions || [];
+		for (var i=0,len=resolutions.length; i<len; i++) {
+			res = resolutions[i];
+			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
+			if (scale>maxscale){
+				scaleres = scale+':'+res;
+			}
+		}
+		$(".sprint-selectscale").val(scaleres).change();
+	};
 	PrintControlDialog.prototype.showExtent = function(scale) {
 		if (!scale || typeof(scale) !== "number") {
 			scale = this.printScale || this.map.getScale();
@@ -172,7 +330,6 @@
 		var format,
 			portrait = true,
 			isPrint = $("#sprint_Print_btnPrint").is(":visible");
-			pxWidth, pxHeight;
 		portrait = $(".sprint-orientation:visible:checked").val();
 		portrait = portrait && typeof(portrait) === "string" ? portrait.toUpperCase() === "PORTRAIT" : true; // convert to boolean
 		format = $(".sprint-paperformat:visible").val() || "A4";
@@ -195,80 +352,105 @@
 			this.extentLayer.destroyFeatures(); // clean layer
 		}
 		
-		var pxWidth, pxHeight;
+		var pxWidth, pxHeight, ls = this.core.module.layoutSizes;
 		switch(format) {
-		case "A3":
+		case "A2":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = 758 * (96/72);
-					pxHeight = 1067 * (96/72);					
+					pxWidth = ls.A2_p_p.w * (96/72);
+					pxHeight = ls.A2_p_p.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 1107 * (96/72);
-					pxHeight = 718 * (96/72);
+					pxWidth = ls.A2_l_p.w * (96/72);
+					pxHeight = ls.A2_l_p.h * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = 842 * (96/72);
-					pxHeight = 1191 * (96/72);					
+					pxWidth = ls.A2_p_x.w * (96/72);
+					pxHeight = ls.A2_p_x.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 1191 * (96/72);
-					pxHeight = 842 * (96/72);	
+					pxWidth = ls.A2_l_x.w * (96/72);
+					pxHeight = ls.A2_l_x.h * (96/72);	
+				}
+			}
+			break;
+		case "A3":
+			if (isPrint) {
+				if (portrait === true) {
+					pxWidth = ls.A3_p_p.w * (96/72);
+					pxHeight = ls.A3_p_p.h * (96/72);					
+				}
+				else {
+					// Landscape
+					pxWidth = ls.A3_l_p.w * (96/72);
+					pxHeight = ls.A3_l_p.h * (96/72);
+				}
+			}
+			else {
+				// Export
+				if (portrait === true) {
+					pxWidth = ls.A3_p_x.w * (96/72);
+					pxHeight = ls.A3_p_x.h * (96/72);					
+				}
+				else {
+					// Landscape
+					pxWidth = ls.A3_l_x.w * (96/72);
+					pxHeight = ls.A3_l_x.h * (96/72);	
 				}
 			}
 			break;
 		case "A4":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = 511 * (96/72);
-					pxHeight = 718 * (96/72);				
+					pxWidth = ls.A4_p_p.w * (96/72);
+					pxHeight = ls.A4_p_p.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 758 * (96/72);
-					pxHeight = 471 * (96/72);
+					pxWidth = ls.A4_l_p.w * (96/72);
+					pxHeight = ls.A4_l_p.h * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = 595 * (96/72);
-					pxHeight = 842 * (96/72);				
+					pxWidth = ls.A4_p_x.w * (96/72);
+					pxHeight = ls.A4_p_x.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 842 * (96/72);
-					pxHeight = 595 * (96/72);
+					pxWidth = ls.A4_l_x.w * (96/72);
+					pxHeight = ls.A4_l_x.h * (96/72);	
 				}
 			}
 			break;
 		case "A5":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = 337 * (96/72);
-					pxHeight = 471 * (96/72);				
+					pxWidth = ls.A5_p_p.w * (96/72);
+					pxHeight = ls.A5_p_p.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 511 * (96/72);
-					pxHeight = 297 * (96/72);
+					pxWidth = ls.A5_l_p.w * (96/72);
+					pxHeight = ls.A5_l_p.h * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = 393 * (96/72);
-					pxHeight = 538 * (96/72);				
+					pxWidth = ls.A5_p_x.w * (96/72);
+					pxHeight = ls.A5_p_x.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 525 * (96/72);
-					pxHeight = 393 * (96/72);
+					pxWidth = ls.A5_l_x.w * (96/72);
+					pxHeight = ls.A5_l_x.h * (96/72);	
 				}
 			}
 			break;
@@ -352,10 +534,15 @@
 		    onComplete = options.onComplete || null,
 		    orientation = options.orientation || "Portrait"; // portrait or landscape
 		
+		if ($("#sprint_Print_chkUseMask:checked").val() !== undefined) {
+			this.addMaskLayer();
+		}
+		if (this.maskEditingLayer) {
+			this.maskEditingLayer.setVisibility(false);			
+		}
 		if (this.extentLayer) {
 			this.map.removeLayer(this.extentLayer);			
 		}
-		
 		this.service = service;  //K-M
 		var that = this;
 		var map = options.map || this.core.module.map;
@@ -461,7 +648,7 @@
 			$.ajax({
 				type: "POST",
 				url : "/print-servlet/" + serviceName + "/create.json",
-				timeout: options.timeout || 20000, // in ms
+				timeout: options.timeout || 30000, // in ms
 				data : JSON.stringify(jsonData),
 				contentType: "application/json; charset=UTF-8",
 				dataType: "json",
@@ -492,9 +679,19 @@
 				}
 			});
 		}
+		// Remove the mask
+		if (this.maskLayer) {
+			this.maskLayer.destroyFeatures();
+			this.map.removeLayer(this.maskLayer);	
+			this.maskLayer.destroy();
+			this.maskLayer = null;
+		}
 		// Put it back again
 		if (this.extentLayer) {
 			this.map.addLayer(this.extentLayer);			
+		}
+		if (this.maskEditingLayer) {
+			this.maskEditingLayer.setVisibility(true);			
 		}
 	};
 	/**
@@ -871,15 +1068,23 @@
 		}
 		return a.href;
 	};
-
+	/*
+	 * Turn off mask editing before close of the dialog
+	 */
+	PrintControlDialog.prototype.beforeDialogclose = function(e) {
+		if (this.maskEditingLayer && this.maskEditingLayer.visibility){
+			$('#sprint_Print_chkUseMask').prop('checked', false);
+			this.toggleMaskEditing();
+		}
+	};
 	PrintControlDialog.prototype.onDialogclose = function(e) {
 		this.core.module.deactivate();
 		//this.core.dialogCloseClicked = true;
 		
 		// unbind update extent event(s)
 		this.map.events.unregister("zoomend", this, this.showExtent);
-		this.map.events.unregister("zoomend", this, this.setCurrentScale);
-		this.map.events.unregister("changebaselayer", this, this.updateScales);
+		//this.map.events.unregister("zoomend", this, this.setCurrentScale);
+		//this.map.events.unregister("changebaselayer", this, this.updateScales);
 		this.map.events.unregister("moveend", this, this.showExtent);
 		
 		// Destroy the extent layer

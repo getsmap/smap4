@@ -40,15 +40,15 @@
 							class="sprint-paperformat" style="width: 140px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;">
 								<!--option value="A0">A0</option-->
 								<!--option value="A1">A1</option-->
-								<!--option value="A2">A2</option-->
+								<option value="A2">A2</option>
 								<option value="A3">A3</option>
 								<option value="A4" selected="selected">A4</option>
-								<option value="A5">A5</option>
+								<!--<option value="A5">A5</option>-->
 						</select></td>
 						<td><select id="sprint_Print_slctResolution"
 							style="width: 140px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;">
-								<option value="96" selected="selected">96</option>
-								<option value="300">300</option>
+								<option value="96">96</option>
+								<option value="300" selected="selected">300</option>
 						</select></td>
 					</tr>
 					<tr>
@@ -63,7 +63,14 @@
 							<input class="sprint-orientation" type="radio" name="sprint_Print_radLandscape" value="Portrait" checked="checked"></input><label>Stående</label></td>
 					</tr>
 					<tr>
-						<td colspan="2">&nbsp;</td>
+						<td><input id="sprint_Print_chkUseMask" type="checkbox"></input><label id="sprint_Print_chkUseMaskLbl"
+							style="margin-top: 7px">Definiera utskriftsyta</label></td>
+						<td colspan="1">
+							<input type="button" id="sprint_Print_btnDraw"
+							value="Rita"></input>
+							<input type="button" id="sprint_Print_btnClear"
+							value="Rensa"></input>
+						</td>
 					</tr>
 					<tr>
 						<td>
@@ -110,15 +117,15 @@
 							class="sprint-paperformat" style="width: 140px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;">
 								<!--option value="A0">A0</option-->
 								<!--option value="A1">A1</option-->
-								<!--option value="A2">A2</option-->
+								<option value="A2">A2</option>
 								<option value="A3">A3</option>
 								<option value="A4" selected="selected">A4</option>
-								<option value="A5">A5</option>
+								<!--<option value="A5">A5</option>-->
 								</select></td>
 						<td><select id="sprint_Export_slctResolution"
 							style="width: 140px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;">
-								<option value="96" selected="selected">96</option>
-								<option value="300">300</option></select>
+								<option value="96">96</option>
+								<option value="300" selected="selected">300</option></select>
 							</td>
 					</tr>
 					<tr>
