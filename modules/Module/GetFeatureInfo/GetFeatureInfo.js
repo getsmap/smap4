@@ -255,7 +255,9 @@ sMap.Module.GetFeatureInfo = OpenLayers.Class(sMap.Module, {
 		}
 	},
 	 featuredeleted : function(){
-		this.listPoints();
+		if (this.infoLayer){
+			this.listPoints();
+		}
 	 },
 	 /**
 	 * List all points in the infolayer and add to the dialog
