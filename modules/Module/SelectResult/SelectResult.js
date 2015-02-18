@@ -221,7 +221,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 			},
 			ondblClickRow: function(rowid){
 				var f = self.fDict[rowid];
-				sMap.map.zoomToExtent(f.geometry.getBounds());
+				//sMap.map.zoomToExtent(f.geometry.getBounds()); //unwanted behaviour //K-M
 				if (self.selectOnDblClick){
 					sMap.events.triggerEvent("selected", this, {
 						features : [self.fDict[rowid]],
