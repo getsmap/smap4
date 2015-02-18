@@ -547,6 +547,8 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 						else{
 							this.sMap.map.zoomToExtent(fbounds);
 						}
+						// Find the right place for the popup. Otherwise it gets the last clicked position.
+						var px = self.map.getViewPortPxFromLonLat(new OpenLayers.LonLat((fbounds.right+fbounds.left)/2, (fbounds.top-fbounds.bottom)/2));
 						//To find out the right layer for the response, since it is asynch.
 						var rightLayer = null;
 						var typeName = features[0].fid.split(".");
@@ -570,7 +572,8 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 					    	
 					    sMap.events.triggerEvent("select", this, {
 						    features : features,
-						    dialog : this.dialogIfMany
+						    dialog : this.dialogIfMany,
+							xy : px
 						});
 					    guiText = $("#advsearch-searchfield").val();
 					}
