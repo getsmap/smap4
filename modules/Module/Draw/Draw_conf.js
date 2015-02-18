@@ -24,17 +24,18 @@ sMap.moduleConfig.Draw = {
 		 */
 		dialogStartPosition : [300, 100],
 		width : 240,
-		height : 400,
+		height : 420,
 		/**
 		 * Witch edit buttons will be available
 		 */
 		useButtons : {
+				"text" : true,
 				"point" : true,
 				"line" : true,
 				"polygon" : true,
-				"move" : false, // sometimes activates by simple click and not only drag, must drag to release feature
-				"modify" : false, //not checking for feature.editable
-				"delete" : false,  //not checking for feature.editable
+				"move" : true, // sometimes activates by simple click and not only drag, must drag to release feature
+				"modify" : true, //not checking for feature.editable
+				"delete" : true,  //not checking for feature.editable
 				"style" : false  //not functioning for point symbols, select feature and color and use button to change color
 			},
 		/**
@@ -48,7 +49,7 @@ sMap.moduleConfig.Draw = {
 		/**
 		 * Should features opened in link be editable?
 		 */
-		editLinkFeatures : false,
+		editLinkFeatures : true,
 		/**
 		 * The available colors in the color picker
 		 * as hexadecimal values. 
@@ -76,28 +77,37 @@ sMap.moduleConfig.Draw = {
 		         "#adff2f"
 		],
 		/**
+		* Path to a blank image. Used as externalGrapåhic for textpoints
+		*/
+		blankSymbol : "http://sbkgeodata.kristianstad.se/img/tom.png",
+		/**
 		 * The available symbols in the symbol picker
 		 * Syntax {url:""[, size: , width: , height: , offsety: , offsetx: ]}
 		 * If no size is given the defaultSymbolsSize i used
 		 */
-       symbols : [
-				{url:"http://www.smap.se/mapsymbols/camping_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/hotell_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/stuga_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/vandrarhem_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/overnatt_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32}
+		defaultSymbol : {url:"http://sbkgeodata.kristianstad.se/img/location.png", size : 16},
+		symbols : [
+				{url:"http://kartor.smap.se/mapsymbols/camping_mini.png", size : 20},
+				{url:"http://kartor.smap.se/mapsymbols/hotell_mini.png"},
+				{url:"http://kartor.smap.se/mapsymbols/stuga_mini.png", size : 20},
+				{url:"http://kartor.smap.se/mapsymbols/vandrarhem_mini.png", size : 20},
+				{url:"http://kartor.smap.se/mapsymbols/overnatt_mini.png"},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
+				//{url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
+				//{url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
+				//{url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"http://sbkgeodata.kristianstad.se/img/skyltar/B2-1.png", size : 20},
+				{url:"http://sbkgeodata.kristianstad.se/img/skyltar/B3-1.png", size : 20},
+				{url:"http://sbkgeodata.kristianstad.se/img/skyltar/C1-1.png", size : 20},
+				{url:"http://sbkgeodata.kristianstad.se/img/location.png", size : 16}
 	           ],
 	    /**
 	     * Adjust the height of the symbol picker to contain all symbols
@@ -109,8 +119,8 @@ sMap.moduleConfig.Draw = {
 		defaultSymbolSize : 20,
 		defaultFillOpacity : 0.3,
 		defaultPointRadius : 6,
-		defaultGraphicName : "square",
-		defaultStrokeWidth : 4,
+		defaultGraphicName : "circle",
+		defaultStrokeWidth : 2,
 		defaultStrokeOpacity : 1,
 		/**
 		 * Configuration for the draw layer
@@ -133,22 +143,27 @@ sMap.moduleConfig.Draw = {
 			 */
 			style : {
 				"default" : {
-					pointRadius : 6,
-					fillColor : "#ff5b00",
-					fillOpacity : 0.3,
-					graphicName: "square",
-					strokeWidth : 4,
-					strokeColor : "#ff5b00",
-					strokeOpacity : 1,
+					pointRadius : "${size}",
+					fillColor : "${color}",
+					fillOpacity : "${fo}",
+					graphicName: "${gn}",//"circle",//"${gn}",
+					strokeWidth : "${size}",//2,
+					strokeColor : "${color}",
+					strokeOpacity : "${so}",
 					cursor : "pointer",
-					externalGraphic : "img/geometries/polygon.png"
+					externalGraphic : "${eg}",
+					label: "${text}",
+					labelAlign: "cm",
+					fontColor : "${color}",
+					fontOpacity : 1,
+					fontSize : "${fontsize}"
 				},
 				"temporary" : {
 					pointRadius : 6,
 					fillColor : "#ff5b00",
 					fillOpacity : 0.3,
-					graphicName: "square",
-					strokeWidth : 4,
+					graphicName: "circle",
+					strokeWidth : 2,
 					strokeColor : "#ff5b00",
 					strokeOpacity : 1,
 					cursor : "pointer"
@@ -159,12 +174,15 @@ sMap.moduleConfig.Draw = {
 					fillOpacity : 0.3, // Make it invisible (meaning only original icon is visible)
 					strokeOpacity : 1,
 					graphicName: "circle",
+					externalGraphic : null,
 					strokeWidth : 4,
 					strokeColor : "#00FFFF",
+					label : "",
 					cursor : "pointer"
 				}
 			}
 		},
+
 		/**
 		 * Makes the drawlayer to be drawn over the overlays
 		 */
@@ -172,5 +190,13 @@ sMap.moduleConfig.Draw = {
 		/**
 		 * Path for fetching features from DB
 		 */
-		fetchFromDbPath : "http://www.smap.se/cgi-bin/shorten/sMap_show.py"
+		fetchFromDbPath : "http://kartor.smap.se/qgis/shorten/sMap_show.py",
+		/**
+		 * Use load and save buttons
+		 */
+		useLoadSave : false,
+		/**
+		 * Path for saving and loading features from DB new API
+		 */
+		savePath : "/wkartor/save/"
 };
