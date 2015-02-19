@@ -155,7 +155,6 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 		}
 		dialogDiv.append(selectCRS);
 		dialogDiv.append("<BR /><BR />"+this.lang.lblExtent+"<BR />");
-		
 		var polybtn = $("<button id='export-polyextent'>"+this.lang.btnPoly+"</button>");
 		polybtn.button();
 		polybtn.click(function() {
@@ -363,6 +362,11 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			url += "," + Math.round(extent.top);
 		}
 		url += "&C=" + crs;
+		var extx = extent.right - extent.left,
+			exty = extent.top - extent.bottom,
+			maxext = (extx > exty) ? extx : exty,
+			q = Math.round(maxext/this.map.getScale()*this.serviceDPI*100/2.54);
+		url += "&Q=" + q;
 		//alert(url);
 		$('#export_result').prop('src', url);
 	},

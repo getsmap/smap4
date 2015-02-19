@@ -85,6 +85,10 @@ sMap.moduleConfig.Export = {
            }
 		],
 		/**
+		 * The DPI value the export service uses to request WMS
+		 */
+		serviceDPI : 250,
+		/**
 		 * Maximum count of layers to allow export
 		 */
 		maxlayers : 20
