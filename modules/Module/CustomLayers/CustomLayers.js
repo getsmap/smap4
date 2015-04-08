@@ -152,7 +152,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		var layerName = $(this).prop("id").split(ctrl.delim)[1];
 
 		if (e !== true) {
-			ctrl.pressRadioButton(layerName);
+			ctrl.pressRadioButton(layerName, false);
 			var b = ctrl.getButton(layerName);
 			ctrl.markButton(b);
 		}
@@ -190,6 +190,12 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 				layTreeInst.checkBox(layerName);
 			}
 		}
+		var bl = sMap.map.baseLayer;
+		if (p.BL) {
+			bl = sMap.map.getLayersByName(p.BL)[0];
+		}
+		sMap.map.setBaseLayer( bl );
+		return false;
 
 	},
 

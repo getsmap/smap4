@@ -473,7 +473,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 	 *     event handlers... so you have to change the base layer yourself
 	 *     if you want to do that.
 	 */
-	pressRadioButton : function(layerName) {
+	pressRadioButton : function(layerName, silent) {
 		var ctrl = sMap.map.getControlsByClass("sMap.Module.BaselayerSwitcher")[0];
 		var allInputs = $(ctrl.div).find("[id*=bLayerInput]");
 		allInputs.each(function(){
@@ -489,7 +489,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		$(b).removeClass("dropDownHover-notClicked");
 		
 		var t = ctrl.getConfig(layerName);
-		if (t && t.onClick) {
+		if (t && t.onClick && !silent) {
 			t.onClick.call(inputTag.parent(), true);
 		}
 		
