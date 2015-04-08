@@ -116,6 +116,14 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 	drawContent : function() {
 		$("#mapDiv").addClass("layertree-width");
 	},
+
+	checkBox: function(layerName) {
+		var theId = "layertree-label-" + layerName;
+		var cbLabel = $("#"+theId);
+		if (cbLabel.parent().hasClass("dynatree-selected") !== true) {
+			cbLabel.click();
+		}
+	},
 	
 	getNameFromSpanID: function(spanID) {
 		return spanID.replace("layertree-label-", "");
@@ -190,7 +198,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			arr = sMap.config.layers.overlays || [];
 		for (i=0,len=arr.length; i<len; i++) {
 			t = arr[i];
-			this.layerConfigs[t.name] = t;			
+			this.layerConfigs[t.name] = t;	
 		}
 	},
 	

@@ -158,7 +158,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		// Store all baselayers config in an ass. array keyed by category name.
 		var cats = {};
 		for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
-			var t = sMap.config.layers.baselayers[i];
+			var t = $.extend(true, {}, sMap.config.layers.baselayers[i]);
 			var idCat = this.replaceOddChars(t["category"]);
 			
 			if (!cats[idCat]) {
@@ -166,6 +166,8 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 			}
 			cats[idCat].push(t);
 		}
+
+		sMap.events.triggerEvent("blswitcher_makearrmakearr", this, {cats: cats});
 		
 		this.cats = cats;
 		
@@ -355,9 +357,16 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 	getButton : function(layerName) {
 		var cat = null;
 		var button = null;
-		
-		for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
-			var t = sMap.config.layers.baselayers[i];
+		var t;
+
+		var cats = this.cats;
+
+		var mergedArr = [];
+		for (var h in cats) {
+			mergedArr = mergedArr.concat(cats[h]);
+		}
+		for (var i=0,len=mergedArr.length; i<len; i++) {
+			t = mergedArr[i];
 			if (layerName.toLowerCase()==t.name.toLowerCase()) {
 				cat = t.category;
 				break;
@@ -371,6 +380,27 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		return button;
 	},
+
+	// getButton : function(layerName) {
+	// 	var cat = null;
+	// 	var button = null;
+	// 	var t;
+		
+	// 	for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
+	// 		t = sMap.config.layers.baselayers[i];
+	// 		if (layerName.toLowerCase()==t.name.toLowerCase()) {
+	// 			cat = t.category;
+	// 			break;
+	// 		}
+	// 	}
+		
+	// 	if (cat!=null) {
+	// 		var bId = "bLayerSwitcher" + this.delim + this.replaceOddChars(cat);
+	// 		button = $("#"+bId);
+	// 	}
+		
+	// 	return button;
+	// },
 
 	
 	/**
@@ -389,12 +419,10 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		var layerName = catsArr[0].name; // default layer for this category to be visible on click
 		
-		//var layer = this.map.getLayersByName(layerName)[0];
-		//this.map.setBaseLayer(layer);
-		//Trigga eventet setbaselayer
 		sMap.events.triggerEvent("setbaselayer", this, {
-		    layerName : layerName
+			layerName : layerName
 		});
+		
 		// Unselect all radio buttons.
 		var allInputs = $(this.div).find("[id*=bLayerInput]");
 		allInputs.each(function(){
@@ -421,6 +449,21 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		$(b).addClass("ui-state-active");
 		$(b).removeClass("dropDownHover-notClicked");
 	},
+
+	getConfig: function(layerName) {
+		var ls = this.cats || {},
+			t, arr;
+		for (var category in ls) {
+			arr = ls[category];
+			for (var i=0,len=arr.length; i<len; i++) {
+				t = arr[i];
+				if (t.name === layerName) {
+					return t;
+				}
+			}
+		}
+		return null;
+	},
 	
 	/**
 	 * Change the selected input radio button in the drop-down programmatically.
@@ -439,10 +482,16 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		var inputTagID = "bLayerInput" + ctrl.delim + layerName;
 		var inputTag = $("#"+inputTagID);
 		inputTag.prop("checked", true);
+
 		
 		var b = ctrl.getButton(layerName);
 		$(b).addClass("dropDownHover");
 		$(b).removeClass("dropDownHover-notClicked");
+		
+		var t = ctrl.getConfig(layerName);
+		if (t && t.onClick) {
+			t.onClick.call(inputTag.parent(), true);
+		}
 		
 	},
 	
@@ -473,7 +522,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 			rowDiv.append(inputTag);
 			rowDiv.append(labelTag);
 
-			rowDiv.click(function(e) {
+			rowDiv.click(t.onClick || function(e) {
 				var ctrl = sMap.map.getControlsByClass("sMap.Module.BaselayerSwitcher")[0];
 				var layerName = $(this).prop("id").split(ctrl.delim)[1];
 				ctrl.pressRadioButton(layerName);

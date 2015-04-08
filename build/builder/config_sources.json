@@ -41,6 +41,10 @@
 		"modules/Module/CopyLink/CopyLink.js",
 		"modules/Module/CopyLink/CopyLink_conf.js",
 		"modules/Module/CopyLink/CopyLink_lang.js",
+
+		"modules/Module/CustomLayers/CustomLayers.js",
+		"modules/Module/CustomLayers/CustomLayers_conf.js",
+		"modules/Module/CustomLayers/CustomLayers_lang.js",
 		
 		"modules/Module/Draw/Draw.js",
 		"modules/Module/Draw/Draw_conf.js",

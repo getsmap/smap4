@@ -413,7 +413,7 @@ sMap.Layer = OpenLayers.Class({
 			this.map.setBaseLayer(layer);
 		}
 		else {
-			debug.error(sMap.lang.errBaselayerDoesNotExist+" layerName: "+layerName);
+			debug.log(sMap.lang.errBaselayerDoesNotExist+" layerName: "+layerName);
 		}
 	},
 	/**
