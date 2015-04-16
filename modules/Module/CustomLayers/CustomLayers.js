@@ -150,13 +150,13 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		var self = sMap.map.getControlsByClass("sMap.Module.CustomLayers")[0],
 			layTreeInst = sMap.map.getControlsByClass("sMap.Module.LayerTree")[0];
 		var layerName = $(this).prop("id").split(ctrl.delim)[1];
+		var opened = layTreeInst.collapseAllHeaders();
 
 		if (e !== true) {
 			ctrl.pressRadioButton(layerName, false);
 			var b = ctrl.getButton(layerName);
 			ctrl.markButton(b);
 		}
-
 
 		// -- Parse parameters --
 
@@ -173,28 +173,44 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		sMap.cmd.hidealllayers();
 		sMap.webParams.applyDefaultParams(p);
 		
-		if (p.OL) {
-			var olArr = p.OL.split(",");
-			var arrLayersToAdd = [];
-			for (var i=0,len=olArr.length; i<len; i++) {
-				var layerName = olArr[i];
-				// var t = sMap.cmd.getLayerConfig(layerName);
-				// t.startVisible = true;	
-				// if (paramsObj.BUFFER){
-				// 	t.options.buffer = paramsObj.BUFFER;
-				// }
-				// arrLayersToAdd.push(t);
-				
-				// sMap.cmd.showlayer({layerName: layerName});
+		function delayed() {
+			if (p.OL) {
+				var olArr = p.OL.split(",");
+				var arrLayersToAdd = [];
+				for (var i=0,len=olArr.length; i<len; i++) {
+					var layerName = olArr[i];
+					// var t = sMap.cmd.getLayerConfig(layerName);
+					// t.startVisible = true;	
+					// if (paramsObj.BUFFER){
+					// 	t.options.buffer = paramsObj.BUFFER;
+					// }
+					// arrLayersToAdd.push(t);
+					
+					// sMap.cmd.showlayer({layerName: layerName});
 
-				layTreeInst.checkBox(layerName);
+					layTreeInst.checkBox(layerName);
+				}
 			}
+			var bl = sMap.map.baseLayer;
+			if (p.BL) {
+				bl = sMap.map.getLayersByName(p.BL)[0];
+			}
+			sMap.map.setBaseLayer( bl );
 		}
-		var bl = sMap.map.baseLayer;
-		if (p.BL) {
-			bl = sMap.map.getLayersByName(p.BL)[0];
-		}
-		sMap.map.setBaseLayer( bl );
+
+		// if (opened.length) {
+		// 	setTimeout(function() {
+		// 		delayed();
+		// 	}, 1000);
+		// }
+		// else {
+		delayed();
+		var $inp = $(this).find("input");
+		setTimeout(function() {
+			// Bug fix. Input gets unchecked for some reason.
+			$inp.prop("checked", true);
+		}, 1);
+
 		return false;
 
 	},

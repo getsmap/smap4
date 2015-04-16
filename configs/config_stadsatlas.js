@@ -16339,7 +16339,7 @@ var config = {
 					"Produkter": [
 						{
 							displayName: "Lagerkartan med åäö",
-							params: "ol=sma_delomrade_p,sma_nyckelkodsomraden_p&bl=stadskartan"
+							params: "ol=sma_befolkning_p100,sma_delomrade_p,sma_nyckelkodsomraden_p&bl=stadskartan"
 						},
 						{
 							displayName: "Superkartan",

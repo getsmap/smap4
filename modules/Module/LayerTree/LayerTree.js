@@ -254,7 +254,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			activeVisible: true,
 			noLink: false,
 			clickFolderMode: 1,
-			fx: { height: "toggle", duration: 200 },
+			fx: null, //{ height: "toggle", duration: 1 },
 			checkbox: true,
 			selectMode: 3, // 3 means checking a folder checks all childrens' checkboxes.
 			onDeactivate: function(node) {},
@@ -1174,6 +1174,16 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		    }
 		}, 3000);*/
 		
+	},
+
+	collapseAllHeaders: function() {
+		var opened = $("#layertree").find(".dynatree-folder.dynatree-expanded .mainheader");
+		opened.click();
+		return opened;
+
+		// $("#layertree").dynatree("getRoot").visit(function(node){
+		// 	node.toggleExpand();
+		// });
 	},
 	
 	/**
