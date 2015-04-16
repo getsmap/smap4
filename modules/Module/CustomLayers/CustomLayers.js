@@ -19,7 +19,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 	 * 
 	 * Look at the event listeners as a public API of the module.
 	 */
-	EVENT_LISTENERS : ["blswitcher_makearrmakearr"],
+	EVENT_LISTENERS : ["blswitcher_makearr"],
 	
 	/**
 	 * The events triggered from this module. Note that some modules
@@ -91,7 +91,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		}
 	},
 
-	blswitcher_makearrmakearr: function(e) {
+	blswitcher_makearr: function(e) {
 		var cats = e.cats || {},
 			ls = this.layers || {},
 			t, arr,
@@ -171,7 +171,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		p = OpenLayers.Util.upperCaseObject(out);
 		
 		sMap.cmd.hidealllayers();
-		sMap.webParams.applyDefaultParams(p);
+		sMap.webParams.applyDefaultParams(p, {noZoomExtentFallback: true});
 		
 		function delayed() {
 			if (p.OL) {
@@ -197,13 +197,6 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 			}
 			sMap.map.setBaseLayer( bl );
 		}
-
-		// if (opened.length) {
-		// 	setTimeout(function() {
-		// 		delayed();
-		// 	}, 1000);
-		// }
-		// else {
 		delayed();
 		var $inp = $(this).find("input");
 		setTimeout(function() {

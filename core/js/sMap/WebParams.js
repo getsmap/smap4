@@ -203,10 +203,13 @@ sMap.WebParams = OpenLayers.Class({
 	 * @param paramsObj {Object}
 	 * @returns
 	 */
-	applyDefaultParams : function(paramsObj) {
+	applyDefaultParams : function(paramsObj, options) {
 		paramsObj = paramsObj || this.getParamsAsObject();
+		options = options || {};
 		
-		this.map.zoomToMaxExtent();
+		if (!options.noZoomExtentFallback) {
+			this.map.zoomToMaxExtent();
+		}
 
 		var zoom = parseInt(paramsObj.ZOOM);
 		if (zoom && zoom > 0) {
@@ -272,7 +275,7 @@ sMap.WebParams = OpenLayers.Class({
 		/*
 		 * If no zoom or center provided - zoom to default extent.
 		 */
-		if (!paramsObj.ZOOM && !paramsObj.CENTER) {
+		if (!paramsObj.ZOOM && !paramsObj.CENTER && !options.noZoomExtentFallback) {
 			var b = sMap.config.defaultExtent;
 			if (b){
 				this.map.zoomToExtent(new OpenLayers.Bounds(b.w, b.s, b.e, b.n), false);

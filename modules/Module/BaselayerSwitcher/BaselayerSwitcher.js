@@ -157,6 +157,8 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		// Store all baselayers config in an ass. array keyed by category name.
 		var cats = {};
+		sMap.events.triggerEvent("blswitcher_makearr", this, {cats: cats});
+		
 		for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
 			var t = $.extend(true, {}, sMap.config.layers.baselayers[i]);
 			var idCat = this.replaceOddChars(t["category"]);
@@ -167,7 +169,6 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 			cats[idCat].push(t);
 		}
 
-		sMap.events.triggerEvent("blswitcher_makearrmakearr", this, {cats: cats});
 		
 		this.cats = cats;
 		
