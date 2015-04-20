@@ -28,7 +28,7 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 	EVENT_TRIGGERS : [],
 
 	options: {
-		idSeparator: ",",
+		idSeparator: ";",
 		key: "objectid",
 
 		layer: {
