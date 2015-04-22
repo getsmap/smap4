@@ -20,6 +20,10 @@ sMap.moduleConfig.Export = {
 		width : 240,
 		height : 410,
 		/**
+		 * Path to the service recieving the POST-form
+		 */
+		 postURL : "/wkartor/export/tillfPOST.php",
+		/**
 		 * Paths to the export scripts and settings for the export routines
 		 */
 		exportRoutines : {

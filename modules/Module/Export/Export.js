@@ -175,8 +175,9 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 		});
 		button.button();
 		dialogDiv.append(button);
-		var iframe = $('<iframe name="export_result" id="export_result" src="about:blank" frameborder="0" scrolling="no" width=210 height=100></iframe>');
-		dialogDiv.append(iframe);
+		var resultdiv = $('<div name="export-result" id="export-result" ></div>');
+		//var iframe = $('<iframe name="export-result" id="export-result" src="about:blank" frameborder="0" scrolling="no" width=210 height=100></iframe>');
+		dialogDiv.append(resultdiv);
 	},
 	/**
 	 * Adds a vector layer for export extent with an OL drawfeature control
@@ -291,9 +292,11 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			extent = map.getExtent(),
 			routine = this.exportRoutines[$("#export-selectRoutine").val()],
 			crs = $("#export-crsSelectTag").val(),
-			url = routine.url + "L=";
+			data = {};//,
+			//url = routine.url + "L=";
 		if (routine.layerlist){
-			url += routine.layerlist;
+			//url += routine.layerlist;
+			data.L = routine.layerlist;
 		}
 		if (routine.addVisibleLayers){
 			var t = {},
@@ -318,10 +321,23 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 						}
 					}
 					layercount++;
+				}else if (layer.visibility && layer.CLASS_NAME == "OpenLayers.Layer.Vector" && layer.name == "theDrawLayer" && layer.features.length){ //theDrawLayer vector
+						var encFeatures = [];
+						var features = layer.features;
+						var featureFormat = new OpenLayers.Format.GeoJSON();
+						var feature;
+						for ( var j = 0, len = features.length; j < len; ++j) {
+							feature = features[j];
+							var featureGeoJson = featureFormat.extract.feature.call(
+								featureFormat, feature);
+							encFeatures.push(featureGeoJson);
+						}
+					data.J = JSON.stringify(encFeatures);
 				}
 			}
 			if (visibleLayerNames){
-				url += visibleLayerNames;
+				//url += visibleLayerNames;
+				data.L = visibleLayerNames;
 			}
 			if (layercount > this.maxlayers) {
 				alert('För många lager! Det går endast att exportera ' + this.maxlayers + ' lager samtidigt');
@@ -330,45 +346,73 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 		}
 		if (routine.addBaseLayer){
 			if (routine.emptyBaseLayer){
-				url += "&BL=";
+				//url += "&BL=";
+				data.BL = "";
 			} else{
-			url += "&BL="+map.baseLayer.name;
+				//url += "&BL="+map.baseLayer.name;
+				data.BL = map.baseLayer.name;
 			}
 		}
 		if (routine.format){
-			url += "&FF="+routine.format;
+			//url += "&FF="+routine.format;
+			data.FF = routine.format;
 		}
+		var bp = "";
 		if(this.exportExtentLayer && this.exportExtentLayer.features.length>0){
 			var newFeature = this.exportExtentLayer.features[0].clone();
 			extent = newFeature.geometry.getBounds();
 			var fv = newFeature.geometry.getVertices();
 			if (fv.length>0){
-				url += "&BP=";
 				for (var i=0;i<fv.length;i++){
-					url += i!=0 ? "," : "";
+					bp += i!=0 ? "," : "";
 					if (this.map.projection != crs && routine.addBaseLayer){
 						fv[i].transform(this.map.projection,crs);
 					}
-					url += Math.round(fv[i].x) + "," + Math.round(fv[i].y);
+					bp += Math.round(fv[i].x) + "," + Math.round(fv[i].y);
 				}
+				//url += "&BP=" + bp;
+				data.BP = bp;
 			}
 		}else{
 			if (this.map.projection != crs && routine.addBaseLayer){
 				extent.transform(this.map.projection,crs);
 			}
-			url += "&B=" + Math.round(extent.left);
-			url += "," + Math.round(extent.bottom);
-			url += "," + Math.round(extent.right);
-			url += "," + Math.round(extent.top);
+			bp += Math.round(extent.left);
+			bp += "," + Math.round(extent.bottom);
+			bp += "," + Math.round(extent.right);
+			bp += "," + Math.round(extent.top);
+			//url += "&B=" + bp;
+			data.B = bp;
 		}
-		url += "&C=" + crs;
+		//url += "&C=" + crs;
+		data.C = crs;
 		var extx = extent.right - extent.left,
 			exty = extent.top - extent.bottom,
 			maxext = (extx > exty) ? extx : exty,
 			q = Math.round(maxext/this.map.getScale()*this.serviceDPI*100/2.54);
-		url += "&Q=" + q;
+		//url += "&Q=" + q;
+		data.Q = q;
 		//alert(url);
-		$('#export_result').prop('src', url);
+		//$('#export_result').prop('src', url);
+		$.ajax({
+			url : this.postURL,
+			headers: {
+				"Content Type": "application/x-www-form-urlencoded"
+			},
+			data : data,
+			type : "POST",
+			error: function(request,error) {
+				alert("Fel! Kontakta ansvarig" + request + error);
+			},
+			success : function(result){
+				$('#export-result').html(result);
+				if (result.indexOf("inloggad")>0||result.indexOf("inga")>0){
+					$('#export-result').html(result);
+				}else{
+					$('#export-result').children().css("color", "#023f88" );
+				}
+			}	
+		});
 	},
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
