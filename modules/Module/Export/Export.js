@@ -321,7 +321,7 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 						}
 					}
 					layercount++;
-				}else if (layer.visibility && layer.CLASS_NAME == "OpenLayers.Layer.Vector" && layer.name == "theDrawLayer" && layer.features.length){ //theDrawLayer vector
+				}else if (layer.visibility && layer.CLASS_NAME == "OpenLayers.Layer.Vector" && (layer.name == "theDrawLayer" || layer.name == "theInfoLayer")&& layer.features.length){ //theDrawLayer vector
 						var encFeatures = [];
 						var features = layer.features;
 						var featureFormat = new OpenLayers.Format.GeoJSON();

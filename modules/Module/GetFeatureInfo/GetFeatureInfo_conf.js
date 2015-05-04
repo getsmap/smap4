@@ -66,7 +66,7 @@ sMap.moduleConfig.GetFeatureInfo = {
 					cursor : "pointer",
 					label:"${info}",
 					fontColor:"#000",
-					fontSize:"14px",
+					fontSize:"14",
 					fontFamily:"Arial",
 					fontWeight:"normal",
 					labelAlign:"lb",
