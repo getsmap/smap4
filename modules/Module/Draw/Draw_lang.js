@@ -9,6 +9,8 @@ sMap.Lang.lang.Draw = {
 		hoverTextPoint : "Lägg till symbol",
 		hoverTextLine : "Lägg till linje",
 		hoverTextPolygon : "Lägg till yta",
+		hoverTextBox : "Lägg till rektangel",
+		hoverTextCircle : "Lägg till cirkel med radie i meter",
 		hoverTextMove : "Flytta ritade objekt",
 		hoverTextModify : "Flytta, lägg till eller ta bort brytpunkter",
 		hoverTextDelete : "Radera objekt",
@@ -19,13 +21,19 @@ sMap.Lang.lang.Draw = {
 		btnColor: "Välj färg",
 		btnSymbol: "Välj symbol",
 		lblNoImage : "Ingen bild",
+		addMeasureLabel : "Lägg till mättext",
+		addMeasureTitle : "Lägg till en text till linje och ytobjekt som visar längd eller yta.",
 		btnCopylink : "Skapa länk till karta",
 		btnLoad : "Ladda",
 		btnSave : "Spara",
 		btnLoadHoverText : "Ladda dina sparade objekt till kartan",
 		btnSaveHoverText : "Spara ritade objekt. OBS! Skriver över befintliga objekt! Glöm inte att ladda upp dem först om de ska vara kvar.",
 		comfirmDlgTitle : "Bekräfta",
-		confirmText : "Är du säker? Dina tidigare sparade objekt skrivs över. Vill du spara dem måste du ladda upp dem först med laddaknappen."
+		confirmText : "Är du säker? Dina tidigare sparade objekt skrivs över. Vill du spara dem måste du ladda upp dem först med laddaknappen.",
+		btnImport : "Import",
+		btnImportHoverText : "Importera en fil till ritningen",
+		importDlgTitle : "Importera fil",
+		importText : "Välj fil att importera"
 	},
 	en : { 
 		buttonText : "Draw",
@@ -36,6 +44,8 @@ sMap.Lang.lang.Draw = {
 		hoverTextPoint : "Add point",
 		hoverTextLine : "Add line",
 		hoverTextPolygon : "Add area",
+		hoverTextBox : "Add rectangel",
+		hoverTextCircle : "Add circle with radius in meter",
 		hoverTextMove : "Move object",
 		hoverTextModify : "Edit vertices",
 		hoverTextDelete : "Delete object",
@@ -46,13 +56,19 @@ sMap.Lang.lang.Draw = {
 		btnColor: "Color",
 		btnSymbol: "Symbol",
 		lblNoImage : "No image",
+		addMeasureLabel : "Add measure text",
+		addMeasureTitle : "Add a text to line och area objekts that shows the length or area.",
 		btnCopylink : "Create link to map",
 		btnLoad : "Load",
 		btnSave : "Save",
 		btnLoadHoverText : "Loading saved iobjects to the map",
 		btnSaveHoverText : "Saving drawed objects. Don't forget to load first if you want to keep old objects!",
 		comfirmDlgTitle : "Confirm",
-		confirmText : "Are you sure? Your previous objects will be overwritten. Don't forget to load first if you want to keep old objects!"
+		confirmText : "Are you sure? Your previous objects will be overwritten. Don't forget to load first if you want to keep old objects!",
+		btnImport : "Import",
+		btnImportHoverText : "Import a file to the drawing",
+		importDlgTitle : "Import file",
+		importText : "Choose file to import"
 	}
 	
 };

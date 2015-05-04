@@ -920,6 +920,21 @@
 						if (style.fontColor) {
 							style.fontColor = this.to16Bit(style.fontColor);
 						}
+						if (style.pointRadius) {
+							if (style.externalGraphic||feature.layer.name=="theInfoLayer"){ //symbols with radius in pixels
+								style.pointRadius = style.pointRadius*72/96;
+							}else{ // graphic with radius in meter
+								var scaleRes = $(".sprint-selectscale:visible").val(), //this.getCurrentScale();
+									res = parseFloat(scaleRes.split(":")[1]);			
+								style.pointRadius = style.pointRadius*72/96*this.map.resolution/res;
+							}
+						}
+						if (style.fontSize) {
+							style.fontSize = style.fontSize*72/96;
+						}
+						if (style.strokeWidth) {
+							style.strokeWidth = style.strokeWidth*72/96;
+						}
 						styleDict[dictKey] = styleName = nextId++;
 						if (style.externalGraphic) {
 							// Replaced Ext.applyIf not same as extend
@@ -928,6 +943,7 @@
 								externalGraphic : style.externalGraphic
 							}, style);
 						} else {
+							delete style.externalGraphic;
 							encStyles[styleName] = style;
 						}
 					}
