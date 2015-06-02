@@ -1449,7 +1449,7 @@ sMap.Layer = OpenLayers.Class({
 			this.map.setBaseLayer(layer);
 		}
 		else {
-			debug.error(sMap.lang.errBaselayerDoesNotExist+" layerName: "+layerName);
+			debug.log(sMap.lang.errBaselayerDoesNotExist+" layerName: "+layerName);
 		}
 	},
 	/**
@@ -3033,10 +3033,13 @@ sMap.WebParams = OpenLayers.Class({
 	 * @param paramsObj {Object}
 	 * @returns
 	 */
-	applyDefaultParams : function(paramsObj) {
+	applyDefaultParams : function(paramsObj, options) {
 		paramsObj = paramsObj || this.getParamsAsObject();
+		options = options || {};
 		
-		this.map.zoomToMaxExtent();
+		if (!options.noZoomExtentFallback) {
+			this.map.zoomToMaxExtent();
+		}
 
 		var zoom = parseInt(paramsObj.ZOOM);
 		if (zoom && zoom > 0) {
@@ -3102,7 +3105,7 @@ sMap.WebParams = OpenLayers.Class({
 		/*
 		 * If no zoom or center provided - zoom to default extent.
 		 */
-		if (!paramsObj.ZOOM && !paramsObj.CENTER) {
+		if (!paramsObj.ZOOM && !paramsObj.CENTER && !options.noZoomExtentFallback) {
 			var b = sMap.config.defaultExtent;
 			if (b){
 				this.map.zoomToExtent(new OpenLayers.Bounds(b.w, b.s, b.e, b.n), false);
@@ -4434,8 +4437,10 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		// Store all baselayers config in an ass. array keyed by category name.
 		var cats = {};
+		sMap.events.triggerEvent("blswitcher_makearr", this, {cats: cats});
+		
 		for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
-			var t = sMap.config.layers.baselayers[i];
+			var t = $.extend(true, {}, sMap.config.layers.baselayers[i]);
 			var idCat = this.replaceOddChars(t["category"]);
 			
 			if (!cats[idCat]) {
@@ -4443,6 +4448,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 			}
 			cats[idCat].push(t);
 		}
+
 		
 		this.cats = cats;
 		
@@ -4632,9 +4638,16 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 	getButton : function(layerName) {
 		var cat = null;
 		var button = null;
-		
-		for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
-			var t = sMap.config.layers.baselayers[i];
+		var t;
+
+		var cats = this.cats;
+
+		var mergedArr = [];
+		for (var h in cats) {
+			mergedArr = mergedArr.concat(cats[h]);
+		}
+		for (var i=0,len=mergedArr.length; i<len; i++) {
+			t = mergedArr[i];
 			if (layerName.toLowerCase()==t.name.toLowerCase()) {
 				cat = t.category;
 				break;
@@ -4648,6 +4661,27 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		return button;
 	},
+
+	// getButton : function(layerName) {
+	// 	var cat = null;
+	// 	var button = null;
+	// 	var t;
+		
+	// 	for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
+	// 		t = sMap.config.layers.baselayers[i];
+	// 		if (layerName.toLowerCase()==t.name.toLowerCase()) {
+	// 			cat = t.category;
+	// 			break;
+	// 		}
+	// 	}
+		
+	// 	if (cat!=null) {
+	// 		var bId = "bLayerSwitcher" + this.delim + this.replaceOddChars(cat);
+	// 		button = $("#"+bId);
+	// 	}
+		
+	// 	return button;
+	// },
 
 	
 	/**
@@ -4666,12 +4700,10 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		var layerName = catsArr[0].name; // default layer for this category to be visible on click
 		
-		//var layer = this.map.getLayersByName(layerName)[0];
-		//this.map.setBaseLayer(layer);
-		//Trigga eventet setbaselayer
 		sMap.events.triggerEvent("setbaselayer", this, {
-		    layerName : layerName
+			layerName : layerName
 		});
+		
 		// Unselect all radio buttons.
 		var allInputs = $(this.div).find("[id*=bLayerInput]");
 		allInputs.each(function(){
@@ -4698,6 +4730,21 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		$(b).addClass("ui-state-active");
 		$(b).removeClass("dropDownHover-notClicked");
 	},
+
+	getConfig: function(layerName) {
+		var ls = this.cats || {},
+			t, arr;
+		for (var category in ls) {
+			arr = ls[category];
+			for (var i=0,len=arr.length; i<len; i++) {
+				t = arr[i];
+				if (t.name === layerName) {
+					return t;
+				}
+			}
+		}
+		return null;
+	},
 	
 	/**
 	 * Change the selected input radio button in the drop-down programmatically.
@@ -4707,7 +4754,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 	 *     event handlers... so you have to change the base layer yourself
 	 *     if you want to do that.
 	 */
-	pressRadioButton : function(layerName) {
+	pressRadioButton : function(layerName, silent) {
 		var ctrl = sMap.map.getControlsByClass("sMap.Module.BaselayerSwitcher")[0];
 		var allInputs = $(ctrl.div).find("[id*=bLayerInput]");
 		allInputs.each(function(){
@@ -4716,10 +4763,16 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		var inputTagID = "bLayerInput" + ctrl.delim + layerName;
 		var inputTag = $("#"+inputTagID);
 		inputTag.prop("checked", true);
+
 		
 		var b = ctrl.getButton(layerName);
 		$(b).addClass("dropDownHover");
 		$(b).removeClass("dropDownHover-notClicked");
+		
+		var t = ctrl.getConfig(layerName);
+		if (t && t.onClick && !silent) {
+			t.onClick.call(inputTag.parent(), true);
+		}
 		
 	},
 	
@@ -4750,7 +4803,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 			rowDiv.append(inputTag);
 			rowDiv.append(labelTag);
 
-			rowDiv.click(function(e) {
+			rowDiv.click(t.onClick || function(e) {
 				var ctrl = sMap.map.getControlsByClass("sMap.Module.BaselayerSwitcher")[0];
 				var layerName = $(this).prop("id").split(ctrl.delim)[1];
 				ctrl.pressRadioButton(layerName);
@@ -7061,6 +7114,263 @@ sMap.Module.CopyLink = OpenLayers.Class(sMap.Module, {
 		successMsg : "Complete"
 	}
 };/**
+ * @author Your Name
+ * @copyright Your office or the organisation that pays you
+ * @license MIT license
+ */
+
+/**
+ * @requires sMap/Module.js
+ */
+
+sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
+	
+	/**
+	 * The events that this module will listen to. Each event listener
+	 * is connected to a method defined in this module, with the same
+	 * name as the event. When another module triggers this event, the
+	 * method will be called (and other modules which are listening
+	 * to the same event).
+	 * 
+	 * Look at the event listeners as a public API of the module.
+	 */
+	EVENT_LISTENERS : ["blswitcher_makearr"],
+	
+	/**
+	 * The events triggered from this module. Note that some modules
+	 * both listens to and trigger events.
+	 */
+	EVENT_TRIGGERS : [],
+	
+	initialize : function(options) {
+		options = options || {};
+		
+		this.EVENT_LISTENERS =
+			sMap.Module.CustomLayers.prototype.EVENT_LISTENERS.concat(
+				sMap.Module.prototype.EVENT_LISTENERS
+        );
+		this.EVENT_TRIGGERS =
+			sMap.Module.CustomLayers.prototype.EVENT_TRIGGERS.concat(
+				sMap.Module.prototype.EVENT_TRIGGERS
+        );
+		
+		// This allows your control to be extended by sending in a parameter hash object
+		// For example overriding a method in this class or in the parent class (see next step).
+		OpenLayers.Util.applyDefaults(this, options);
+		// This calls the parent class's constructor and allows to
+		// extend it (e.g. override methods).
+		sMap.Module.prototype.initialize.apply(this, [options]);
+		
+	},
+	
+	activate : function() {
+		if (this.active===true) {
+			return false;
+		}
+		// Call the activate method of the parent class
+		return sMap.Module.prototype.activate.apply(
+	            this, arguments);
+	},
+	
+	deactivate : function() {
+		if (this.active!==true) {
+			return false;
+		}
+		// Call the deactivate method of the parent class
+		return sMap.Module.prototype.deactivate.apply(
+	            this, arguments
+	        );
+	},
+	
+	destroy : function() {
+		// Call the destroy method of the parent class
+		return sMap.Module.prototype.destroy.apply(this, arguments);
+	},
+	
+    /**
+     * Called when all modules are initialized, i.e. after initialize.
+     * All initial HTML should be produced from here.
+     * @returns {void}
+     */
+	drawContent : function() {
+		// sMap.events.register("modulesadded", this, function(e) {
+		// 	this.init();
+		// });
+		this.init();
+	},
+
+	init: function() {
+		if (!$("#baselayerDiv").length) {
+			// This module requires baselayer switcher module
+			return false;
+		}
+	},
+
+	blswitcher_makearr: function(e) {
+		var cats = e.cats || {},
+			ls = this.layers || {},
+			t, arr,
+			blSwitcherInst = e.caller;
+		this.blSwitcherInst = blSwitcherInst;
+		for (var category in ls) {
+			arr = ls[ blSwitcherInst.replaceOddChars(category) ];
+			for (var i=0,len=arr.length; i<len; i++) {
+				t = arr[i];
+				t.name = $.trim(t.displayName.replace(/[^\x00-\x7F]/g, "")).replace(/\s/g, "_");
+				t.onClick = this.onRowClick;
+				t.category = category;
+			}
+		}
+
+		for (var category in cats) {
+			arr = cats[ blSwitcherInst.replaceOddChars(category) ];
+			if (ls[category]) {
+				cats[category] = cats[category].concat( ls[category] );
+			}
+		}
+		for (var category in ls) {
+			if (!cats[category]) {
+				cats[category] = ls[category];
+			}
+
+		}
+
+
+		// $.extend(true, cats, ls);
+		// var a;
+	},
+
+
+	getConfig: function(layerName) {
+		var ls = this.layers || {},
+			t, arr;
+		for (var category in ls) {
+			arr = ls[category];
+			for (var i=0,len=arr.length; i<len; i++) {
+				t = arr[i];
+				if (t.name === layerName) {
+					return t;
+				}
+			}
+		}
+		return null;
+	},
+
+	onRowClick: function(e) {
+		var ctrls = sMap.map.getControlsByClass("sMap.Module.BaselayerSwitcher");
+		if (!ctrls) {
+			return false;
+		}
+		var ctrl = ctrls[0];
+		var self = sMap.map.getControlsByClass("sMap.Module.CustomLayers")[0],
+			layTreeInst = sMap.map.getControlsByClass("sMap.Module.LayerTree")[0];
+		var layerName = $(this).prop("id").split(ctrl.delim)[1];
+		var opened = layTreeInst.collapseAllHeaders();
+
+		if (e !== true) {
+			ctrl.pressRadioButton(layerName, false);
+			var b = ctrl.getButton(layerName);
+			ctrl.markButton(b);
+		}
+
+		// -- Parse parameters --
+
+		var t = self.getConfig(layerName);
+		var p = t.params;
+		var pArr = p.split("&");
+		var out = {};
+		for (var i=0,len=pArr.length; i<len; i++) {
+			var keyVal = pArr[i].split("=");
+			out[keyVal[0]] = keyVal[1];
+		}
+		p = OpenLayers.Util.upperCaseObject(out);
+		
+		sMap.cmd.hidealllayers();
+		sMap.webParams.applyDefaultParams(p, {noZoomExtentFallback: true});
+		
+		function delayed() {
+			if (p.OL) {
+				var olArr = p.OL.split(",");
+				var arrLayersToAdd = [];
+				for (var i=0,len=olArr.length; i<len; i++) {
+					var layerName = olArr[i];
+					// var t = sMap.cmd.getLayerConfig(layerName);
+					// t.startVisible = true;	
+					// if (paramsObj.BUFFER){
+					// 	t.options.buffer = paramsObj.BUFFER;
+					// }
+					// arrLayersToAdd.push(t);
+					
+					// sMap.cmd.showlayer({layerName: layerName});
+
+					layTreeInst.checkBox(layerName);
+				}
+			}
+			var bl = sMap.map.baseLayer;
+			if (p.BL) {
+				bl = sMap.map.getLayersByName(p.BL)[0];
+			}
+			sMap.map.setBaseLayer( bl );
+		}
+		delayed();
+		var $inp = $(this).find("input");
+		setTimeout(function() {
+			// Bug fix. Input gets unchecked for some reason.
+			$inp.prop("checked", true);
+		}, 1);
+
+		return false;
+
+	},
+
+
+
+	// parseParams: function(p) {
+	// 	if (p)
+	// },
+
+	// addHeader: function(headerText) {
+	// 	var encHeaderText = encodeURIComponent(headerText).replace(/\W/g, '');
+	// 	var h = $('<div class="ui-widget-content ui-state-default baselayer-button" id="bLayerSwitcher___'+encHeaderText+'">'+headerText+'</div>');
+	// 	$("#baselayerDiv").append(h);
+	// 	return h;
+	// },
+
+	// addRow: function(t) {
+	// 	var h = $("#baselayerDiv .baselayer-button:contains("+t.header+")");
+	// 	if (!h.length) {
+	// 		h = this.addHeader();
+	// 	}
+	// 	var r = 
+
+
+
+
+
+
+	// },
+	
+	// Class name needed when you want to fetch your module...
+	// should correspond to the real class name.
+	CLASS_NAME : "sMap.Module.CustomLayers"
+	
+});sMap.moduleConfig.CustomLayers = {
+		
+		/**
+		 * If true, calls module's methods "activate" after methods
+		 * "initialize" and "drawContent" have been called.
+		 */ 
+		activateFromStart : false
+};
+sMap.Lang.lang.CustomLayers = {
+	"sv-SE" : {
+		labelText : "Tryck här"
+	},
+	en : { 
+		labelText : "Press here"
+	}
+	
+};/**
  * @author Karl-Magnus Jönsson
  * @copyright Kristianstads kommun
  * @license MIT license
@@ -7205,6 +7515,12 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 				});
 				self.editLayer.styleMap.styles.temporary.defaultStyle.fillColor = color;
 				self.editLayer.styleMap.styles.temporary.defaultStyle.strokeColor = color;
+				self.editLayer.styleMap.styles.temporary.defaultStyle.fontColor = color;
+				if(self.selectedFeature) {
+					self.selectedFeature.attributes.color = color;
+					sMap.events.triggerEvent("updatelinkentries", this, {});
+					self.editLayer.redraw();
+				}
 			});
 		}
 		div.height(Math.ceil(colors.length/4)*22); //Adjust the div height to contain all color samples
@@ -7213,7 +7529,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		button.click(function() {
 			$("#draw-divcolorselect").show();
 		});
-		var defaultColor = this.editLayer.styleMap.styles.temporary.defaultStyle.fillColor;
+		var defaultColor = this.defaultColor;//editLayer.styleMap.styles.temporary.defaultStyle.fillColor;
 		button.css({
 			"background-color": defaultColor
 		});
@@ -7242,48 +7558,55 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
 		  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2);
 	},
+	 /**
+	  * Create s graphic size input
+	  */
+	  addSizeInput : function(parent) {
+		var self=this,
+			tempStyle = self.editLayer.styleMap.styles.temporary.defaultStyle;
+		var input = $("<span id='draw-graphicsize-label'>Storl.</span><input id='draw-graphicsize' type='text' value='"+this.defaultPointRadius+"'></input>");
+		input.keyup(function(){
+			if(!isNaN(this.value)){
+				if (tempStyle.externalGraphic != "") {tempStyle.pointRadius = this.value;}//symbols and texts
+				if (tempStyle.strokeOpacity == 0.9) {tempStyle.pointRadius = this.value / sMap.map.getResolution();}// points without external graphic (circle with radius)
+				if (tempStyle.strokeOpacity == 0) {tempStyle.fontSize = this.value * 2}; //Only texts
+				tempStyle.strokeWidth = (tempStyle.strokeOpacity == 1) ? this.value : tempStyle.strokeWidth; //Lines and polys this.value, points current value
+				if(self.selectedFeature) {
+					self.selectedFeature.attributes.size = this.value;
+					self.selectedFeature.attributes.sw = (self.selectedFeature.attributes.so == 1) ? this.value : self.selectedFeature.attributes.sw; //lines, polys, symbols
+					self.selectedFeature.attributes.fontsize = (self.selectedFeature.attributes.so == 0) ? this.value * 2 : self.selectedFeature.attributes.fontsize; //texts
+					sMap.events.triggerEvent("updatelinkentries", this, {});
+					self.editLayer.redraw();
+				}
+			}else{
+				alert("Endast siffror!");
+			}
+		});
+		parent.append(input);
+		return input;
+	  },
 	/**
 	 * Create a symbol picker.
 	 */
 	addSymbolPicker: function(parent) {
+		var self = this;
 		var button = $("<button id='draw-buttonsymbolselect'>"+this.lang.btnSymbol+"</button>"),
 			divselected = $("<div id='draw-divsymbolseleced' />"),
 			div = $("<div id='draw-divsymbolselect' />"),
-			s = $("<span id='draw-spannoimage'/>");
-		s.text(this.lang.lblNoImage);
-		div.append(s);
-		s.click(function(){
-			divselected.css({
-				"background-image": "none"
+			ds = this.defaultSymbol;
+		divselected.css({
+				"background-image": "url("+ds.url+")",
+				"size" : ds.size,
+				"width" : ds.size,
+				"height" : ds.size
 			});
-			self.restoreTempStyle();
+		var selcat = $("<select id='draw-selcat'><option value='standard'>Standard</option><option value='trafik'>Trafik</option></select>");
+		selcat.change(function(){
+			self.addSymbols(div);
 		});
-		var symbols = this.symbols, size = {},height={}, width={};
-		for (var i=0,len=symbols.length; i<len; i++) {
-			var src = symbols[i].url,
-				image = $("<img />"),
-				compsize = 0;
-			height[src] = symbols[i].height ? symbols[i].height : (symbols[i].size ? symbols[i].size : this.defaultSymbolSize);
-			width[src] = symbols[i].width ? symbols[i].width : (symbols[i].size ? symbols[i].size : this.defaultSymbolSize);
-			compsize = width[src]>height[src] ? width[src] : height[src];
-			size[src] = symbols[i].size ? symbols[i].size : (compsize ? compsize : this.defaultSymbolSize);
-			image.prop("src",src);
-			image.css({"height":height[src],"width":width[src]});
-			div.append(image);
-			image.click(function(){
-				var symbol = $(this).prop("src");
-				divselected.css({
-					"background-image": "url("+symbol+")",
-					"size" : size[symbol],
-					"width" : width[symbol],
-					"height" : height[symbol]
-				});
-				self.setPointTempStyle();
-			});
-		}
-		div.height(this.symbolPickerHeight);
-		var self = this;
-		
+		parent.append(selcat);
+		button.button();
+		button.find('span.ui-button-text').addClass('smallbutton');
 		button.click(function() {
 			$("#draw-divsymbolselect").show();
 		});
@@ -7292,65 +7615,186 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		button.mouseleave(function() {
 			$("#draw-divsymbolselect").hide();
 		});
-
 		parent.append(button).append(div).append(divselected);
 		div.hide();
 		button.hide();
+		divselected.hide();
+		selcat.hide();
 		return div;
+	},
+	addSymbols : function(div){
+		var self = this;
+		div.empty();
+		var cat = $("#draw-selcat").val(),
+			divselected = $("#draw-divsymbolseleced"),
+			symbols = this.symbols, size = {},height={}, width={}, rowheight=0, rowlength=0, divheight=0, maxrowlength=111;
+		for (var sk in symbols){
+			if (symbols[sk].cat==cat){
+				var src = symbols[sk].url,
+					image = $("<img />"),
+					compsize = 0;
+				height[src] = symbols[sk].height ? symbols[sk].height : (symbols[sk].size ? symbols[sk].size : this.defaultSymbolSize);
+				width[src] = symbols[sk].width ? symbols[sk].width : (symbols[sk].size ? symbols[sk].size : this.defaultSymbolSize);
+				compsize = width[src]>height[src] ? width[src] : height[src];
+				size[src] = symbols[sk].size ? symbols[sk].size : (compsize ? compsize : this.defaultSymbolSize);
+				image.prop("src",src);
+				image.css({"height":height[src],"width":width[src]});
+				div.append(image);
+				rowheight = (height[src]+2 > rowheight) ? height[src]+2 : rowheight;
+				if((rowlength+width[src]+2)<maxrowlength){
+					rowlength += width[src]+2;
+				}else{ //new row
+					divheight += rowheight;
+					rowheight = height[src]+2;
+					rowlength = width[src]+2;
+				}
+				image.click(function(){
+					var symbol = $(this).prop("src");
+					divselected.css({
+						"background-image": "url("+symbol+")",
+						"size" : size[symbol],
+						"width" : width[symbol],
+						"height" : height[symbol]
+					});
+					$("#draw-graphicsize").val(size[symbol]/2);
+					self.setPointTempStyle();
+					if(self.selectedFeature) {
+						self.selectedFeature.attributes.eg = symbol;
+						sMap.events.triggerEvent("updatelinkentries", this, {});
+						self.editLayer.redraw();
+					}
+				});
+			}
+		}
+		div.height(divheight+rowheight);
 	},
 	/**
 	 * Set temporary style when drawing points with external graphic
 	 */
 	setPointTempStyle : function(){
+		this.showSymbolPicker();
+		this.hideColorPicker();
 		var divselected = $("#draw-divsymbolseleced"),
 			backgroundImg = divselected[0].style.backgroundImage,
 			symbol= "",
-			size = sMap.util.takeAwayPx(divselected[0].style.size);
+			size = sMap.util.takeAwayPx(divselected[0].style.size),
+			tempstyle = this.editLayer.styleMap.styles.temporary.defaultStyle;
 		if (backgroundImg.substring(4,5)=='"'){
 			symbol = (sMap.util.rightStrip(backgroundImg,2)).substring(5); //FF has extra "" in string like: url("...")
 		}else{
 			symbol = (sMap.util.rightStrip(backgroundImg,1)).substring(4); //and the others like: url(...)
 		}
-		var index = null;
-		for (var i = 0; i < this.symbols.length;i++){
-			if (this.symbols[i].url == symbol){
-				index = i;
+		var key = null;
+		for (var sk in this.symbols){
+			if (this.symbols[sk].url == symbol){
+				key = sk;
 			}
 		}
+		$("#draw-graphicsize").val(size/2);//this.defaultSymbolSize/2
 		if (symbol!=""){
-			this.editLayer.styleMap.styles.temporary.defaultStyle.externalGraphic = symbol;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.pointRadius = size/2;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.fillOpacity = 1;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.graphicYOffset = this.symbols[index].offsety ? this.symbols[index].offsety : null;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.graphicXOffset = this.symbols[index].offsetx ? this.symbols[index].offsetx : null;
-		};
+			tempstyle.externalGraphic = symbol;
+			tempstyle.pointRadius = $("#draw-graphicsize").val();//size/2;
+			tempstyle.fillOpacity = 1;
+			tempstyle.strokeOpacity = this.defaultStrokeOpacity;
+			tempstyle.label = "";//null;
+			tempstyle.graphicYOffset = this.symbols[key].offsety ? this.symbols[key].offsety : null;
+			tempstyle.graphicXOffset = this.symbols[key].offsetx ? this.symbols[key].offsetx : null;
+			tempstyle.fontSize = this.defaultFontSize;
+		}
 	},
 	/**
-	 * Restore temporary style when drawing lines, polys and points with no external graphic
+	 * Set temporary style when drawing textpoints
+	 */
+	setTextTempStyle : function(){
+		this.hideSymbolPicker();
+		this.showColorPicker();
+		var tempstyle = this.editLayer.styleMap.styles.temporary.defaultStyle;
+		$("#draw-graphicsize").val(this.defaultFontSize/2);
+		tempstyle.externalGraphic = this.blankSymbol;
+		tempstyle.fillOpacity = 1;
+		tempstyle.strokeOpacity = 0;
+		tempstyle.label =  "Text";
+		tempstyle.labelAlign = "cm";
+		tempstyle.fontColor =  tempstyle.strokeColor;
+		tempstyle.pointRadius = $("#draw-graphicsize").val();//10;
+		tempstyle.fontSize = $("#draw-graphicsize").val() * 2;
+	},
+	/**
+	 * Restore temporary style when drawing lines and polys with no external graphic
 	 */
 	restoreTempStyle : function(){
-		this.editLayer.styleMap.styles.temporary.defaultStyle.externalGraphic = null;
-		this.editLayer.styleMap.styles.temporary.defaultStyle.pointRadius = this.defaultPointRadius;
-		this.editLayer.styleMap.styles.temporary.defaultStyle.fillOpacity = this.defaultFillOpacity;
-		this.editLayer.styleMap.styles.temporary.defaultStyle.graphicYOffset = null;
-		this.editLayer.styleMap.styles.temporary.defaultStyle.graphicXOffset = null;
+		this.hideSymbolPicker();
+		this.showColorPicker();
+		var tempstyle = this.editLayer.styleMap.styles.temporary.defaultStyle;
+		$("#draw-graphicsize").val(this.defaultStrokeWidth);
+		tempstyle.externalGraphic = "";
+		tempstyle.fillOpacity = this.defaultFillOpacity;
+		tempstyle.strokeOpacity = this.defaultStrokeOpacity;
+		tempstyle.strokeWidth = $("#draw-graphicsize").val();
+		tempstyle.graphicYOffset = null;
+		tempstyle.graphicXOffset = null;
+		tempstyle.label = "";
+		tempstyle.labelAlign = null;
+		tempstyle.pointRadius = this.defaultPointRadius;
+		tempstyle.graphicName = this.defaultGraphicName;
+		tempstyle.fontSize = this.defaultFontSize;
+	},
+	/**
+	 * Set temporary style when drawing points with no external graphic
+	 */
+	setGraphicTempStyle : function(){
+		this.hideSymbolPicker();
+		this.showColorPicker();
+		var tempstyle = this.editLayer.styleMap.styles.temporary.defaultStyle;
+		$("#draw-graphicsize").val(200);
+		tempstyle.externalGraphic = "";
+		tempstyle.fillOpacity = this.defaultFillOpacity;
+		tempstyle.strokeOpacity = 0.9;
+		tempstyle.strokeWidth = this.defaultStrokeWidth;
+		tempstyle.graphicYOffset = null;
+		tempstyle.graphicXOffset = null;
+		tempstyle.label = "";
+		tempstyle.labelAlign = null;
+		tempstyle.pointRadius = $("#draw-graphicsize").val()/ sMap.map.getResolution();
+		tempstyle.graphicName = this.defaultGraphicName;
+		tempstyle.fontSize = this.defaultFontSize;
 	},
 	/**
 	 * Shows the symbolpicker
 	 */
 	showSymbolPicker : function(){
 		var divselected = $("#draw-divsymbolseleced"),
-			btn = $("#draw-buttonsymbolselect");
+			btn = $("#draw-buttonsymbolselect"),
+			selcat = $("#draw-selcat"),
+			symbolselect = $("#draw-divsymbolselect");
 		divselected.show();
 		btn.show();
+		selcat.show();
+		this.addSymbols(symbolselect);
 	},
 	/**
 	 * Hides the symbolpicker
 	 */
 	hideSymbolPicker : function(){
 		var divselected = $("#draw-divsymbolseleced"),
+			selcat = $("#draw-selcat"),
 			btn = $("#draw-buttonsymbolselect");
 		divselected.hide();
+		btn.hide();
+		selcat.hide();
+	},
+	/**
+	 * Shows the colorpicker
+	 */
+	showColorPicker : function(){
+		var btn = $("#draw-buttoncolorselect");
+		btn.show();
+	},
+	/**
+	 * Hides the colorpicker
+	 */
+	hideColorPicker : function(){
+		var btn = $("#draw-buttoncolorselect");
 		btn.hide();
 	},
 	/**
@@ -7362,18 +7806,32 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		var mxEditBtnsDiv = this.makeEditButtons(); // the edit buttons
 		this.addColorPicker(mxEditBtnsDiv);
 		this.addSymbolPicker(mxEditBtnsDiv);
+		this.addSizeInput(mxEditBtnsDiv);
 		dialogDiv.append(mxEditBtnsDiv);
+		var self = this;
+		var cbAddMeasure = $("<span id='draw-lbaddmeasure' title='"+this.lang.addMeasureTitle+"'>"+this.lang.addMeasureLabel+"</span><input id='draw-cbaddmeasure' type='checkbox'/>");
+		cbAddMeasure.change(function(){
+			if(self.selectedFeature) {
+				self.alterMeasureText(self.selectedFeature);
+				sMap.events.triggerEvent("updatelinkentries", this, {});
+				self.editLayer.redraw();
+			}
+		});
+		dialogDiv.append(cbAddMeasure);
 		var mxDescDiv = this.makeDescrDiv(); // the describe field
 		dialogDiv.append(mxDescDiv);
 		var mxButtonDiv = this.makeButtons();
 		dialogDiv.append(mxButtonDiv);
+		var resultdiv = $('<div name="draw-result" id="draw-result" ></div>');
+		dialogDiv.append(resultdiv);
 		return dialogDiv;
 	},
 	/**
-	 * Make the div with copylink button.
+	 * Make the div with copylink, load and save buttons.
 	 * @return {div}
 	 */
 	makeButtons : function() {
+		var self = this;
 		var mxButtonDiv = $("<div id='mxButtonDiv' />");
 		var button = $("<button id='draw-opencopylink'>"+this.lang.btnCopylink+"</button>");
 		button.click(function() {
@@ -7381,7 +7839,63 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		});
 		button.button();
 		mxButtonDiv.append(button);
+		if (this.useLoadSave){
+			var loadbutton = $("<button id='draw-load' title='"+this.lang.btnLoadHoverText+"'>"+this.lang.btnLoad+"</button>");
+			loadbutton.click(function() {
+				self.loadObjects();
+			});
+			loadbutton.button();
+			mxButtonDiv.append(loadbutton);
+			var savebutton = $("<button id='draw-save' title='"+this.lang.btnSaveHoverText+"'>"+this.lang.btnSave+"</button>");
+			savebutton.click(function() {
+				self.confirmSave();
+			});
+			savebutton.button();
+			mxButtonDiv.append(savebutton);
+			var confirm = $("<div id='draw-conf-dialog' title='"+this.lang.comfirmDlgTitle+"'>"+this.lang.confirmText+"</div>");
+			confirm.dialog({
+				autoOpen: false,
+				modal: true,
+				buttons : {
+					"Spara" : function() {
+						self.saveObjects();
+						$(this).dialog("close");
+					},
+					"Avbryt" : function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			var importbutton = $("<button id='draw-import' title='"+this.lang.btnImportHoverText+"'>"+this.lang.btnImport+"</button>");
+			importbutton.click(function() {
+				var idialog = $("#draw-import-dialog");
+				idialog.dialog("open");
+			});
+			importbutton.button();
+			mxButtonDiv.append(importbutton);
+			var importdia = $("<div id='draw-import-dialog' title='"+this.lang.importDlgTitle+"'>"+this.lang.importText+"<iframe src="+this.importFilePath+" style=\"width: 250px; border-width: 0px;\"></iframe></div>");
+			importdia.dialog({
+				autoOpen: false,
+				modal: true,
+				buttons : {
+					"Importera!" : function() {
+						self.importGeoJSON();
+						$(this).dialog("close");
+					},
+					"Avbryt" : function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+		}
 		return mxButtonDiv;
+	},
+	/**
+	* Opens the confirm dialog
+	*/
+	confirmSave : function(){
+		var conf = $("#draw-conf-dialog");
+		conf.dialog("open");
 	},
 	/**
 	 * Make edit buttons. Editing is actually activated from this function.
@@ -7430,11 +7944,21 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		var editlayerExists = this.map.getLayersByName(this.drawLayerConfig.name).length == 1 ? true : false;
 		if (!editlayerExists){
 			var s = this.drawLayerConfig.style;
+			var context = {
+                getSize: function(feature) {
+					if (feature.attributes["eg"]){ // text and symbols
+						return feature.attributes["size"];
+					}
+					else{ 
+						return feature.attributes["size"] / sMap.map.getResolution(); //Points. Lines and polys don't show point radius
+					}
+                }
+            };
 			this.editLayer = new OpenLayers.Layer.Vector(this.drawLayerConfig.name, {
 				styleMap : new OpenLayers.StyleMap({
-						"default": new OpenLayers.Style( s["default"] ),
+						"default": new OpenLayers.Style( s["default"], {context: context}),
 						"select": new OpenLayers.Style( s["select"] ),
-						"temporary": new OpenLayers.Style( s["temporary"] )
+						"temporary": new OpenLayers.Style( s["temporary"])
 				}),
 				projection: new OpenLayers.Projection(this.map.projection),
 				selectable: true,
@@ -7451,19 +7975,25 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	/**
 	 * Paths for buttons
 	 */
+	srcIconTextOff: "img/editTools/text_off.png",
 	srcIconPointOff: "img/editTools/point_off.png",
 	srcIconLineOff: "img/editTools/line_off.png",
 	srcIconPolygonOff: "img/editTools/polygon_off.png",
-	srcIconModifyOff: "img/editTools/polygon_off.png",
+	srcIconBoxOff: "img/editTools/box_off.png",
+	srcIconCircleOff: "img/editTools/circle_off.png",
+	srcIconModifyOff: "img/editTools/modify_off.png",
 	srcIconDeleteOff: "img/editTools/delete_off.png",
-	srcIconMoveOff: "img/editTools/polygon_off.png",
+	srcIconMoveOff: "img/editTools/move_feature_off.png",
 	
+	srcIconTextOn: "img/editTools/text_on.png",
 	srcIconPointOn: "img/editTools/point_on.png",
 	srcIconLineOn: "img/editTools/line_on.png",
 	srcIconPolygonOn: "img/editTools/polygon_on.png",
-	srcIconModifyOn: "img/editTools/polygon_on.png",
+	srcIconBoxOn: "img/editTools/box_on.png",
+	srcIconCircleOn: "img/editTools/circle_on.png",
+	srcIconModifyOn: "img/editTools/modify_on.png",
 	srcIconDeleteOn: "img/editTools/delete_on.png",
-	srcIconMoveOn: "img/editTools/polygon_on.png",
+	srcIconMoveOn: "img/editTools/move_feature_on.png",
 	
 	/**
 	 * 
@@ -7496,17 +8026,23 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		
 		this.panel = $("<div id='draw-panel' />");
 		
-		var buttonPoint = $("<div class='draw-button' id='draw-btn-point'><img src='"+this.srcIconPointOff+"'></img></div>"),
-			buttonLine = $("<div class='draw-button' id='draw-btn-line'><img src='"+this.srcIconLineOff+"'></img></div>"),
-			buttonPolygon = $("<div class='draw-button' id='draw-btn-polygon'><img src='"+this.srcIconPolygonOff+"'></img></div>"),
-			buttonModify = $("<div class='draw-button' id='draw-btn-modify'><img src='"+this.srcIconModifyOff+"'></img></div>"),
-			buttonMove = $("<div class='draw-button' id='draw-btn-move'><img src='"+this.srcIconMoveOff+"'></img></div>"),
-			buttonDelete = $("<div class='draw-button' id='draw-btn-delete'><img src='"+this.srcIconDeleteOff+"'></img></div>");
-//		this.panel.append(buttonPoint).append(buttonLine).append(buttonPolygon).append(buttonModify).append(buttonDelete);
+		var buttonText = $("<div class='draw-button' id='draw-btn-text' title='"+this.lang.hoverTextText+"'><img src='"+this.srcIconTextOff+"'></img></div>"),
+			buttonPoint = $("<div class='draw-button' id='draw-btn-point' title='"+this.lang.hoverTextPoint+"'><img src='"+this.srcIconPointOff+"'></img></div>"),
+			buttonLine = $("<div class='draw-button' id='draw-btn-line' title='"+this.lang.hoverTextLine+"'><img src='"+this.srcIconLineOff+"'></img></div>"),
+			buttonPolygon = $("<div class='draw-button' id='draw-btn-polygon' title='"+this.lang.hoverTextPolygon+"'><img src='"+this.srcIconPolygonOff+"'></img></div>"),
+			buttonBox = $("<div class='draw-button' id='draw-btn-box' title='"+this.lang.hoverTextBox+"'><img src='"+this.srcIconBoxOff+"'></img></div>"),
+			buttonCircle = $("<div class='draw-button' id='draw-btn-circle' title='"+this.lang.hoverTextCircle+"'><img src='"+this.srcIconCircleOff+"'></img></div>"),
+			buttonModify = $("<div class='draw-button' id='draw-btn-modify' title='"+this.lang.hoverTextModify+"'><img src='"+this.srcIconModifyOff+"'></img></div>"),
+			buttonMove = $("<div class='draw-button' id='draw-btn-move' title='"+this.lang.hoverTextMove+"'><img src='"+this.srcIconMoveOff+"'></img></div>"),
+			buttonDelete = $("<div class='draw-button' id='draw-btn-delete' title='"+this.lang.hoverTextDelete+"'><img src='"+this.srcIconDeleteOff+"'></img></div>");
+
 		this.buttons = {
+			text: buttonText,
 			point: buttonPoint,
 			line: buttonLine,
 			polygon: buttonPolygon,
+			box: buttonBox,
+			circle: buttonCircle,
 			modify: buttonModify,
 			move: buttonMove,
 			"delete": buttonDelete
@@ -7534,38 +8070,56 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		 */
 		var drawPolygon = new OpenLayers.Control.DrawFeature(
 			this.editLayer, OpenLayers.Handler.Polygon, {
-				title: this.lang.hoverTextPolygon,
 				multi: true
 		});
 		drawPolygon.events.register("activate", this, function(e) {this.restoreTempStyle();});
 		var drawPoint = new OpenLayers.Control.DrawFeature(
 			  this.editLayer, OpenLayers.Handler.Point, {
-				  title: this.lang.hoverTextPoint,
 				  multi: false
 		});
-		drawPoint.events.register("activate", this, function(e) {this.setPointTempStyle();this.showSymbolPicker();});
-		drawPoint.events.register("deactivate", this, function(e) {this.hideSymbolPicker();});
+		drawPoint.events.register("activate", this, function(e) {this.setPointTempStyle();this.map.getControlsByClass("sMap.Module.Select")[0].deactivate();});
+		drawPoint.events.register("deactivate", this, function(e) {this.map.getControlsByClass("sMap.Module.Select")[0].activate();});
+		var drawText = new OpenLayers.Control.DrawFeature(
+				  this.editLayer, OpenLayers.Handler.Point, {
+					  multi: false
+			});
+		drawText.events.register("activate", this, function(e) {this.setTextTempStyle();this.map.getControlsByClass("sMap.Module.Select")[0].deactivate();});
+		drawText.events.register("deactivate", this, function(e) {this.map.getControlsByClass("sMap.Module.Select")[0].activate();});
 		var drawLine = new OpenLayers.Control.DrawFeature(
 				this.editLayer, OpenLayers.Handler.Path, {
-					title: this.lang.hoverTextLine,
 					multi: true
 		});
 		drawLine.events.register("activate", this, function(e) {this.restoreTempStyle();});
+		var drawBox = new OpenLayers.Control.DrawFeature(
+			this.editLayer, OpenLayers.Handler.RegularPolygon, {  //RegularPolygon
+				multi: true,
+				handlerOptions: {
+					sides: 4,
+					irregular: true
+				}
+			});
+		drawBox.events.register("activate", this, function(e) {this.restoreTempStyle();});
+		var drawCircle = new OpenLayers.Control.DrawFeature(
+			this.editLayer, OpenLayers.Handler.Point, {
+				multi: false
+		});
+		drawCircle.events.register("activate", this, function(e) {this.setGraphicTempStyle();});
 		var move = new OpenLayers.Control.DragFeature(this.editLayer, {
-			title: this.lang.hoverTextMove,
-			onComplete : function(){
+			onComplete : function(f){
+				self.alterMeasureText(f);
+				self.editLayer.redraw();
 				sMap.events.triggerEvent("updatelinkentries", this, {});
 			}
 		});
 		var modify = new OpenLayers.Control.ModifyFeature(this.editLayer, {
-			title: this.lang.hoverTextModify,
 			vertexRenderIntent : "select",
-			displayClass: "olControlModifyFeature"
+			displayClass: "olControlModifyFeature",
+			mode: OpenLayers.Control.ModifyFeature.RESHAPE // | OpenLayers.Control.ModifyFeature.RESIZE
 		});
+		modify.events.register("activate", this, function(e) {this.map.getControlsByClass("sMap.Module.Select")[0].deactivate();});
+		modify.events.register("deactivate", this, function(e) {this.map.getControlsByClass("sMap.Module.Select")[0].activate();});
 		var del = new OpenLayers.Control.DeleteFeature(this.editLayer, {
-			title: this.lang.hoverTextDelete
 		});
-
 		var style = new OpenLayers.Control.Button({
 			title: this.lang.hoverTextStyle,
 			type : OpenLayers.Control.TYPE_BUTTON,
@@ -7585,9 +8139,12 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			displayClass: "olControlSaveFeatures"
 		});
 		this.controls = {
+				text : drawText,
 				point : drawPoint,
 				line : drawLine,
 				polygon : drawPolygon,
+				box : drawBox,
+				circle : drawCircle,
 				move : move,
 				modify : modify,
 				"delete" : del,
@@ -7618,86 +8175,57 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		for (var i=0,len=toBeAdded.length; i<len; i++) {
 			var c = toBeAdded[i];
 			c.events.register("activate", this, function(e) {
-//				var ctrl = e.object;
-//				var className = ctrl.handler.CLASS_NAME.split(".")[2].toLowerCase();
-//				var type = dict[className];
-//				var button = this.buttons[type];
-//				this.deactivateButtonsAndControls( button );
 				this.unselectFeatures();
 			});
 		}
 	},
-	/**
-	 * Styles the features that are sent in to the function according to current tempStyle
-	 */
-	styleFeature : function(feature){
-		var f = feature,
-			tempstyle = this.editLayer.styleMap.styles.temporary.defaultStyle,
-			color = tempstyle.fillColor,
-			symbol = tempstyle.externalGraphic,
-			offsety = tempstyle.graphicYOffset,
-			offsetx = tempstyle.graphicXOffset,
-			size = tempstyle.pointRadius,
-			opacity = tempstyle.fillOpacity,
-			defaultstyle = this.editLayer.styleMap.styles["default"].defaultStyle;
-		if (true){  //tempstyle.fillColor!=defaultstyle.fillColor||tempstyle.externalGraphic
-			for (var i=0;i<f.length;i++){
-				var newStyle = {};
-				if (symbol){
-					newStyle = {
-							pointRadius : size,
-							fillOpacity : opacity,
-							externalGraphic : symbol,
-							graphicYOffset : offsety,
-							graphicXOffset : offsetx,
-							cursor : "pointer"
-						};
-				}
-				if (!symbol) {
-					newStyle = {
-							pointRadius : size,
-							fillColor : color,
-							fillOpacity : opacity,
-							graphicName: this.defaultGraphicName,
-							strokeWidth : this.defaultStrokeWidth,
-							strokeColor : color,
-							strokeOpacity : this.defaultStrokeOpacity,
-							cursor : "pointer"
-						};
-				}
-				f[i].style = newStyle;
-			};
-			this.editLayer.redraw();
-		}
-	},
 	
 	/**
-	 * This is called upon completion of a marker (after creation, modification or erasing).
+	 * This is called upon completion of a feature (after creation, modification or erasing).
 	 * Catch the event type through e.type.
 	 * @param e
 	 * @return
 	 */
 	bindFeatureCompleteEvents : function() {
+		this.editLayer.events.register("beforefeatureadded", this, function(e) {
+			var feature = e.feature,
+				tempstyle = this.editLayer.styleMap.styles.temporary.defaultStyle;
+			if (Object.keys(feature.attributes).length==0){  //only newly added features
+				feature.attributes.info = tempstyle.label ? tempstyle.label : "";//"";
+				feature.attributes.text = tempstyle.label ? tempstyle.label : "";//"";
+				feature.attributes.color = tempstyle.fillColor;
+				feature.attributes.fo = tempstyle.fillOpacity;
+				feature.attributes.so = tempstyle.strokeOpacity;
+				feature.attributes.gn = tempstyle.graphicName;
+				feature.attributes.size = $("#draw-graphicsize").val();
+				feature.attributes.fontsize = tempstyle.fontSize ? tempstyle.fontSize : this.defaultFontSize;
+				feature.attributes.la = "cm";
+				feature.attributes.sw = tempstyle.strokeWidth;
+				feature.attributes.eg = tempstyle.externalGraphic;
+				feature.attributes.measure = false;
+				feature.attributes.editable = true;
+				feature.attributes.orgid = feature.id;
+			}
+		});
 		this.editLayer.events.register("featureadded", this, function(e) {
 			if (this.autoDeactivateTool){
 				this.deactivateButtonsAndControls();
 			}
 			var feature = e.feature;
 			this.showHideEditLayer();
-			this.styleFeature([feature]);
-			feature.attributes.info = "";
-			feature.attributes.editable = true;
-			feature.attributes.orgid = feature.id;
-			this.selectFeature(feature);
+			this.alterMeasureText(feature);
+			if (feature.state=="Insert"){this.selectFeature(feature);} //only newly added features
 			sMap.events.triggerEvent("updatelinkentries", this, {});
+			this.editLayer.redraw();
 			OpenLayers.Event.stop(e);
 		});
 		this.editLayer.events.register("beforefeaturemodified", this, function(e) {
 			this.checkEditable(e);
-			this.selectFeature(e.feature);
+			//this.selectFeature(e.feature);
 		});
 		this.editLayer.events.register("featuremodified", this, function(e) {
 			this.unselectFeatures();
+			this.alterMeasureText(e.feature);
 			sMap.events.triggerEvent("updatelinkentries", this, {});
 		});
 		this.editLayer.events.register("beforefeatureremoved", this, function(e) {
@@ -7708,6 +8236,40 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			this.unselectFeatures();
 			sMap.events.triggerEvent("updatelinkentries", this, {});
 		});
+	},
+	/**
+	 * Modifies the measure and text attributes of the feature
+	 * @param feature
+	 */
+	alterMeasureText : function(feature) {
+		if (feature.attributes.so > 0){ //Textpoints should not be affected
+			var cb = $("#draw-cbaddmeasure").prop('checked'),
+				as = feature.attributes;
+			if (!cb) {
+				as.measure = false;
+				as.text = "";
+			} else {
+				as.measure = true;
+				this.addMeasureText(feature);
+			}
+		}
+	},
+	addMeasureText : function(f){
+		if (f.geometry.id.indexOf("Polygon")>0){
+			f.attributes.text = Math.round(f.geometry.components[0].getArea()) + " m2";
+		}
+		if (f.geometry.id.indexOf("MultiLineString")>0){
+			f.attributes.text = Math.round(f.geometry.components[0].getLength()) + " m";
+			f.attributes.la = "lb";
+		}
+		if (f.geometry.id.indexOf("Point")>0 && f.attributes.eg==""){
+			f.attributes.text =  "r="+f.attributes.size + " m";
+		}
+		if (f.geometry.id.indexOf("Point")>0 && f.attributes.eg!=""){
+			var decConst = Math.pow(10, this.decimals); 
+			f.attributes.text =  "Norr="+Math.round(f.geometry.y*decConst)/decConst + ", Öst="+Math.round(f.geometry.x*decConst)/decConst;
+			f.attributes.la = "lb";
+		}
 	},
 	checkEditable : function(e){
 		if (!e.feature.attributes.editable){
@@ -7721,9 +8283,12 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	 */
 	selectFeature : function(feature){
 		var featureclone = feature.clone();
+		var c = feature.geometry.getCentroid();
+		var px = this.map.getViewPortPxFromLonLat(new OpenLayers.LonLat(c.x, c.y));
 		featureclone.layerName = this.drawLayerConfig.name;
 		sMap.events.triggerEvent("select", this, {
-			features:[featureclone]
+			features:[featureclone],
+			xy : new OpenLayers.Pixel(px.x, px.y)
 		});
 	},
 	/**
@@ -7753,13 +8318,31 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	 */
 	selected: function(e) {
 		var f = e.selectedFeatures.length ? e.selectedFeatures[0] : null;
-		if (f) {
+		if (f && this.editLayer && f.layerName == this.drawLayerConfig.name) {
 			if (f.attributes.editable||this.editLinkFeatures) {
 				this.selectedFeature = this.editLayer.getFeatureById(f.attributes.orgid);
 				this.addButtonsToPopup();
 				$("#mxDescrEntry").prop("disabled", false);
-				$("#mxDescrEntry").focus();
 				this.updateTextField(f.attributes.info);
+				$("#mxDescrEntry").focus();
+				$("#mxDescrEntry").select();
+				$("#draw-buttoncolorselect").css({
+					"background-color": f.attributes.color
+				});
+				$("#draw-graphicsize").val(f.attributes.size);
+				if (f.attributes.eg && f.attributes.eg!=this.blankSymbol){
+					this.showSymbolPicker(); 
+					this.hideColorPicker();
+					$("#draw-divsymbolseleced").css({"background-image": "url("+f.attributes.eg+")"});
+				}else{
+					this.hideSymbolPicker();
+					this.showColorPicker();
+				}
+				if (f.attributes.measure){ 
+					$("#draw-cbaddmeasure").prop('checked', true);
+				} else {
+					$("#draw-cbaddmeasure").prop('checked', false);
+				}
 			}
 		}
 	},
@@ -7768,10 +8351,13 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	 * @param e
 	 */
 	unselected: function(e) {
-		$("#mxDescrEntry").prop("disabled", true);
-		this.updateTextField(this.lang.descrEntryText);
-		this.selectedFeature = null;
-		sMap.events.triggerEvent("updatelinkentries", this, {});
+		if (this.editLayer){
+			$("#mxDescrEntry").prop("disabled", true);
+			this.updateTextField(this.lang.descrEntryText);
+			this.selectedFeature = null;
+			sMap.events.triggerEvent("updatelinkentries", this, {});
+			this.editLayer.redraw();
+		}
 	},
 	
 	/**
@@ -7795,7 +8381,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		$("#mxDescrEntry").focus();
 	},
 	/**
-	 * Make the div where you can write the content of the marker.
+	 * Make the div where you can write the content of the feature.
 	 * @return
 	 */
 	makeDescrDiv : function() {
@@ -7814,6 +8400,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		var self = this;
 		mxDescrEntry.keyup(function(e) {
 			self.selectedFeature.attributes.info = this.value;
+			if (self.selectedFeature.attributes.so == 0) self.selectedFeature.attributes.text = this.value;  //Only text is supposed to have 0 stroke opacity
 			$("#draw-text").text( $(this).val() );
 			sMap.events.triggerEvent("updatelinkentries", this, {});
 		});
@@ -7933,13 +8520,48 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		feature.popup.updateSize();
 		feature.popup.draw();
 	},
-	
+	saveObjects : function(){
+		var url = this.savePath;
+		var featureString = this.createFeatureString();
+		// if (!featureString) {
+			// alert("Inga features!");
+		// }
+		$.ajax({
+			url : url,
+			headers: {
+				"Content Type": "application/x-www-form-urlencoded"
+			},
+			data : {
+				"action" : "save",
+				"data" : featureString
+			},
+			type : "POST",
+			error: function(request,error) {
+				alert("Fel! Kontakta ansvarig" + request + error);
+			},
+			success : function(result){
+				$('#draw-result').html(result);
+				if (result.indexOf("inloggad")>0||result.indexOf("inga")>0){
+					$('#draw-result').html(result);
+				}else{
+					$('#draw-result').children().css("color", "#023f88" );
+				}
+			}	
+		});
+		return false;
+	},
 	creatingwebparams : function(){
 		// Remove drawLayer from the OL-params
 		var index = $.inArray( this.drawLayerConfig.name, sMap.db.webParams.OL || [] );
 		if (index > -1) {
 			sMap.db.webParams.OL.splice(index, 1);
 		}
+		var featureString = this.createFeatureString();
+		if (featureString) {
+			sMap.db.webParams.features = featureString;
+		}
+	},
+	createFeatureString : function() {
 		// Check if any draw objects have been added.
 		var editLayer = this.editLayer,
 			markerFeatures=""; // Store all features in the editLayer as one continuous string, separated by an "F".
@@ -7959,7 +8581,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			
 			// Getting each feature f from the editLayer, one by one.
 			// And round each features coords (long and lat) to 0 decimals.
-			var f = null, markerText=null, markerTexts="", measureText=null, measureTexts="", style="", styles="";
+			var f = null, info=null, infos="", text=null, texts="", style="", styles="", size=null, sizes="";
 			var decConst = Math.pow(10, this.decimals); // Create constant for calculating the rounding
 			for (var i=0,len=features.length; i<len; i++) {
 				f = features[i];
@@ -7985,49 +8607,57 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 					// Add a feature separator.
 					markerFeatures = markerFeatures + markerWkt + splitSign;
 					
-					// Retrieve the marker pop-up text.
-					markerText = f.attributes.info ? f.attributes.info.replace(/,/g, commaSign) : "";
-					markerText = markerText.replace(/\n/g, newRowSign);
-					markerText = encodeURIComponent(markerText);
-					markerTexts = markerTexts + markerText + splitSign;
+					// Retrieve the feature pop-up text.
+					info = f.attributes.info ? f.attributes.info.replace(/,/g, commaSign) : "";
+					info = info.replace(/\n/g, newRowSign);
+					info = encodeURIComponent(info);
+					infos = infos + info + splitSign;
 					
-					// Check if it has measure attribute contains any text - if so, add measurement to url. 
-					measureText = f.attributes.measurement ? "1" : "0"; // 1: true, 0: false
-					measureTexts = measureTexts + measureText + splitSign;
-					
-					//Check if feature has a style - if so, add style to url
-					if (f.style){
-						var index = 0;
-						if (f.style.externalGraphic){
-							for (var j=0;j<this.symbols.length;j++){
-								if (f.style.externalGraphic==this.symbols[j].url){
-									index = j;
-								}
-							}
-							style = "s" + index;
-						}
-						else{
-							/*var fcarr = this.extractRGB(f.style.strokeColor),
-								pcarr = [];
-							for (var k=0;k<this.colors.length;k++){
-								pcarr = this.extractRGB(this.colors[k]);
-								if ((fcarr[0] === pcarr[0]) && (fcarr[1] === pcarr[1]) && (fcarr[2] === pcarr[2])){
-									index = k;
-								}
-							}
-							style = "c" + index;*/
-							for (var k=0;k<this.colors.length;k++){
-								if (f.style.strokeColor == this.colors[k]){
-									index = k;
-								}
-							}
-							style = "c" + index;
+					// Check if the text attribute contains any text - if so, add text to url. 
+					//text = f.attributes.text ? "1" : "0"; // 2:text=measure, 1: true, 0: false
+					if (f.attributes.text){
+						if (f.attributes.measure){
+							text = "2"
+						}else{
+							text = "1"
 						}
 					}
-					else {
-						style = 0;
+					else{
+						text = "0"
+					}
+					texts = texts + text + splitSign;
+					
+					//Check if feature has a external graphic and not text else add color index
+					var index = 0;
+					if (f.attributes.eg && text!=1){
+						for (var j in this.symbols){
+							if (f.attributes.eg==this.symbols[j].url){
+								index = j;
+							}
+						}
+						style = "s" + index;
+					}
+					else{
+						for (var k=0;k<this.colors.length;k++){
+							if (f.attributes.color == this.colors[k]){
+								index = k;
+							}
+						}
+						style = "c" + index;
 					}
 					styles = styles + style + splitSign;
+					
+					// Check if feature has external graphics (point or text), add size to url.
+					if (text == "1") {
+						size = f.attributes.fontsize;
+					}else{
+						if(f.attributes.eg=="" && f.attributes.so==1){
+							size = f.attributes.sw;
+						}else{
+							size = f.attributes.size;
+						}
+					}
+					sizes = sizes + size + splitSign;
 				}
 			}
 
@@ -8036,33 +8666,134 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 				var len = splitSign.length;
 				markerFeatures =
 						sMap.util.rightStrip(markerFeatures, len) + "," +
-						sMap.util.rightStrip(markerTexts, len) + "," +
-						sMap.util.rightStrip(measureTexts, len) + "," +
-						sMap.util.rightStrip(styles, len);
+						sMap.util.rightStrip(infos, len) + "," +
+						sMap.util.rightStrip(texts, len) + "," +
+						sMap.util.rightStrip(styles, len) + "," +
+						sMap.util.rightStrip(sizes, len);
 				
 				markerFeatures = $.base64.encode(markerFeatures).replace(/=/g, "%3D"); // "=" disappears when in URL
-				sMap.db.webParams.features = markerFeatures;
+				
 			}
 		}
+		return markerFeatures;
+	},	
+	loadObjects : function(){
+		var self = this;
+		var url = this.savePath;
+		$.ajax({
+			url : url,
+			data : {
+				"action" : "load"
+			},
+			type : "POST",
+			error: function(request,error) {
+				alert("Fel! Kontakta ansvarig");
+			},
+			success : function(result){
+				if (result.indexOf("inloggad")>0||result.indexOf("inga")>0){
+					$('#draw-result').html(result);
+					$('#draw-result').children().css("color", "#ff0000" );
+				}else{
+					$('#draw-result').html("<b>Dina objekt är laddade!</b>");
+					self.drawTheFeatures.call(self, result);
+				}
+			}	
+		});
+		return false;
 	},
-	extractRGB : function(colstr){
-		if (colstr){
-			var n = colstr.indexOf("(")+1,
-				m = colstr.indexOf(",",n),
-				r = parseInt(colstr.substring(n,m)),
-				g = 0,
-				b = 0;
-			n = m+1;
-			m = colstr.indexOf(",",n);
-			g = parseInt(colstr.substring(n,m));
-			n = m+1;
-			m = colstr.indexOf(")");
-			b = parseInt(colstr.substring(n,m));
-			var rgbArr = [r,g,b];
-			return rgbArr;
+	/**
+	 * Import objects from GeoJSON
+	 */
+	importGeoJSON : function(){
+		var self = this;
+		var url = this.importPath;
+		$.ajax({
+			url : url,
+			type : "GET",
+			error: function(request,error) {
+				alert("Fel! Kontakta ansvarig");
+			},
+			success : function(result){
+				if(!$.isArray(result)) {
+					result = [result];
+				}
+				for (var j=0;j<result.length;j++){
+					var ljson = result[j];
+					if (ljson.indexOf){
+						$('#draw-result').html(ljson);
+						$('#draw-result').children().css("color", "#ff0000" );
+					}else{
+						$('#draw-result').html("Laddat fil");
+						var olFormat = new OpenLayers.Format.GeoJSON();
+						var fs = olFormat.read(ljson);
+						var currentGtype = "";
+						for (var i = 0;i<fs.length;i++){
+							var f = fs[i];
+							var gtype = ljson.features[i].geometry.type;
+							var fp=ljson.features[i].properties;
+							fp.typ = fp.typ ? fp.typ : "shape";
+							if (currentGtype!=gtype){
+								currentGtype=gtype;
+								if (gtype == "Point"){
+									if (ljson.name=="ritlager_t" || fp.typ=="ritlager_t"){
+										self.setTextTempStyle();
+									}else if (ljson.name=="ritlager_c" || fp.typ=="ritlager_c"){
+										self.setGraphicTempStyle();
+									}else{
+										self.setPointTempStyle();
+									}
+								}
+								else{
+									self.restoreTempStyle();
+								}
+							}
+							f.attributes = {};
+							if (fp.typ!="acad_label"){
+								self.editLayer.addFeatures([f]);
+							}
+							//if (ljson.name.indexOf("ritlager")>-1){
+								if (fp){
+									f.attributes.color = fp.color ? self.importColor(fp.color) : f.attributes.color;
+									f.attributes.info = fp.info ? fp.info : "";
+									f.attributes.text = fp.text ? fp.text : "";
+									f.attributes.size = fp.size ? fp.size : "";
+									f.attributes.eg = fp.eg ? fp.eg : "";
+								}
+							//}
+						}
+					}
+				}
+				self.editLayer.redraw();
+			}	
+		});
+		return false;
+	},
+	importColor : function(icolor){
+			var rgb = icolor.split(",");	
+			return "#" +
+		  ("0" + parseInt(rgb[0],10).toString(16)).slice(-2) +
+		  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+		  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2);
+	},
+	/**
+	 * All previous code in afterapplyingwebparams has been moved 
+	 * to the function drawTheFeatures().
+	 * Instead a check is done to see if the features should
+	 * be fetched from database.
+	 * 
+	 * 
+	 *
+	 */
+	
+	afterapplyingwebparams : function(){
+		var startfeatures = sMap.db.startingWebParamsObject.FEATURES;
+		if (startfeatures=="short"){
+			this.fetchFromDb(sMap.db.startingWebParamsObject.ID);
+		}
+		else{
+			this.drawTheFeatures(startfeatures);
 		}
 	},
-	
 	/**
 	 * Fetch a previously saved long string for the features.
 	 * 
@@ -8085,7 +8816,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 				alert("Fel! Kontakta ansvarig");
 			},
 			success : function(result){
-				self.drawTheFeatures.call(self, result);
+					self.drawTheFeatures.call(self, result);
 			}	
 		});
 		return false;
@@ -8093,151 +8824,137 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	
 	
 	drawTheFeatures : function(drawParam){
-			var startfeatures = drawParam;
-			if (startfeatures && startfeatures.length>=1) {
-				startfeatures = startfeatures.replace(/%3D/g, "="); // The hack (because "=" disappears from URL)
-	        	var str = startfeatures || "";
-				var strend = str.substring(str.length-1,str.length);  // If the string ends with a newline character this must be romoved. /K-M
-				if (strend=="\n"){str=str.substr(0,str.length-1);}
-	        	var decodedStr = $.base64.decode(str);
-	        	var params = decodedStr.split(",");
-	        	
-	        	var wkts = params[0];
-	        	var texts = params[1];
-	        	var measurements = params[2];
-	        	var styles = params[3] ? params[3] : "0";
-	        	
-	        	var splitSign = "$$"; // Separates many WKT:s and texts in the URL. Has to corresponds with splitSign in SMap.WebParams.
-	        	var commaSignRegExp = /££/g; // to replace "," in WKT-strings and text. Has to corresponds with splitSign in SMap.WebParams.
-	        	var newRowSignRegExp = /¤¤/g; // solves the problem at Malmo.se where \n is interpreted in sitevision -> error.
-	        	
-	        	// Note - these 2 variables are declared earlier and they must not be declared again here.
-	        	var markerWktArr = (wkts.search(splitSign)!=-1) ? wkts.split(splitSign) : [wkts];
-	        	var markerTextArr = (texts.search(splitSign)!=-1) ? texts.split(splitSign) : [texts];
-	        	var measureArr = (measurements.search(splitSign)!=-1) ? measurements.split(splitSign) : [measurements];
-	        	var styleArr = (styles.search(splitSign)!=-1) ? styles.split(splitSign) : [styles];
-	        	
-	        	var wkt=null, markerText=null;
-	        	for (var i=0; i<markerWktArr.length; i++) {
-	        		// Decode the wkt and its pop-up text.
-	        		markerWktArr[i] = decodeURIComponent(markerWktArr[i]).replace(commaSignRegExp, ",");
-	        		
-	        		// Put back comma (",") and new row sign ("\n").
-	        		markerText = markerTextArr[i] ? decodeURIComponent(markerTextArr[i]) : null;
-		        	if (markerText) {
-	        			markerText = markerText.replace(commaSignRegExp, ",");
-		        		markerText = markerText.replace(newRowSignRegExp, "\n");
-		        	}
-		        	markerTextArr[i] = markerText;
-	        	}
-	        	this.markerWktArr = markerWktArr;
-	        	this.markerTextArr = markerTextArr;
-	        	this.measureArr = measureArr;
-	        	
-	    		this.addEditLayer();
-	    		this.addMarkers(this.markerWktArr, this.markerTextArr, this.measureArr, styleArr);
-	    		// Create dialog if the features should be editable
-	    		if (!this.dialogDiv && this.editLinkFeatures){
-	    			this.dialogDiv = this.makeDialogContent();
-	    			this.dialogDiv = this.makeDialog(this.dialogDiv);
-	    		}
-	    		//Select (if configured) the last feature added
-				if (this.selectLinkFeatures){
-					this.selectFeature(this.editLayer.features[this.editLayer.features.length-1]);
-				}
-				this.showHideEditLayer();
-	        }
-		},
-		
-		/**
-		 * All previous code in afterapplyingwebparams has been moved 
-		 * to the function drawTheFeatures().
-		 * Instead a check is done to see if the features should
-		 * be fetched from database.
-		 * 
-		 * 
-		 *
-		 */
-		
-		afterapplyingwebparams : function(){
-			var startfeatures = sMap.db.startingWebParamsObject.FEATURES;
-			if (startfeatures=="short"){
-				this.fetchFromDb(sMap.db.startingWebParamsObject.ID);
-			}
-			else{
-				this.drawTheFeatures(startfeatures);
-			}
-		},
-		
-		/**
-		 * Add a marker with the given geometry and also add
-		 * a pop-up which is open from start for the last feature in the array.
-		 * 
-		 * @param markerWktArr {Array(String)} Geometry in the "Well Known Text" (WKT)
-		 * @param markerTextArr {Array(String)} The pop-up text. Index should match with corresponding feature.
-		 * @return Nothing. A marker in given geometry is added to the poiLayer. The last feature's pop-up starts open.
-		 */
-		addMarkers : function(markerWktArr, markerTextArr, measureArr, styleArr) {
-
-			// Fetch the markerLayer.
-			var markerLayer = this.editLayer;
+		var startfeatures = drawParam;
+		if (startfeatures && startfeatures.length>=1) {
+			startfeatures = startfeatures.replace(/%3D/g, "="); // The hack (because "=" disappears from URL)
+			var str = startfeatures || "";
+			var strend = str.substring(str.length-1,str.length);  // If the string ends with a newline character this must be romoved. /K-M
+			if (strend=="\n"){str=str.substr(0,str.length-1);}
+			var decodedStr = $.base64.decode(str);
+			var params = decodedStr.split(",");
 			
-			var marker=null, wkt=null, markerText=null, measurement=null, style=null;
-			for (var i=0; i<markerWktArr.length; i++) {
-				wkt = markerWktArr[i];
-				markerText = markerTextArr[i] ? markerTextArr[i] : "";
-				measureText = measureArr[i] ? measureArr[i] : "0";
-				style = styleArr[i] ? styleArr[i] : "0";
-				var geom = new OpenLayers.Geometry.fromWKT(wkt);
-				marker = new OpenLayers.Feature.Vector(geom);
+			var wkts = params[0];
+			var infos = params[1];
+			var texts = params[2];
+			var styles = params[3] ? params[3] : "0";
+			var sizes = params[4];
+			
+			var splitSign = "$$"; // Separates many WKT:s and texts in the URL. Has to corresponds with splitSign in SMap.WebParams.
+			var commaSignRegExp = /££/g; // to replace "," in WKT-strings and text. Has to corresponds with splitSign in SMap.WebParams.
+			var newRowSignRegExp = /¤¤/g; // solves the problem at Malmo.se where \n is interpreted in sitevision -> error.
+			
+			// Note - these 2 variables are declared earlier and they must not be declared again here.
+			var featureWktArr = (wkts.search(splitSign)!=-1) ? wkts.split(splitSign) : [wkts];
+			var infoArr = (infos.search(splitSign)!=-1) ? infos.split(splitSign) : [infos];
+			var textArr = (texts.search(splitSign)!=-1) ? texts.split(splitSign) : [texts];
+			var styleArr = (styles.search(splitSign)!=-1) ? styles.split(splitSign) : [styles];
+			var sizeArr = (sizes.search(splitSign)!=-1) ? sizes.split(splitSign) : [sizes];
+			
+			var wkt=null, info=null;
+			for (var i=0; i<featureWktArr.length; i++) {
+				// Decode the wkt and its pop-up text.
+				featureWktArr[i] = decodeURIComponent(featureWktArr[i]).replace(commaSignRegExp, ",");
 				
-				marker.attributes.info = markerText;
-
-				// Add measurements to feature.
-				if (parseInt(measureText)==1) {
-					// Measure the feature and store the information in the feature.
-					var measurement = markerEditingCtrl.measureFeatureToString.call(markerEditingCtrl, marker);
-					marker.attributes["measurement"] = measurement;
-					
-					// Add the headers to make it appear in the popup.
-					var measureHeader = ["div", null, "measurement", "popup-measure"];
-					if (marker.popUpHeaders && marker.popUpHeaders.length>0) {
-						marker.popUpHeaders.push(measureHeader);
-					}
-					else {
-						marker.popUpHeaders = [measureHeader];
-					}
+				// Put back comma (",") and new row sign ("\n").
+				info = infoArr[i] ? decodeURIComponent(infoArr[i]) : null;
+				if (info) {
+					info = info.replace(commaSignRegExp, ",");
+					info = info.replace(newRowSignRegExp, "\n");
 				}
-				if (style!=0){
-					var newStyle = null, index=parseInt(style.substring(1));
-					if (style.substring(0,1)=="s"){   //symbol
-						newStyle = {
-								pointRadius : this.symbols[index].size ? this.symbols[index].size/2 : this.defaultSymbolSize/2,
-								fillOpacity : 1,
-								externalGraphic : this.symbols[index].url,
-								graphicYOffset : this.symbols[index].offsety ? this.symbols[index].offsety : null,
-								graphicXOffset : this.symbols[index].offsetx ? this.symbols[index].offsetx : null,
-								cursor : "pointer"
-						};
-					}
-					if (style.substring(0,1)=="c"){		//color
-						newStyle = {
-								pointRadius : this.defaultPointRadius,
-								fillColor : this.colors[index],
-								fillOpacity : this.defaultFillOpacity,
-								graphicName: this.defaultGraphicName,
-								strokeWidth : this.defaultStrokeWidth,
-								strokeColor : this.colors[index],
-								strokeOpacity : this.defaultStrokeOpacity,
-								cursor : "pointer"
-						};
-					}
-					marker.style = newStyle;
-				}
-				markerLayer.addFeatures([marker]);
-				markerLayer.features[i].attributes.orgid = markerLayer.features[i].id;
+				infoArr[i] = info;
 			}
-		},
+
+			this.addEditLayer();
+			this.addFeatures(featureWktArr, infoArr, textArr, styleArr, sizeArr);
+			// Create dialog if the features should be editable
+			if (!this.dialogDiv && this.editLinkFeatures){
+				this.dialogDiv = this.makeDialogContent();
+				this.dialogDiv = this.makeDialog(this.dialogDiv);
+			}
+			//Select (if configured) the last feature added
+			if (this.selectLinkFeatures){
+				this.selectFeature(this.editLayer.features[this.editLayer.features.length-1]);
+			}
+			this.showHideEditLayer();
+		}
+	},
+		
+	/**
+	 * Add a feature with the given geometry and also add
+	 * a pop-up which is open from start for the last feature in the array.
+	 * 
+	 * @param featureWktArr {Array(String)} Geometry in the "Well Known Text" (WKT)
+	 * @param infoArr {Array(String)} The pop-up text. Index should match with corresponding feature.
+	 * @param textArr {Array(Integer)} 1 = Textpoint 0 = Symbolpoint
+	 * @return Nothing. A feature in given geometry is added to the poiLayer. The last feature's pop-up starts open.
+	 */
+	addFeatures : function(featureWktArr, infoArr, textArr, styleArr, sizeArr) {
+
+		// Fetch the markerLayer.
+		var markerLayer = this.editLayer;
+		
+		var feature=null, wkt=null, info=null, text=null, style=null, size=null;
+		for (var i=0; i<featureWktArr.length; i++) {
+			wkt = featureWktArr[i];
+			info = infoArr[i] ? infoArr[i] : "";
+			text = textArr[i] ? textArr[i] : "0";
+			style = styleArr[i] ? styleArr[i] : "0";
+			size = sizeArr[i] ? sizeArr[i] : this.defaultPointRadius;
+			var gtype = wkt.substring(0,wkt.indexOf("("));
+				geom = new OpenLayers.Geometry.fromWKT(wkt);
+			feature = new OpenLayers.Feature.Vector(geom);
+
+			// Add default attributes to feature
+			feature.attributes.info = info;
+			feature.attributes.eg = "";
+			feature.attributes.gn = this.defaultGraphicName;
+			feature.attributes.size = size;
+			feature.attributes.fontsize = this.defaultFontSize;
+			feature.attributes.sw = this.defaultStrokeWidth;
+			feature.attributes.so = this.defaultStrokeOpacity;
+			feature.attributes.fo = this.defaultFillOpacity;
+			feature.attributes.color = this.defaultColor;
+			feature.attributes.la = "cm";
+
+			// Add external graphic or color to the features attributes
+			var index=style.substring(1);
+			if (style.substring(0,1)=="s"){   //symbol
+				feature.attributes.eg = this.symbols[index].url;
+				feature.attributes.fo = 1;
+			}
+			if (style.substring(0,1)=="c"){		//color
+				feature.attributes.color = this.colors[index];
+				if (gtype=="POINT"){  //Points with radius
+					feature.attributes.so = 0.9;
+				}else{  //lines and polys
+					feature.attributes.sw = size;
+				}
+			}
+			
+			// Add text attribute to feature.
+			var textstring = "";
+			if (parseInt(text)==1) {
+				textstring = info;
+				feature.attributes.eg = this.blankSymbol;
+				feature.attributes.so = 0;
+				feature.attributes.fo = 1;
+				feature.attributes.fontsize = size;
+				feature.attributes.size = size/2;
+			}
+			feature.attributes.text = textstring;
+			
+			//Add measure attribute and override the text attribute with the measure text
+			if (parseInt(text)==2) { 
+				feature.attributes.measure=true;
+				this.addMeasureText(feature);
+			}else{
+				feature.attributes.measure=false;
+			}
+			
+			markerLayer.addFeatures([feature]);
+			markerLayer.features[i].attributes.orgid = markerLayer.features[i].id;
+		}
+	},
 	
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
@@ -8267,19 +8984,22 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		/**
 		 * Dialog size and position
 		 */
-		dialogStartPosition : [300, 100],
-		width : 240,
-		height : 400,
+		dialogStartPosition : [150, 100],
+		width : 280,
+		height : 420,
 		/**
 		 * Witch edit buttons will be available
 		 */
 		useButtons : {
+				"text" : true,
 				"point" : true,
 				"line" : true,
 				"polygon" : true,
-				"move" : false, // sometimes activates by simple click and not only drag, must drag to release feature
-				"modify" : false, //not checking for feature.editable
-				"delete" : false,  //not checking for feature.editable
+				"box" : true,
+				"circle" : true,
+				"move" : true, // sometimes activates by simple click and not only drag, must drag to release feature
+				"modify" : true, //not checking for feature.editable
+				"delete" : true,  //not checking for feature.editable
 				"style" : false  //not functioning for point symbols, select feature and color and use button to change color
 			},
 		/**
@@ -8293,7 +9013,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		/**
 		 * Should features opened in link be editable?
 		 */
-		editLinkFeatures : false,
+		editLinkFeatures : true,
 		/**
 		 * The available colors in the color picker
 		 * as hexadecimal values. 
@@ -8321,29 +9041,38 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		         "#adff2f"
 		],
 		/**
+		* Path to a blank image. Used as externalGrapåhic for textpoints
+		*/
+		blankSymbol : "http://sbkgeodata.kristianstad.se/img/tom.png",
+		/**
 		 * The available symbols in the symbol picker
 		 * Syntax {url:""[, size: , width: , height: , offsety: , offsetx: ]}
 		 * If no size is given the defaultSymbolsSize i used
 		 */
-       symbols : [
-				{url:"http://www.smap.se/mapsymbols/camping_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/hotell_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/stuga_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/vandrarhem_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/overnatt_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32}
-	           ],
+		defaultSymbol : {url:"http://sbkgeodata.kristianstad.se/img/location.png", size : 16},
+		symbols : {},//[
+				// {url:"http://kartor.smap.se/mapsymbols/camping_mini.png", size : 20},
+				// {url:"http://kartor.smap.se/mapsymbols/hotell_mini.png"},
+				// {url:"http://kartor.smap.se/mapsymbols/stuga_mini.png", size : 20},
+				// {url:"http://kartor.smap.se/mapsymbols/vandrarhem_mini.png", size : 20},
+				// {url:"http://kartor.smap.se/mapsymbols/overnatt_mini.png"},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
+				// {url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
+				//{url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
+				//{url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
+				//{url:"http://kartor.smap.se/mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32},
+				// {url:"http://sbkgeodata.kristianstad.se/img/skyltar/B2-1.png", size : 20},
+				// {url:"http://sbkgeodata.kristianstad.se/img/skyltar/B3-1.png", size : 20},
+				// {url:"http://sbkgeodata.kristianstad.se/img/skyltar/C1-1.png", size : 20},
+				// {url:"http://sbkgeodata.kristianstad.se/img/location.png", size : 16}
+	          // ],
 	    /**
 	     * Adjust the height of the symbol picker to contain all symbols
 	     */
@@ -8351,11 +9080,13 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		/**
 		 * Default style values for the vector features
 		 */
+		defaultColor : "#808080",
 		defaultSymbolSize : 20,
+		defaultFontSize : 16,
 		defaultFillOpacity : 0.3,
 		defaultPointRadius : 6,
-		defaultGraphicName : "square",
-		defaultStrokeWidth : 4,
+		defaultGraphicName : "circle",
+		defaultStrokeWidth : 2,
 		defaultStrokeOpacity : 1,
 		/**
 		 * Configuration for the draw layer
@@ -8378,38 +9109,48 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			 */
 			style : {
 				"default" : {
-					pointRadius : 6,
-					fillColor : "#ff5b00",
-					fillOpacity : 0.3,
-					graphicName: "square",
-					strokeWidth : 4,
-					strokeColor : "#ff5b00",
-					strokeOpacity : 1,
+					pointRadius : "${getSize}",
+					fillColor : "${color}",
+					fillOpacity : "${fo}",
+					graphicName: "${gn}",//"circle",
+					strokeWidth : "${sw}",//2,
+					strokeColor : "${color}",
+					strokeOpacity : "${so}",
 					cursor : "pointer",
-					externalGraphic : "img/geometries/polygon.png"
+					externalGraphic : "${eg}",
+					label: "${text}",
+					title: "${info}",
+					labelAlign: "${la}",//"cm",
+					fontColor : "${color}",
+					fontOpacity : 1,
+					fontSize : "${fontsize}"//,
+					//rotation : 30
 				},
 				"temporary" : {
 					pointRadius : 6,
-					fillColor : "#ff5b00",
+					fillColor : "#808080",
 					fillOpacity : 0.3,
-					graphicName: "square",
-					strokeWidth : 4,
-					strokeColor : "#ff5b00",
+					graphicName: "circle",
+					strokeWidth : 2,
+					strokeColor : "#808080",
 					strokeOpacity : 1,
 					cursor : "pointer"
 				},
 				"select" : {
 					pointRadius : 6,
 					fillColor : "#00FFFF",
-					fillOpacity : 0.3, // Make it invisible (meaning only original icon is visible)
+					fillOpacity : 0.3,
 					strokeOpacity : 1,
 					graphicName: "circle",
+					externalGraphic : null,
 					strokeWidth : 4,
 					strokeColor : "#00FFFF",
+					label : "",
 					cursor : "pointer"
 				}
 			}
 		},
+
 		/**
 		 * Makes the drawlayer to be drawn over the overlays
 		 */
@@ -8417,7 +9158,23 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		/**
 		 * Path for fetching features from DB
 		 */
-		fetchFromDbPath : "http://www.smap.se/cgi-bin/shorten/sMap_show.py"
+		fetchFromDbPath : "http://kartor.smap.se/qgis/shorten/sMap_show.py",
+		/**
+		 * Use load and save buttons
+		 */
+		useLoadSave : false,
+		/**
+		 * Path for saving and loading features from DB new API
+		 */
+		savePath : "/wkartor/save/",
+		/**
+		 * Path for saving and loading features from DB new API
+		 */
+		importFilePath : "/sbkqgis/cgi-bin/fmeimp/index.php",
+		/**
+		 * Path for saving and loading features from DB new API
+		 */
+		importPath : "/sbkqgis/cgi-bin/fmeimp/getjson.php"
 };
 sMap.Lang.lang.Draw = {
 	"sv-SE" : {
@@ -8425,12 +9182,15 @@ sMap.Lang.lang.Draw = {
 		headerText : "Ritaverktyg",
 		helpText : "Välj verktyg nedan och markera i kartan. Avsluta med dubbelklick.",
 		moreHelpLinkText : "Hjälp",
-		hoverTextPoint : "Punkt",
-		hoverTextLine : "Linje",
-		hoverTextPolygon : "Yta",
-		hoverTextMove : "Flytta",
-		hoverTextModify : "Ändra",
-		hoverTextDelete : "Radera",
+		hoverTextText : "Lägg till text",
+		hoverTextPoint : "Lägg till symbol",
+		hoverTextLine : "Lägg till linje",
+		hoverTextPolygon : "Lägg till yta",
+		hoverTextBox : "Lägg till rektangel",
+		hoverTextCircle : "Lägg till cirkel med radie i meter",
+		hoverTextMove : "Flytta ritade objekt",
+		hoverTextModify : "Flytta, lägg till eller ta bort brytpunkter",
+		hoverTextDelete : "Radera objekt",
 		descrLblText: "Beskriv markering",
 		descrEntryText: "Skapa eller markera ett objekt för att ändra texten",
 		popupBtnEdit: "Redigera",
@@ -8438,19 +9198,34 @@ sMap.Lang.lang.Draw = {
 		btnColor: "Välj färg",
 		btnSymbol: "Välj symbol",
 		lblNoImage : "Ingen bild",
-		btnCopylink : "Skapa länk till karta"	
+		addMeasureLabel : "Lägg till mättext",
+		addMeasureTitle : "Lägg till en text till linje och ytobjekt som visar längd eller yta.",
+		btnCopylink : "Skapa länk till karta",
+		btnLoad : "Ladda",
+		btnSave : "Spara",
+		btnLoadHoverText : "Ladda dina sparade objekt till kartan",
+		btnSaveHoverText : "Spara ritade objekt. OBS! Skriver över befintliga objekt! Glöm inte att ladda upp dem först om de ska vara kvar.",
+		comfirmDlgTitle : "Bekräfta",
+		confirmText : "Är du säker? Dina tidigare sparade objekt skrivs över. Vill du spara dem måste du ladda upp dem först med laddaknappen.",
+		btnImport : "Import",
+		btnImportHoverText : "Importera en fil till ritningen",
+		importDlgTitle : "Importera fil",
+		importText : "Välj fil att importera"
 	},
 	en : { 
 		buttonText : "Draw",
 		headerText : "Draw tools",
 		helpText : "Select a tool and draw in the map. Finish with doubleclick.",
 		moreHelpLinkText : "Help",
-		hoverTextPoint : "Point",
-		hoverTextLine : "Line",
-		hoverTextPolygon : "Area",
-		hoverTextMove : "Move",
-		hoverTextModify : "Edit",
-		hoverTextDelete : "Delete",
+		hoverTextText : "Add text",
+		hoverTextPoint : "Add point",
+		hoverTextLine : "Add line",
+		hoverTextPolygon : "Add area",
+		hoverTextBox : "Add rectangel",
+		hoverTextCircle : "Add circle with radius in meter",
+		hoverTextMove : "Move object",
+		hoverTextModify : "Edit vertices",
+		hoverTextDelete : "Delete object",
 		descrLblText: "Describe object",
 		descrEntryText: "Create or mark an object to change text",
 		popupBtnEdit: "Edit",
@@ -8458,7 +9233,19 @@ sMap.Lang.lang.Draw = {
 		btnColor: "Color",
 		btnSymbol: "Symbol",
 		lblNoImage : "No image",
-		btnCopylink : "Create link to map"
+		addMeasureLabel : "Add measure text",
+		addMeasureTitle : "Add a text to line och area objekts that shows the length or area.",
+		btnCopylink : "Create link to map",
+		btnLoad : "Load",
+		btnSave : "Save",
+		btnLoadHoverText : "Loading saved iobjects to the map",
+		btnSaveHoverText : "Saving drawed objects. Don't forget to load first if you want to keep old objects!",
+		comfirmDlgTitle : "Confirm",
+		confirmText : "Are you sure? Your previous objects will be overwritten. Don't forget to load first if you want to keep old objects!",
+		btnImport : "Import",
+		btnImportHoverText : "Import a file to the drawing",
+		importDlgTitle : "Import file",
+		importText : "Choose file to import"
 	}
 	
 };/**
@@ -10045,7 +10832,9 @@ sMap.Module.GetFeatureInfo = OpenLayers.Class(sMap.Module, {
 		}
 	},
 	 featuredeleted : function(){
-		this.listPoints();
+		if (this.infoLayer){
+			this.listPoints();
+		}
 	 },
 	 /**
 	 * List all points in the infolayer and add to the dialog
@@ -10195,7 +10984,7 @@ sMap.Module.GetFeatureInfo = OpenLayers.Class(sMap.Module, {
 					cursor : "pointer",
 					label:"${info}",
 					fontColor:"#000",
-					fontSize:"14px",
+					fontSize:"14",
 					fontFamily:"Arial",
 					fontWeight:"normal",
 					labelAlign:"lb",
@@ -10739,6 +11528,14 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 	drawContent : function() {
 		$("#mapDiv").addClass("layertree-width");
 	},
+
+	checkBox: function(layerName) {
+		var theId = "layertree-label-" + layerName;
+		var cbLabel = $("#"+theId);
+		if (cbLabel.parent().hasClass("dynatree-selected") !== true) {
+			cbLabel.click();
+		}
+	},
 	
 	getNameFromSpanID: function(spanID) {
 		return spanID.replace("layertree-label-", "");
@@ -10813,7 +11610,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			arr = sMap.config.layers.overlays || [];
 		for (i=0,len=arr.length; i<len; i++) {
 			t = arr[i];
-			this.layerConfigs[t.name] = t;			
+			this.layerConfigs[t.name] = t;	
 		}
 	},
 	
@@ -10869,7 +11666,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			activeVisible: true,
 			noLink: false,
 			clickFolderMode: 1,
-			fx: { height: "toggle", duration: 200 },
+			fx: null, //{ height: "toggle", duration: 1 },
 			checkbox: true,
 			selectMode: 3, // 3 means checking a folder checks all childrens' checkboxes.
 			onDeactivate: function(node) {},
@@ -11789,6 +12586,16 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		    }
 		}, 3000);*/
 		
+	},
+
+	collapseAllHeaders: function() {
+		var opened = $("#layertree").find(".dynatree-folder.dynatree-expanded .mainheader");
+		opened.click();
+		return opened;
+
+		// $("#layertree").dynatree("getRoot").visit(function(node){
+		// 	node.toggleExpand();
+		// });
 	},
 	
 	/**
@@ -13702,7 +14509,7 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 	EVENT_TRIGGERS : [],
 
 	options: {
-		idSeparator: ",",
+		idSeparator: ";",
 		key: "objid",
 
 		layer: {
@@ -13807,11 +14614,22 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 		for (var i=0,len=fs.length; i<len; i++) {
 			f = fs[i];
 			props = f.attributes || {};
-			arr.push(props.objid);
+			arr.push(props[this.options.key]);
 		}
 
 		// Set the global variable that some unkown magical desktop application can read
-		window.EDPget = arr.join(this.options.idSeparator);
+		// window.EDPget = arr.join(this.options.idSeparator); // Does not work in old ECMA script
+		// document.getElementById('EDPget').value = arr.join(this.options.idSeparator);
+		// window.EDPget = outString;
+
+		var outString = arr.join(this.options.idSeparator);
+
+		var $edpGetTag = $("#EDPget");
+		if (!$edpGetTag.length) {
+			$edpGetTag = $('<input style="display:none !important;" id="EDPget" value="" />').appendTo($("body"));
+		}
+		$edpGetTag.val(outString);
+
 		// console.log(window.EDPget);
 
 	},
@@ -13823,7 +14641,21 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 	afterapplyingwebparams: function(e) {
 		var p = e.params;
 		if (p.ID) {
-			var arr = p.ID instanceof Array ? p.ID : p.ID.split(",");
+			// var arr = p.ID instanceof Array ? p.ID : p.ID.split(this.options.idSeparator);
+
+			// Process params again since ol's OpenLayers.Util.getParameters cracks up when using ";" in param value
+			var s = location.search.substring(1);
+			var ss = s.split("&");
+			var keyVal;
+			var newParams = {};
+			for (var i = 0; i < ss.length; i++) {
+				keyVal = ss[i].split("=");
+				newParams[keyVal[0].toUpperCase()] = keyVal[1];
+			}
+			// Done! We now have the params…
+			var arr = newParams.ID.split(this.options.idSeparator);
+
+
 
 			// TODO: Should we:
 			// 	a) Create a new layer where only these features are visible (using a WMS-filter)
@@ -13942,15 +14774,16 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 	 * All initial HTML should be produced from here.
 	 * @returns {void}
 	 */
-	drawContent : function() {
-
-	},
+	drawContent : function() {},
 	
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
 	CLASS_NAME : "sMap.Module.MiljoReda"
 	
-});sMap.moduleConfig.MiljoReda = {
+});
+
+
+sMap.moduleConfig.MiljoReda = {
 		
 		/**
 		 * If true, calls module's methods "activate" after methods
@@ -18778,7 +19611,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 	},
 	
@@ -18807,7 +19640,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		sMap.events.triggerEvent("fetchselectfeatures", this, {
 			bounds : bounds,
 			add : (addSelectWithKey && shiftKeyPressed),
-			dialog : dialogIfMany //!shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
+			dialog : false//dialogIfMany //  !shiftKeyPressed//dialogIfMany show dialog if shiftkey is not pressed
 		});
 		
 	},
@@ -18872,7 +19705,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 	 */
 	select : function(e) {
 		var features = e.features;
-		
+		var xy = e.xy ? e.xy : null;
 		if (!features.length) {
 			return false;
 		}
@@ -18908,7 +19741,8 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		}
 		else {
 			this.selectFeatures(features, {
-				add : e.add
+				add : e.add,
+				xy : xy
 			});
 		}
 		debug.log("Number of selected features: " + this.selectLayer.features.length);
@@ -19291,6 +20125,9 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 					 */
 					var c = f.geometry.getCentroid();
 					var px = self.map.getViewPortPxFromLonLat(new OpenLayers.LonLat(c.x, c.y));
+					if (!self.fitBoundsIfNotContained){
+						px = self.handlers.click && self.handlers.click.evt && self.handlers.click.active ? self.handlers.click.evt.xy : null;
+					}
 					self.selectFeatures([f], {
 						add : options.add,
 						xy: new OpenLayers.Pixel(px.x, px.y)
@@ -19718,7 +20555,7 @@ sMap.Module.SelectResult = OpenLayers.Class(sMap.Module, {
 			},
 			ondblClickRow: function(rowid){
 				var f = self.fDict[rowid];
-				sMap.map.zoomToExtent(f.geometry.getBounds());
+				//sMap.map.zoomToExtent(f.geometry.getBounds()); //unwanted behaviour //K-M
 				if (self.selectOnDblClick){
 					sMap.events.triggerEvent("selected", this, {
 						features : [self.fDict[rowid]],
@@ -20575,7 +21412,39 @@ sMap.Module.SPrint = OpenLayers.Class(sMap.Module, {
 		// For displaying correct scales in the dialog scale selector,
 		// default is otherwise 72.
 		DOTS_PER_INCH: 96,
-		
+		/**
+		 * Path to print servlet
+		 */
+		 
+		/**
+		 * Enable a tool for creatinga a mask in the print
+		 */
+		usePrintMask : true,
+		/**
+		 * Available print resolutions. Does not care for the resolutions in the map.
+		 */
+		printResolutions : [ 132.2919, 52.91677, 26.45839, 13.229193, 5.291677, 2.645839, 1.322919, 0.529168, 0.264584 ],
+		/**
+		 * Pixel sizes in the print layouts [format(A3/A4/A5)]_[portrait or landscape(p/l)_[print or export(p/x)]]
+		 */
+		layoutSizes : {
+			A5_p_p : {w:337,h:471},
+			A5_l_p : {w:511,h:297},
+			A5_p_x : {w:393,h:538},
+			A5_l_x : {w:525,h:393},
+			A4_p_p : {w:511,h:718},
+			A4_l_p : {w:758,h:471},
+			A4_p_x : {w:595,h:842},
+			A4_l_x : {w:842,h:595},
+			A3_p_p : {w:758,h:1067},
+			A3_l_p : {w:1107,h:718},
+			A3_p_x : {w:842,h:1191},
+			A3_l_x : {w:1191,h:842},
+			A2_p_p : {w:1107,h:1560},
+			A2_l_p : {w:1600,h:1067},
+			A2_p_x : {w:1191,h:1684},
+			A2_l_x : {w:1684,h:1191}
+		},
 		printCopyrightNotice: '<div id="print-dialog-userconditions" class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0" style="width: auto; min-height: 0px; height: 183px;">För utdrag från kartan/flygfotot till tryck eller annan publicering, krävs tillstånd från Malmö Stadsbyggnadskontor. Vid frågor om tillstånd, användningsområden eller kartprodukter kontaktas Stadsbyggnadskontorets kartförsäljning: 040-34 24 35 eller <a href="mailto:sbk.sma@malmo.se?subject=Best%E4lla karta">sbk.sma@malmo.se</a>.<br><strong>Accepterar du villkoren?</strong></div>'
 };
 sMap.Lang.lang.SPrint = {
@@ -20746,37 +21615,39 @@ sMap.Lang.lang.SPrint = {
 		var service = print ? "Print_" : "Export_";
 		
 		var self = this;
-		
-		
-		$("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
-			title: "Användarvillkor",
-			autoOpen: true,
-			modal: true,
-			close: function() {
-				$(this).dialog("destroy").empty().remove();
-				
-			},
-			buttons: [
-			          {
-			        	  text: "Nej",
-			        	  click: function() {
-				        	  	$(this).dialog("close");
-				          	}
-			          },
-			          {
-			        	  text: "Jag accepterar",
-			        	  click: function() {
-			        	  		$(this).dialog("close");
-				        	  	self.print(service, printFormat, {
-				        	  		orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-									format: $(".sprint-paperformat:visible").val() || "A4"
-				        	  	});
-			          		}
-			          }
-			]
+		// Vill man ha dialogen ta bort detta och lägg till det nedan
+		self.print(service, printFormat, {
+			orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+			format: $(".sprint-paperformat:visible").val() || "A4"
 		});
 		
-		
+		// $("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
+			// title: "Användarvillkor",
+			// autoOpen: true,
+			// modal: true,
+			// close: function() {
+				// $(this).dialog("destroy").empty().remove();
+				
+			// },
+			// buttons: [
+			          // {
+			        	  // text: "Nej",
+			        	  // click: function() {
+				        	  	// $(this).dialog("close");
+				          	// }
+			          // },
+			          // {
+			        	  // text: "Jag accepterar",
+			        	  // click: function() {
+			        	  		// $(this).dialog("close");
+				        	  	// self.print(service, printFormat, {
+				        	  		// orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+									// format: $(".sprint-paperformat:visible").val() || "A4"
+				        	  	// });
+			          		// }
+			          // }
+			// ]
+		// });
 	};
 	
 	/**
@@ -20806,19 +21677,21 @@ sMap.Lang.lang.SPrint = {
 		this.dialog.dialog({
 			title : 'Utskrift',
 			width : 370,
+			position : {my: "right", at : "right" },
 			resizable : false,
 			closeOnEscape : false,
 			open : function(e, ui) {
 				self.updateScales();
 				self.showExtent();
 				self.setCurrentScale();
-				self.map.events.register("zoomend", self, self.setCurrentScale);
-				self.map.events.register("changebaselayer", self, self.updateScales);
+				//self.map.events.register("zoomend", self, self.setCurrentScale);
+				//self.map.events.register("changebaselayer", self, self.updateScales);
 				self.map.events.register("zoomend", self, self.showExtent);
 				self.map.events.register("moveend", self, self.showExtent);
 				
 				// $(".ui-dialog-titlebar-close", ui.dialog).hide();
 			},
+			beforeClose : Core.bind(this, this.beforeDialogclose),
 			close : Core.bind(this, this.onDialogclose),
 			autoOpen: false
 		});
@@ -20831,6 +21704,23 @@ sMap.Lang.lang.SPrint = {
 		});
 
 		var that = this;
+		$("#sprint_Print_chkUseMask").click(function() {
+			that.toggleMaskEditing();
+		});
+		if(!this.core.module.usePrintMask){
+			$("#sprint_Print_chkUseMask").hide();
+			$("#sprint_Print_chkUseMaskLbl").hide();
+		}
+		$("#sprint_Print_btnDraw").button();
+		$("#sprint_Print_btnDraw").click(function() {
+			that.toggleDraw();
+		});
+		$("#sprint_Print_btnDraw").hide();
+		$("#sprint_Print_btnClear").button();
+		$("#sprint_Print_btnClear").click(function() {
+			that.clearDraw();
+		});
+		$("#sprint_Print_btnClear").hide();
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -20872,7 +21762,7 @@ sMap.Lang.lang.SPrint = {
 	PrintControlDialog.prototype.updateScales = function() {
 		$(".sprint-selectscale").empty();
 		var scale, option, res,
-			resolutions = this.map.baseLayer.resolutions || this.map.resolutions || [];
+			resolutions = this.core.module.printResolutions || this.map.resolutions || [];//this.map.baseLayer.resolutions || this.map.resolutions || [];
 		for (var i=0,len=resolutions.length; i<len; i++) {
 			res = resolutions[i];
 			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
@@ -20881,9 +21771,146 @@ sMap.Lang.lang.SPrint = {
 				$(this).append(option.clone());
 			});
 		}
-		this.setCurrentScale(); // set scale also
+		//this.setCurrentScale(); // set scale also
 	};
+	/*
+	 * Toggles draw and clear buttons for print mask
+	 */
+	PrintControlDialog.prototype.toggleMaskEditing = function(){
+		if ($("#sprint_Print_btnDraw").is(":visible")) {
+			$("#sprint_Print_btnDraw").hide();
+			$("#sprint_Print_btnClear").hide();
+			this.maskEditingLayer.setVisibility(false);
+		}else{
+			$("#sprint_Print_btnDraw").show();
+			$("#sprint_Print_btnClear").show();
+			this.addMaskEditingLayer();
+		}
+	};
+	/*
+	 * Adds a vector layer for mask editing with an OL drawfeature control
+	 */
+	PrintControlDialog.prototype.addMaskEditingLayer = function(){
+		if (!this.maskEditingLayer) {
+			this.maskEditingLayer = new OpenLayers.Layer.Vector("sprint_maskeditlayer", {
+				styleMap: new OpenLayers.StyleMap({
+					"default": new OpenLayers.Style({
+						fillOpacity: 0,
+						fillColor: "#FFF",
+						strokeWidth: 1,
+						strokeOpacity: 1,
+						strokeColor: "#F00"
+					}),
+					"temporary": new OpenLayers.Style({
+						fillOpacity: 0,
+						fillColor: "#FFF",
+						strokeWidth: 1,
+						strokeOpacity: 1,
+						strokeColor: "#F00"
+					})
+				})
+			});
+			this.map.addLayer(this.maskEditingLayer);
+			this.maskEditingLayer.events.register("featureadded", this, function(e) {
+				this.toggleDraw();
+				this.centerAndFitExtent(e.feature);
+			});
+			this.drawPolygon = new OpenLayers.Control.DrawFeature(
+					this.maskEditingLayer, OpenLayers.Handler.Polygon, {
+						title: "Rita",
+						multi: true
+				});
+			this.map.addControl(this.drawPolygon);
+		}
+		else{
+			this.maskEditingLayer.setVisibility(true);
+		}
 		
+	};
+	/*
+	 * Toggles the OL drawfeature control
+	 */
+	PrintControlDialog.prototype.toggleDraw = function(){
+		if (this.drawPolygon.active){
+			this.drawPolygon.deactivate();
+		}
+		else{
+			this.drawPolygon.activate();
+		}
+	};
+	/*
+	 * Clears all drawed features
+	 */
+	PrintControlDialog.prototype.clearDraw = function(){
+		this.maskEditingLayer.removeAllFeatures();
+	};
+	/*
+	 * Adds a vector layer when printing. The layer contains the extent feature minus the drawed features in a white style
+	 */
+	PrintControlDialog.prototype.addMaskLayer = function(){
+		if (this.maskEditingLayer.features.length>0){
+			if (!this.maskLayer) {
+				this.maskLayer = new OpenLayers.Layer.Vector("sprint_masklayer", {
+					styleMap: new OpenLayers.StyleMap({
+						"default": new OpenLayers.Style({
+							fillOpacity: 1,
+							fillColor: "#ffffff",
+							strokeWidth: 1,
+							strokeOpacity: 1,
+							strokeColor: "#ffffff"
+						})
+					})
+				});
+				this.map.addLayer(this.maskLayer);
+			}
+			var P = OpenLayers.Geometry.Point,
+				ext = this.map.maxExtent,
+				geomPolygon = new OpenLayers.Geometry.Polygon(
+				[new OpenLayers.Geometry.LinearRing(
+					[new P(ext.left, ext.bottom), new P(ext.right, ext.bottom), new P(ext.right, ext.top), new P(ext.left, ext.top), new P(ext.left, ext.bottom)] 
+				)]
+			);
+			var extPolygon = new OpenLayers.Feature.Vector(geomPolygon);
+			var maskFeature = this.subtract(extPolygon, this.maskEditingLayer.features); //this.extentLayer.features[0]
+			this.maskLayer.addFeatures([maskFeature]);
+		}
+	};
+	
+	PrintControlDialog.prototype.subtract = function(bigFeature, smallFeatures) {
+	    var newPolygon = new OpenLayers.Geometry.Polygon(bigFeature.geometry.components);
+	    var newFeature = new OpenLayers.Feature.Vector(newPolygon);
+	    //Add Inner DONUT HOLES!
+	    for (var i = 0; i<smallFeatures.length;i++){
+	    	newPolygon.addComponent(smallFeatures[i].geometry.components[0].components[0]);
+	    }
+
+	    return newFeature;
+	};
+	PrintControlDialog.prototype.centerAndFitExtent = function(feature) {
+		var bounds = feature.geometry.getBounds(),
+			c = bounds.getCenterLonLat(),
+			fw = bounds.getWidth(),
+			fh = bounds.getHeight();
+		this.map.setCenter([c.lon,c.lat]);
+		var format = $(".sprint-paperformat:visible").val() || "A4",
+			portrait = $(".sprint-orientation:visible:checked").val(),
+			isPrint = $("#sprint_Print_btnPrint").is(":visible") ? "p" : "x";
+		portrait = portrait.toUpperCase() === "PORTRAIT" ? "p" : "l"; //p or l
+		var layout = this.core.module.layoutSizes[format + "_" + portrait + "_" + isPrint];
+		var scalex = fw*72/(layout.w*0.0254);
+		var scaley = fh*72/(layout.h*0.0254);
+		var maxscale = (scalex > scaley) ? scalex : scaley;
+		var scale, res, scaleres,
+			resolutions = this.core.module.printResolutions || this.map.resolutions || [];//this.map.baseLayer.resolutions || this.map.resolutions || [];
+		for (var i=0,len=resolutions.length; i<len; i++) {
+			res = resolutions[i];
+			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
+			if (scale>maxscale){
+				scaleres = scale+':'+res;
+			}
+		}
+		$(".sprint-selectscale").val(scaleres).change();
+	};
 	PrintControlDialog.prototype.showExtent = function(scale) {
 		if (!scale || typeof(scale) !== "number") {
 			scale = this.printScale || this.map.getScale();
@@ -20893,7 +21920,6 @@ sMap.Lang.lang.SPrint = {
 		var format,
 			portrait = true,
 			isPrint = $("#sprint_Print_btnPrint").is(":visible");
-			pxWidth, pxHeight;
 		portrait = $(".sprint-orientation:visible:checked").val();
 		portrait = portrait && typeof(portrait) === "string" ? portrait.toUpperCase() === "PORTRAIT" : true; // convert to boolean
 		format = $(".sprint-paperformat:visible").val() || "A4";
@@ -20916,80 +21942,105 @@ sMap.Lang.lang.SPrint = {
 			this.extentLayer.destroyFeatures(); // clean layer
 		}
 		
-		var pxWidth, pxHeight;
+		var pxWidth, pxHeight, ls = this.core.module.layoutSizes;
 		switch(format) {
-		case "A3":
+		case "A2":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = 758 * (96/72);
-					pxHeight = 1067 * (96/72);					
+					pxWidth = ls.A2_p_p.w * (96/72);
+					pxHeight = ls.A2_p_p.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 1107 * (96/72);
-					pxHeight = 718 * (96/72);
+					pxWidth = ls.A2_l_p.w * (96/72);
+					pxHeight = ls.A2_l_p.h * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = 842 * (96/72);
-					pxHeight = 1191 * (96/72);					
+					pxWidth = ls.A2_p_x.w * (96/72);
+					pxHeight = ls.A2_p_x.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 1191 * (96/72);
-					pxHeight = 842 * (96/72);	
+					pxWidth = ls.A2_l_x.w * (96/72);
+					pxHeight = ls.A2_l_x.h * (96/72);	
+				}
+			}
+			break;
+		case "A3":
+			if (isPrint) {
+				if (portrait === true) {
+					pxWidth = ls.A3_p_p.w * (96/72);
+					pxHeight = ls.A3_p_p.h * (96/72);					
+				}
+				else {
+					// Landscape
+					pxWidth = ls.A3_l_p.w * (96/72);
+					pxHeight = ls.A3_l_p.h * (96/72);
+				}
+			}
+			else {
+				// Export
+				if (portrait === true) {
+					pxWidth = ls.A3_p_x.w * (96/72);
+					pxHeight = ls.A3_p_x.h * (96/72);					
+				}
+				else {
+					// Landscape
+					pxWidth = ls.A3_l_x.w * (96/72);
+					pxHeight = ls.A3_l_x.h * (96/72);	
 				}
 			}
 			break;
 		case "A4":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = 511 * (96/72);
-					pxHeight = 718 * (96/72);				
+					pxWidth = ls.A4_p_p.w * (96/72);
+					pxHeight = ls.A4_p_p.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 758 * (96/72);
-					pxHeight = 471 * (96/72);
+					pxWidth = ls.A4_l_p.w * (96/72);
+					pxHeight = ls.A4_l_p.h * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = 595 * (96/72);
-					pxHeight = 842 * (96/72);				
+					pxWidth = ls.A4_p_x.w * (96/72);
+					pxHeight = ls.A4_p_x.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 842 * (96/72);
-					pxHeight = 595 * (96/72);
+					pxWidth = ls.A4_l_x.w * (96/72);
+					pxHeight = ls.A4_l_x.h * (96/72);	
 				}
 			}
 			break;
 		case "A5":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = 337 * (96/72);
-					pxHeight = 471 * (96/72);				
+					pxWidth = ls.A5_p_p.w * (96/72);
+					pxHeight = ls.A5_p_p.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 511 * (96/72);
-					pxHeight = 297 * (96/72);
+					pxWidth = ls.A5_l_p.w * (96/72);
+					pxHeight = ls.A5_l_p.h * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = 393 * (96/72);
-					pxHeight = 538 * (96/72);				
+					pxWidth = ls.A5_p_x.w * (96/72);
+					pxHeight = ls.A5_p_x.h * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = 525 * (96/72);
-					pxHeight = 393 * (96/72);
+					pxWidth = ls.A5_l_x.w * (96/72);
+					pxHeight = ls.A5_l_x.h * (96/72);	
 				}
 			}
 			break;
@@ -21073,10 +22124,15 @@ sMap.Lang.lang.SPrint = {
 		    onComplete = options.onComplete || null,
 		    orientation = options.orientation || "Portrait"; // portrait or landscape
 		
+		if ($("#sprint_Print_chkUseMask:checked").val() !== undefined) {
+			this.addMaskLayer();
+		}
+		if (this.maskEditingLayer) {
+			this.maskEditingLayer.setVisibility(false);			
+		}
 		if (this.extentLayer) {
 			this.map.removeLayer(this.extentLayer);			
 		}
-		
 		this.service = service;  //K-M
 		var that = this;
 		var map = options.map || this.core.module.map;
@@ -21182,7 +22238,7 @@ sMap.Lang.lang.SPrint = {
 			$.ajax({
 				type: "POST",
 				url : "/print-servlet/" + serviceName + "/create.json",
-				timeout: options.timeout || 20000, // in ms
+				timeout: options.timeout || 30000, // in ms
 				data : JSON.stringify(jsonData),
 				contentType: "application/json; charset=UTF-8",
 				dataType: "json",
@@ -21213,9 +22269,19 @@ sMap.Lang.lang.SPrint = {
 				}
 			});
 		}
+		// Remove the mask
+		if (this.maskLayer) {
+			this.maskLayer.destroyFeatures();
+			this.map.removeLayer(this.maskLayer);	
+			this.maskLayer.destroy();
+			this.maskLayer = null;
+		}
 		// Put it back again
 		if (this.extentLayer) {
 			this.map.addLayer(this.extentLayer);			
+		}
+		if (this.maskEditingLayer) {
+			this.maskEditingLayer.setVisibility(true);			
 		}
 	};
 	/**
@@ -21444,6 +22510,21 @@ sMap.Lang.lang.SPrint = {
 						if (style.fontColor) {
 							style.fontColor = this.to16Bit(style.fontColor);
 						}
+						if (style.pointRadius) {
+							if (style.externalGraphic||feature.layer.name=="theInfoLayer"){ //symbols with radius in pixels
+								style.pointRadius = style.pointRadius*72/96;
+							}else{ // graphic with radius in meter
+								var scaleRes = $(".sprint-selectscale:visible").val(), //this.getCurrentScale();
+									res = parseFloat(scaleRes.split(":")[1]);			
+								style.pointRadius = style.pointRadius*72/96*this.map.resolution/res;
+							}
+						}
+						if (style.fontSize) {
+							style.fontSize = style.fontSize*72/96;
+						}
+						if (style.strokeWidth) {
+							style.strokeWidth = style.strokeWidth*72/96;
+						}
 						styleDict[dictKey] = styleName = nextId++;
 						if (style.externalGraphic) {
 							// Replaced Ext.applyIf not same as extend
@@ -21452,6 +22533,7 @@ sMap.Lang.lang.SPrint = {
 								externalGraphic : style.externalGraphic
 							}, style);
 						} else {
+							delete style.externalGraphic;
 							encStyles[styleName] = style;
 						}
 					}
@@ -21592,15 +22674,23 @@ sMap.Lang.lang.SPrint = {
 		}
 		return a.href;
 	};
-
+	/*
+	 * Turn off mask editing before close of the dialog
+	 */
+	PrintControlDialog.prototype.beforeDialogclose = function(e) {
+		if (this.maskEditingLayer && this.maskEditingLayer.visibility){
+			$('#sprint_Print_chkUseMask').prop('checked', false);
+			this.toggleMaskEditing();
+		}
+	};
 	PrintControlDialog.prototype.onDialogclose = function(e) {
 		this.core.module.deactivate();
 		//this.core.dialogCloseClicked = true;
 		
 		// unbind update extent event(s)
 		this.map.events.unregister("zoomend", this, this.showExtent);
-		this.map.events.unregister("zoomend", this, this.setCurrentScale);
-		this.map.events.unregister("changebaselayer", this, this.updateScales);
+		//this.map.events.unregister("zoomend", this, this.setCurrentScale);
+		//this.map.events.unregister("changebaselayer", this, this.updateScales);
 		this.map.events.unregister("moveend", this, this.showExtent);
 		
 		// Destroy the extent layer

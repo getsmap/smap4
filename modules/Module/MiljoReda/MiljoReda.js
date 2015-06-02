@@ -137,7 +137,18 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 		}
 
 		// Set the global variable that some unkown magical desktop application can read
-		window.EDPget = arr.join(this.options.idSeparator);
+		// window.EDPget = arr.join(this.options.idSeparator); // Does not work in old ECMA script
+		// document.getElementById('EDPget').value = arr.join(this.options.idSeparator);
+		// window.EDPget = outString;
+
+		var outString = arr.join(this.options.idSeparator);
+
+		var $edpGetTag = $("#EDPget");
+		if (!$edpGetTag.length) {
+			$edpGetTag = $('<input style="display:none !important;" id="EDPget" value="" />').appendTo($("body"));
+		}
+		$edpGetTag.val(outString);
+
 		// console.log(window.EDPget);
 
 	},
@@ -149,7 +160,21 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 	afterapplyingwebparams: function(e) {
 		var p = e.params;
 		if (p.ID) {
-			var arr = p.ID instanceof Array ? p.ID : p.ID.split(",");
+			// var arr = p.ID instanceof Array ? p.ID : p.ID.split(this.options.idSeparator);
+
+			// Process params again since ol's OpenLayers.Util.getParameters cracks up when using ";" in param value
+			var s = location.search.substring(1);
+			var ss = s.split("&");
+			var keyVal;
+			var newParams = {};
+			for (var i = 0; i < ss.length; i++) {
+				keyVal = ss[i].split("=");
+				newParams[keyVal[0].toUpperCase()] = keyVal[1];
+			}
+			// Done! We now have the params…
+			var arr = newParams.ID.split(this.options.idSeparator);
+
+
 
 			// TODO: Should we:
 			// 	a) Create a new layer where only these features are visible (using a WMS-filter)
@@ -268,12 +293,12 @@ sMap.Module.MiljoReda = OpenLayers.Class(sMap.Module, {
 	 * All initial HTML should be produced from here.
 	 * @returns {void}
 	 */
-	drawContent : function() {
-
-	},
+	drawContent : function() {},
 	
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
 	CLASS_NAME : "sMap.Module.MiljoReda"
 	
 });
+
+

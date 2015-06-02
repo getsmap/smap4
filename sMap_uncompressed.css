@@ -20,7 +20,7 @@ div, span, p, button, label {
    user-select: none;
 }
 
-.olFramedCloudPopupContent, .olFramedCloudPopupContent > * {
+.olFramedCloudPopupContent, .olFramedCloudPopupContent > *, iframe, iframe > * {
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;
@@ -688,7 +688,7 @@ some checking/unchecking of boxes */
 	left: 0px;
 	top: 20px;
 	z-index: 2000;
-	width: 210px;
+	width: 270px;
 	height: 25px;
 	border: none;
 	white-space: nowrap;
@@ -919,13 +919,13 @@ textarea{
 	border: 1px solid #848484;
 	cursor: pointer;
 	cursor: hand;
-	background: #cccccc url(../../../img/ui-bg_highlight-hard_100_cccccc_1x100.png) 50% 50% repeat-x;
+	background: #cccccc url(/img/ui-bg_highlight-hard_100_cccccc_1x100.png) 50% 50% repeat-x;
 	
 }
 .smapBtn:hover {
 	background-color: #000000;
 	color: #ffffff;
-	background: #cccccc url(../../../img/ui-bg_highlight-hard_100_cccccc_1x100_turn.png) 50% 50% repeat-x;
+	background: #cccccc url(/img/ui-bg_highlight-hard_100_cccccc_1x100_turn.png) 50% 50% repeat-x;
 	
 }
 
@@ -940,7 +940,25 @@ textarea{
 	font-size: 12px;
 	cursor: pointer;
 }
-
+#draw-graphicselect {
+    height: 22px;
+    left: 85px;
+    position: absolute;
+    top: 100px;
+    width: 60px;
+}
+#draw-graphicsize-label {
+    left: 128px;
+    position: absolute;
+    top: 105px;
+    width: 20px;
+}
+#draw-graphicsize {
+    left: 160px;
+    position: absolute;
+    top: 100px;
+    width: 40px;
+}
 #draw-divcolorselect {
 	position: relative;
 	top: 40px;
@@ -964,23 +982,33 @@ textarea{
 }
 #draw-buttonsymbolselect {
 	position: absolute;
-    left: 90px;
-    top: 73px;
+    left: 0px;
+    top: 100px;
     height: 22px;
+    width: 100px;
+}
+.smallbutton{
+	padding: 0.1em !important;
+}
+#draw-selcat {
+	position: absolute;
+    left: 0px;
+    top: 77px;
+    height: 20px;
     width: 100px;
 }
 #draw-divsymbolseleced {
     height: 20px;
-    left: 190px;
+    left: 100px;
     position: absolute;
-    top: 73px;
+    top: 100px;
     width: 20px;
     background-size: cover;
 }
 #draw-divsymbolselect {
 	position: absolute;
-	top: 95px;
-	left: 95px;
+	top: 122px;
+	left: 0px;
 	width: 111px;
 	height: 82px;
 	border: 1px solid #333;
@@ -1010,6 +1038,16 @@ textarea{
 #draw-divsymbolselect img:hover {
 	border: 1px solid #005;
 }
+#draw-cbaddmeasure{
+	position: absolute;
+	top: 150px;
+	left: 100px;
+}
+#draw-lbaddmeasure{
+	position: absolute;
+	top: 150px;
+	left: 0px;
+}
 #mxButtonDiv{
 	position: absolute;
 	top: 260px;
@@ -1019,6 +1057,30 @@ textarea{
 }
 #draw-opencopylink{
 	width: 170px;
+}
+#draw-load{
+	width: 70px;
+	position: absolute;
+	top: 35px;
+	left: 0px;
+}
+#draw-save{
+	width: 70px;
+	position: absolute;
+	top: 35px;
+	left: 80px;
+}
+#draw-import{
+	width: 70px;
+	position: absolute;
+	top: 35px;
+	left: 160px;
+}
+#draw-result{
+	position: absolute;
+	top : 330px;
+	width: 170px;
+	color: #023f88;
 }
 .incorrect_email {
   border: 1px solid red;
