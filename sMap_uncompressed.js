@@ -21428,6 +21428,9 @@ sMap.Module.SPrint = OpenLayers.Class(sMap.Module, {
 		// Default DPI (selected on dialog open)
 		defaultDpi: 96,
 
+		paperFormatsPrint: ["A3", "A4", "A5"],
+		paperFormatsExport: ["A3", "A4", "A5"],
+
 		/**
 		 * Available print resolutions. Does not care for the resolutions in the map.
 		 */
@@ -21505,6 +21508,27 @@ sMap.Lang.lang.SPrint = {
 		var dpi = this.module.defaultDpi || $("#sprint_Print_slctResolution option:first").val();
 		$("#sprint_Print_slctResolution").val(dpi);
 		$("#sprint_Export_slctResolution").val(dpi);
+
+		if (this.module.paperFormatsPrint) {
+			// First empty, then add
+			$("#sprint_Print_slctPrintFormat").empty();
+			var f, option;
+			for (var i = 0; i < this.module.paperFormatsPrint.length; i++) {
+				f = this.module.paperFormatsPrint[i];
+				option = '<option value="'+f+'">'+f+'</option>';
+				$("#sprint_Print_slctPrintFormat").append(option);
+			}
+		}
+		if (this.module.paperFormatsExport) {
+			// First empty, then add
+			$("#sprint_Export_slctPrintFormat").empty();
+			var f, option;
+			for (var i = 0; i < this.module.paperFormatsExport.length; i++) {
+				f = this.module.paperFormatsExport[i];
+				option = '<option value="'+f+'">'+f+'</option>';
+				$("#sprint_Export_slctPrintFormat").append(option);
+			}
+		}
 		this.dialogClosed = false;
 	};
 	
