@@ -367,7 +367,7 @@ sMap.Module.CopyLink = OpenLayers.Class(sMap.Module, {
 		linkDiv.append(linkClose);
 		
 		// If shorten links...see CopyLink_conf.js for details
-		if (self.shortenOption == "toDb" || self.shortenOption == "bitLy") {
+		if (self.shortenOption && (self.shortenOption == "toDb" || self.shortenOption == "bitLy")) {
 			
 			var shortenDiv = $("<div id='copylink-shortendiv'></div>"),
 				shortenBtn = $("<input id='copylink-shortenbtn' type='button' value='"+ self.lang.shortenURLBtn +"' />");

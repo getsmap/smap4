@@ -6983,7 +6983,7 @@ sMap.Module.CopyLink = OpenLayers.Class(sMap.Module, {
 		linkDiv.append(linkClose);
 		
 		// If shorten links...see CopyLink_conf.js for details
-		if (self.shortenOption == "toDb" || self.shortenOption == "bitLy") {
+		if (self.shortenOption && (self.shortenOption == "toDb" || self.shortenOption == "bitLy")) {
 			
 			var shortenDiv = $("<div id='copylink-shortendiv'></div>"),
 				shortenBtn = $("<input id='copylink-shortenbtn' type='button' value='"+ self.lang.shortenURLBtn +"' />");
@@ -8991,17 +8991,17 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		 * Witch edit buttons will be available
 		 */
 		useButtons : {
-				"text" : true,
-				"point" : true,
-				"line" : true,
-				"polygon" : true,
-				"box" : true,
-				"circle" : true,
-				"move" : true, // sometimes activates by simple click and not only drag, must drag to release feature
-				"modify" : true, //not checking for feature.editable
-				"delete" : true,  //not checking for feature.editable
-				"style" : false  //not functioning for point symbols, select feature and color and use button to change color
-			},
+			"text" : true,
+			"point" : true,
+			"line" : true,
+			"polygon" : true,
+			"box" : true,
+			"circle" : true,
+			"move" : true, // sometimes activates by simple click and not only drag, must drag to release feature
+			"modify" : true, //not checking for feature.editable
+			"delete" : true,  //not checking for feature.editable
+			"style" : false  //not functioning for point symbols, select feature and color and use button to change color
+		},
 		/**
 		 * Deactivate drawing tool after finishing sketch?
 		 */
