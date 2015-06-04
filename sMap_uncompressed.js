@@ -8987,6 +8987,9 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		dialogStartPosition : [150, 100],
 		width : 280,
 		height : 420,
+
+		selCatOptions: ["Standard"], //["Standard", "Trafik"],
+
 		/**
 		 * Witch edit buttons will be available
 		 */
@@ -9044,6 +9047,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		* Path to a blank image. Used as externalGrapåhic for textpoints
 		*/
 		blankSymbol : "http://sbkgeodata.kristianstad.se/img/tom.png",
+
 		/**
 		 * The available symbols in the symbol picker
 		 * Syntax {url:""[, size: , width: , height: , offsety: , offsetx: ]}
