@@ -40,6 +40,27 @@
 		var dpi = this.module.defaultDpi || $("#sprint_Print_slctResolution option:first").val();
 		$("#sprint_Print_slctResolution").val(dpi);
 		$("#sprint_Export_slctResolution").val(dpi);
+
+		if (this.module.paperFormatsPrint) {
+			// First empty, then add
+			$("#sprint_Print_slctPrintFormat").empty();
+			var f, option;
+			for (var i = 0; i < this.module.paperFormatsPrint.length; i++) {
+				f = this.module.paperFormatsPrint[i];
+				option = '<option value="'+f+'">'+f+'</option>';
+				$("#sprint_Print_slctPrintFormat").append(option);
+			}
+		}
+		if (this.module.paperFormatsExport) {
+			// First empty, then add
+			$("#sprint_Export_slctPrintFormat").empty();
+			var f, option;
+			for (var i = 0; i < this.module.paperFormatsExport.length; i++) {
+				f = this.module.paperFormatsExport[i];
+				option = '<option value="'+f+'">'+f+'</option>';
+				$("#sprint_Export_slctPrintFormat").append(option);
+			}
+		}
 		this.dialogClosed = false;
 	};
 	

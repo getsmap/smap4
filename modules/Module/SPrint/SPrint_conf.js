@@ -25,6 +25,9 @@ sMap.moduleConfig.SPrint = {
 		// Default DPI (selected on dialog open)
 		defaultDpi: 96,
 
+		paperFormatsPrint: ["A3", "A4", "A5"],
+		paperFormatsExport: ["A3", "A4", "A5"],
+
 		/**
 		 * Available print resolutions. Does not care for the resolutions in the map.
 		 */
