@@ -37,6 +37,9 @@
 	
 	Core.prototype.activate = function() {
 		this.dialog.dialog.dialog("open");
+		var dpi = this.module.defaultDpi || $("#sprint_Print_slctResolution option:first").val();
+		$("#sprint_Print_slctResolution").val(dpi);
+		$("#sprint_Export_slctResolution").val(dpi);
 		this.dialogClosed = false;
 	};
 	

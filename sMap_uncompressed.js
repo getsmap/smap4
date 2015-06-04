@@ -21419,11 +21419,19 @@ sMap.Module.SPrint = OpenLayers.Class(sMap.Module, {
 		/**
 		 * Enable a tool for creatinga a mask in the print
 		 */
-		usePrintMask : true,
+		usePrintMask : false,
+
+		useAcceptDialog: false,
+
+		dialogStartPosition: {my: "center", at: "center"},
+
+		// Default DPI (selected on dialog open)
+		defaultDpi: 96,
+
 		/**
 		 * Available print resolutions. Does not care for the resolutions in the map.
 		 */
-		printResolutions : [ 132.2919, 52.91677, 26.45839, 13.229193, 5.291677, 2.645839, 1.322919, 0.529168, 0.264584 ],
+		// printResolutions : [ 132.2919, 52.91677, 26.45839, 13.229193, 5.291677, 2.645839, 1.322919, 0.529168, 0.264584 ],
 		/**
 		 * Pixel sizes in the print layouts [format(A3/A4/A5)]_[portrait or landscape(p/l)_[print or export(p/x)]]
 		 */
@@ -21494,6 +21502,9 @@ sMap.Lang.lang.SPrint = {
 	
 	Core.prototype.activate = function() {
 		this.dialog.dialog.dialog("open");
+		var dpi = this.module.defaultDpi || $("#sprint_Print_slctResolution option:first").val();
+		$("#sprint_Print_slctResolution").val(dpi);
+		$("#sprint_Export_slctResolution").val(dpi);
 		this.dialogClosed = false;
 	};
 	
@@ -21615,39 +21626,45 @@ sMap.Lang.lang.SPrint = {
 		var service = print ? "Print_" : "Export_";
 		
 		var self = this;
+
 		// Vill man ha dialogen ta bort detta och lägg till det nedan
-		self.print(service, printFormat, {
-			orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-			format: $(".sprint-paperformat:visible").val() || "A4"
-		});
 		
-		// $("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
-			// title: "Användarvillkor",
-			// autoOpen: true,
-			// modal: true,
-			// close: function() {
-				// $(this).dialog("destroy").empty().remove();
-				
-			// },
-			// buttons: [
-			          // {
-			        	  // text: "Nej",
-			        	  // click: function() {
-				        	  	// $(this).dialog("close");
-				          	// }
-			          // },
-			          // {
-			        	  // text: "Jag accepterar",
-			        	  // click: function() {
-			        	  		// $(this).dialog("close");
-				        	  	// self.print(service, printFormat, {
-				        	  		// orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-									// format: $(".sprint-paperformat:visible").val() || "A4"
-				        	  	// });
-			          		// }
-			          // }
-			// ]
-		// });
+		if (this.core.module.useAcceptDialog) {
+			$("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
+				title: "Användarvillkor",
+				autoOpen: true,
+				modal: true,
+				close: function() {
+					$(this).dialog("destroy").empty().remove();
+					
+				},
+				buttons: [
+				          {
+				        	  text: "Nej",
+				        	  click: function() {
+					        	  	$(this).dialog("close");
+					          	}
+				          },
+				          {
+				        	  text: "Jag accepterar",
+				        	  click: function() {
+				        	  		$(this).dialog("close");
+					        	  	self.print(service, printFormat, {
+					        	  		orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+										format: $(".sprint-paperformat:visible").val() || "A4"
+					        	  	});
+				          		}
+				          }
+				]
+			});
+		}
+		else {
+			self.print(service, printFormat, {
+				orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+				format: $(".sprint-paperformat:visible").val() || "A4"
+			});
+		}
+		
 	};
 	
 	/**
@@ -21677,7 +21694,7 @@ sMap.Lang.lang.SPrint = {
 		this.dialog.dialog({
 			title : 'Utskrift',
 			width : 370,
-			position : {my: "right", at : "right" },
+			position : this.core.module.dialogStartPosition || {my: "center", at: "center"},
 			resizable : false,
 			closeOnEscape : false,
 			open : function(e, ui) {
@@ -21704,23 +21721,25 @@ sMap.Lang.lang.SPrint = {
 		});
 
 		var that = this;
-		$("#sprint_Print_chkUseMask").click(function() {
-			that.toggleMaskEditing();
-		});
+
+		
 		if(!this.core.module.usePrintMask){
+			$("#sprint_Print_chkUseMask").click(function() {
+				that.toggleMaskEditing();
+			});
 			$("#sprint_Print_chkUseMask").hide();
 			$("#sprint_Print_chkUseMaskLbl").hide();
+			$("#sprint_Print_btnDraw").button();
+			$("#sprint_Print_btnDraw").click(function() {
+				that.toggleDraw();
+			});
+			$("#sprint_Print_btnDraw").hide();
+			$("#sprint_Print_btnClear").button();
+			$("#sprint_Print_btnClear").click(function() {
+				that.clearDraw();
+			});
+			$("#sprint_Print_btnClear").hide();
 		}
-		$("#sprint_Print_btnDraw").button();
-		$("#sprint_Print_btnDraw").click(function() {
-			that.toggleDraw();
-		});
-		$("#sprint_Print_btnDraw").hide();
-		$("#sprint_Print_btnClear").button();
-		$("#sprint_Print_btnClear").click(function() {
-			that.clearDraw();
-		});
-		$("#sprint_Print_btnClear").hide();
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -21762,7 +21781,7 @@ sMap.Lang.lang.SPrint = {
 	PrintControlDialog.prototype.updateScales = function() {
 		$(".sprint-selectscale").empty();
 		var scale, option, res,
-			resolutions = this.core.module.printResolutions || this.map.resolutions || [];//this.map.baseLayer.resolutions || this.map.resolutions || [];
+			resolutions = this.core.module.printResolutions || this.map.resolutions || []; //this.map.baseLayer.resolutions || this.map.resolutions || [];
 		for (var i=0,len=resolutions.length; i<len; i++) {
 			res = resolutions[i];
 			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
@@ -22233,7 +22252,7 @@ sMap.Lang.lang.SPrint = {
 					$(this).dialog("destroy").empty().remove();
 				}
 			});
-			sMap.cmd.loading(false)
+			sMap.cmd.loading(false);
 		}else {
 			$.ajax({
 				type: "POST",

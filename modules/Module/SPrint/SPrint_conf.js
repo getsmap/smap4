@@ -16,11 +16,19 @@ sMap.moduleConfig.SPrint = {
 		/**
 		 * Enable a tool for creatinga a mask in the print
 		 */
-		usePrintMask : true,
+		usePrintMask : false,
+
+		useAcceptDialog: false,
+
+		dialogStartPosition: {my: "center", at: "center"},
+
+		// Default DPI (selected on dialog open)
+		defaultDpi: 96,
+
 		/**
 		 * Available print resolutions. Does not care for the resolutions in the map.
 		 */
-		printResolutions : [ 132.2919, 52.91677, 26.45839, 13.229193, 5.291677, 2.645839, 1.322919, 0.529168, 0.264584 ],
+		// printResolutions : [ 132.2919, 52.91677, 26.45839, 13.229193, 5.291677, 2.645839, 1.322919, 0.529168, 0.264584 ],
 		/**
 		 * Pixel sizes in the print layouts [format(A3/A4/A5)]_[portrait or landscape(p/l)_[print or export(p/x)]]
 		 */

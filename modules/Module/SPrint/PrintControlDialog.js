@@ -25,39 +25,45 @@
 		var service = print ? "Print_" : "Export_";
 		
 		var self = this;
+
 		// Vill man ha dialogen ta bort detta och lägg till det nedan
-		self.print(service, printFormat, {
-			orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-			format: $(".sprint-paperformat:visible").val() || "A4"
-		});
 		
-		// $("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
-			// title: "Användarvillkor",
-			// autoOpen: true,
-			// modal: true,
-			// close: function() {
-				// $(this).dialog("destroy").empty().remove();
-				
-			// },
-			// buttons: [
-			          // {
-			        	  // text: "Nej",
-			        	  // click: function() {
-				        	  	// $(this).dialog("close");
-				          	// }
-			          // },
-			          // {
-			        	  // text: "Jag accepterar",
-			        	  // click: function() {
-			        	  		// $(this).dialog("close");
-				        	  	// self.print(service, printFormat, {
-				        	  		// orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-									// format: $(".sprint-paperformat:visible").val() || "A4"
-				        	  	// });
-			          		// }
-			          // }
-			// ]
-		// });
+		if (this.core.module.useAcceptDialog) {
+			$("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
+				title: "Användarvillkor",
+				autoOpen: true,
+				modal: true,
+				close: function() {
+					$(this).dialog("destroy").empty().remove();
+					
+				},
+				buttons: [
+				          {
+				        	  text: "Nej",
+				        	  click: function() {
+					        	  	$(this).dialog("close");
+					          	}
+				          },
+				          {
+				        	  text: "Jag accepterar",
+				        	  click: function() {
+				        	  		$(this).dialog("close");
+					        	  	self.print(service, printFormat, {
+					        	  		orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+										format: $(".sprint-paperformat:visible").val() || "A4"
+					        	  	});
+				          		}
+				          }
+				]
+			});
+		}
+		else {
+			self.print(service, printFormat, {
+				orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+				format: $(".sprint-paperformat:visible").val() || "A4"
+			});
+		}
+		
 	};
 	
 	/**
@@ -87,7 +93,7 @@
 		this.dialog.dialog({
 			title : 'Utskrift',
 			width : 370,
-			position : {my: "right", at : "right" },
+			position : this.core.module.dialogStartPosition || {my: "center", at: "center"},
 			resizable : false,
 			closeOnEscape : false,
 			open : function(e, ui) {
@@ -114,23 +120,25 @@
 		});
 
 		var that = this;
-		$("#sprint_Print_chkUseMask").click(function() {
-			that.toggleMaskEditing();
-		});
+
+		
 		if(!this.core.module.usePrintMask){
+			$("#sprint_Print_chkUseMask").click(function() {
+				that.toggleMaskEditing();
+			});
 			$("#sprint_Print_chkUseMask").hide();
 			$("#sprint_Print_chkUseMaskLbl").hide();
+			$("#sprint_Print_btnDraw").button();
+			$("#sprint_Print_btnDraw").click(function() {
+				that.toggleDraw();
+			});
+			$("#sprint_Print_btnDraw").hide();
+			$("#sprint_Print_btnClear").button();
+			$("#sprint_Print_btnClear").click(function() {
+				that.clearDraw();
+			});
+			$("#sprint_Print_btnClear").hide();
 		}
-		$("#sprint_Print_btnDraw").button();
-		$("#sprint_Print_btnDraw").click(function() {
-			that.toggleDraw();
-		});
-		$("#sprint_Print_btnDraw").hide();
-		$("#sprint_Print_btnClear").button();
-		$("#sprint_Print_btnClear").click(function() {
-			that.clearDraw();
-		});
-		$("#sprint_Print_btnClear").hide();
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -172,7 +180,7 @@
 	PrintControlDialog.prototype.updateScales = function() {
 		$(".sprint-selectscale").empty();
 		var scale, option, res,
-			resolutions = this.core.module.printResolutions || this.map.resolutions || [];//this.map.baseLayer.resolutions || this.map.resolutions || [];
+			resolutions = this.core.module.printResolutions || this.map.resolutions || []; //this.map.baseLayer.resolutions || this.map.resolutions || [];
 		for (var i=0,len=resolutions.length; i<len; i++) {
 			res = resolutions[i];
 			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
@@ -643,7 +651,7 @@
 					$(this).dialog("destroy").empty().remove();
 				}
 			});
-			sMap.cmd.loading(false)
+			sMap.cmd.loading(false);
 		}else {
 			$.ajax({
 				type: "POST",
