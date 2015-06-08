@@ -46,9 +46,9 @@
 		"modules/Module/CustomLayers/CustomLayers_conf.js",
 		"modules/Module/CustomLayers/CustomLayers_lang.js",
 		
-		"modules/Module/Draw/Draw.js",
-		"modules/Module/Draw/Draw_conf.js",
-		"modules/Module/Draw/Draw_lang.js",
+		"modules/Module/DrawOriginal/DrawOriginal.js",
+		"modules/Module/DrawOriginal/DrawOriginal_conf.js",
+		"modules/Module/DrawOriginal/DrawOriginal_lang.js",
 		
 		"modules/Module/Email/Email.js",
 		"modules/Module/Email/Email_conf.js",
@@ -184,7 +184,7 @@
 		"modules/Module/Blixten/Blixten.css",
 		"modules/Module/BlixtenPopup2/BlixtenPopup2.css",
 		"modules/Module/CopyLink/CopyLink.css",
-		"modules/Module/Draw/Draw.css",
+		"modules/Module/DrawOriginal/DrawOriginal.css",
 		"modules/Module/Email/Email.css",
 		"modules/Module/ExtractClick/ExtractClick.css",
 		"modules/Module/FeatureRequester/FeatureRequester.css",
