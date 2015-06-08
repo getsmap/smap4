@@ -58,3 +58,5 @@ Då används sökvägarna i "config_env_johan.json" och källorna (filerna som s
 Om jag vill använda andra källor än de som finns i default-configen kan jag skapa en ny fil med godtyckligt namn, t ex: "config_sources_johan.json", och då exekvera med:
 
 python build.py config_env_johan.json config_sources_johan.json
+
+python build.py config_env_johan.json config_sources_malmo.json

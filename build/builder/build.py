@@ -179,9 +179,9 @@ if __name__=="__main__":
     customBuild = None
     
     if len(sys.argv) > 1:
-        configEnv = sys.argv[1]
+        pathEnv = sys.argv[1]
     if len(sys.argv) > 2:
-        configSources = sys.argv[2]
+        pathSources = sys.argv[2]
     if len(sys.argv) > 1:
         o, a = getopt.getopt(sys.argv[1:], "c:", ["custom="])
         opts = {}
