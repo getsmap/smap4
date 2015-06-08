@@ -1,0 +1,344 @@
+.btndraw {
+	background: none !important;
+	background-image: url("img/editTools/pencil.png") !important;
+}
+/* ------------ MARKER EDITING EXTENDED -----------------------------------------------*/
+
+/* Settings for the panel - i.e. the div holding the editing buttons */
+#draw-panel {
+	position: relative;
+	left: 0px;
+	top: 20px;
+	z-index: 2000;
+	width: 210px;
+	height: 25px;
+	border: none;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.draw-button {
+	float: left;
+	margin-right: 7px;
+	cursor: pointer;
+}
+
+.olControlDrawFeaturePointItemActive {
+	background-position: -77px -23px ;
+}
+.olControlDrawFeaturePointItemInactive {
+	background-position: -77px 0px;
+}
+
+.olControlNavigationItemActive { 
+	background-position: -103px -23px; 
+}
+.olControlNavigationItemInactive { 
+	background-position: -103px -0px; 
+}
+.olControlDrawFeaturePathItemActive {
+	background-position: -51px -23px ;
+}
+.olControlDrawFeaturePathItemInactive {
+	background-position: -51px 0px;
+}
+.olControlDrawFeaturePolygonItemInactive { 
+	background-position: -26px 0px; 
+}
+.olControlDrawFeaturePolygonItemActive { 
+	background-position: -26px -23px;                                                             
+}
+.olControlSaveFeaturesItemInactive {
+	background-position: 0px 1px; 
+}
+.olControlSaveFeaturesItemActive {
+	background-position: 0px -23px; 
+}
+
+/* These buttons (modify, delete) should have a custom icon since there is no appropriate icon in the toolbar-png. */
+
+
+.olControlModifyFeatureItemActive {
+	background-image: url("../../../img/draw_modify_active.png") !important; 
+	background-position: 0px 0px;
+}
+.olControlModifyFeatureItemInactive {
+	background-image: url("../../../img/draw_modify.png") !important;
+	background-position: 0px 0px; 
+}
+.olControlDragFeatureItemActive {
+	background-image: url("../../../img/editing_tool_bar.png");
+	background-position: -1px -23px;
+}
+.olControlDragFeatureItemInactive {
+	background-image: url("../../../img/editing_tool_bar.png");
+	background-position: -1px 0px
+}
+.olControlDeleteFeatureItemActive {
+	background-image: url("../../../img/draw_eraser_active.png") !important; 
+	background-position: 0px 0px;
+}
+.olControlDeleteFeatureItemInactive {
+	background-image: url("../../../img/draw_eraser.png") !important; 
+	background-position: 0px 0px;
+}
+/*------ Container div ------*/
+.mxDiv {
+	position: absolute;
+	top: 2px;
+	left: 0px;
+	width: 175px;
+	height: 410px;
+	margin-left: 10px;
+	margin-top: 10px;
+	font-family: Arial, Verdana, sans-serif;
+	font-size : 13px;
+}
+
+
+/* All headers/labels in the mx window */
+.mxLbl {
+	font-family: "Trebuchet MS", "DejaVu Sans", “Bitstream Vera Sans”, "sans-serif";
+	font-weight: 600;
+	font-size: 1.1em;
+	text-align: left;
+	float: left;
+}
+
+/*------ Edit buttons div ------*/
+#mxEditBtnsDiv {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 200px;
+	height: 90px;
+	z-index: 1;
+}
+
+#mxEditLbl {
+	height: 32px;
+}
+
+/*------ Descripton editing ------*/
+#mxDescrDiv {
+	position: absolute;
+	top: 170px;
+	left: 0px;
+	width: 200px;
+	height: 75px;
+}
+
+#mxDescrLbl {
+
+}
+
+#mxDescrEntry {
+	position: relative;
+	left: 0px;
+	top: 10px;
+	width: 170px;
+	height: 43px;
+	font-family: arial;
+}
+
+
+textarea[disabled], textarea[readonly] { /*input[disabled], input[readonly], select[disabled], select[readonly], checkbox[disabled], checkbox[readonly],*/
+	background-color: #F2F2F2;
+	font-style: italic;
+	border: 1px solid #BDBDBD;
+}
+
+/* In Safari and Chrome textareas can be resizeable. This codes prevent this. */
+textarea{
+	resize: none
+}
+
+
+/*------ Save/Erase/Email buttons ------ */
+
+#mxSaveBtnsDiv {
+	position: absolute;
+	top: 285px;
+	left: 0px;	
+	width: 175px;
+	
+}
+
+.mxBtn {
+	-moz-user-select: none;
+	width: 45px;
+	height: 15px;
+	text-align: center;
+	padding-top: 2px;
+	background-color: #ffffff;
+	border: 1px solid #999999;
+	float: right;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.mxBtn:hover {
+	background-color: #000000;
+	color: #ffffff;	
+	
+}
+
+#mxBtnErase {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	float: left;
+}
+
+#mxBtnEmail {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 80px;
+}
+
+#mxBtnOK {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+/* ------- email dialog ------- */
+#emailDiv {	
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	font-size: 12px;
+	padding: 5px;
+	margin: 10px 0 0 10px;
+}
+/* The button in the popup window which executes editing window. */
+
+.btnCont {
+	position: relative;
+	right: 0px;
+	bottom: 0px;
+	width: 110px;
+	height: 20px;
+	cursor: pointer;
+	cursor: hand;
+	margin: 10px 0 0 0;
+}
+
+#btnEditObject {
+	float: right;
+}
+
+
+.smapBtn {
+	-moz-user-select: none;
+	font-size: 10px;
+	font-weight: 700;
+	width: 50px;
+	height: 15px;
+	text-align: center;
+	padding-top: 2px;
+	background-color: #E6E6E6;
+	border: 1px solid #848484;
+	cursor: pointer;
+	cursor: hand;
+	background: #cccccc url(../../../img/ui-bg_highlight-hard_100_cccccc_1x100.png) 50% 50% repeat-x;
+	
+}
+.smapBtn:hover {
+	background-color: #000000;
+	color: #ffffff;
+	background: #cccccc url(../../../img/ui-bg_highlight-hard_100_cccccc_1x100_turn.png) 50% 50% repeat-x;
+	
+}
+
+
+#draw-buttoncolorselect {
+	position: relative;
+	top: 40px;
+	left: 0px;
+	height: 22px;
+	width: 80px;
+	font-weight: bold;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+#draw-divcolorselect {
+	position: relative;
+	top: 40px;
+	left: 0px;
+	width: 89px;
+	height: 88px;
+	border: 1px solid #333;
+	z-index: 2000;
+	background-color : #fff
+}
+#draw-divcolorselect span {
+	width: 20px;
+	height: 20px;
+	display: block;
+	float: left;
+	border: 1px solid transparent;
+	cursor: pointer;
+}
+#draw-divcolorselect span:hover {
+	border: 1px solid #005;
+}
+#draw-buttonsymbolselect {
+	position: absolute;
+    left: 90px;
+    top: 73px;
+    height: 22px;
+    width: 100px;
+}
+#draw-divsymbolseleced {
+    height: 20px;
+    left: 190px;
+    position: absolute;
+    top: 73px;
+    width: 20px;
+    background-size: cover;
+}
+#draw-divsymbolselect {
+	position: absolute;
+	top: 95px;
+	left: 95px;
+	width: 111px;
+	height: 82px;
+	border: 1px solid #333;
+	z-index: 2000;
+	background-color : #fff;
+}
+#draw-divsymbolselect span {
+	width: 107px;
+	height: 20px;
+	display: block;
+	float: left;
+	text-align:center;
+	border: 1px solid transparent;
+	cursor: pointer;
+}
+#draw-divsymbolselect span:hover {
+	border: 1px solid #005;
+}
+#draw-divsymbolselect img {
+	width: 20px;
+	height: 20px;
+	display: block;
+	float: left;
+	border: 1px solid transparent;
+	cursor: pointer;
+}
+#draw-divsymbolselect img:hover {
+	border: 1px solid #005;
+}
+#mxButtonDiv{
+	position: absolute;
+	top: 260px;
+	left: 0px;
+	width: 170px;
+	height: 30px;
+}
+#draw-opencopylink{
+	width: 170px;
+}
