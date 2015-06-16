@@ -676,7 +676,61 @@ some checking/unchecking of boxes */
 .btncopylink {
 	background: none !important;
 	background-image: url("img/icon_lank_svart.png") !important;
-}.btndraw {
+}
+.smap-clayers-container {
+	position: absolute;
+	top: 5px;
+	right: 300px;
+	z-index: 1007;
+	font-size: 1.1em;
+}
+
+.smap-clayers-header {
+	padding: .3em .6em;
+	background-color: #dfdfdf;
+	color: #000;
+	cursor: pointer;
+	border: 1px solid #cdcdcd;
+	display: inline-block;
+}
+.smap-clayers-header.hover {
+	background-color: #fff;
+	border-bottom-color: #fff;
+}
+
+#smap-clayers-dropdowncont {
+	position: relative;
+}
+
+.smap-clayers-dropdown {
+	position: absolute;
+	background-color: #fff;
+	padding: 0.5em;
+	display: none;
+	border: 1px solid #cdcdcd;
+	/*border-width: 0 1px 1px 1px;*/
+	margin-top: -1px;
+	z-index: -1;
+	padding-top: 1em;
+}
+.smap-clayers-dropdown.visible {
+	display: block;
+}
+
+.smap-clayers-option {
+	line-height: 1.7em;
+	white-space: nowrap;
+}
+
+.smap-clayers-option span {
+	cursor: pointer;
+	margin-left: 4px;
+}
+
+
+/*.smap-clayers-header.ui-state-active {
+
+}*/.btndraw {
 	background: none !important;
 	background-image: url("img/editTools/pencil.png") !important;
 }
@@ -2376,3 +2430,43 @@ div.olControlMousePosition {
 .toolsmenu-rows .ui-state-hover
 .toolsmenu-rows .ui-state-active
 */
+body {
+	font-family: "Trebuchet MS",sans-serif !important;	
+}
+
+
+a {
+	outline: none;	
+}
+
+.toolsmenu-dropdown {
+	background: #fff !important;
+}
+
+/*.baselayer-button.ui-state-default { 
+	transition: background 400ms, color 400ms;
+	-webkit-transition: background 400ms, color 400ms;
+}*/
+
+.toolsmenu-rows .ui-state-default {
+	background: #fff !important;
+}
+.toolsmenu-rows .ui-state-hover {
+	background: #F7F7F7 !important;
+}
+.toolsmenu-rows .ui-state-active {
+	background: #3E5F9C !important;
+	color: #fff !important;
+}
+
+.toolsmenu-mainbutton.ui-state-active {
+	background: #fff !important;
+	border-color: #cdcdcd !important;
+}
+
+.baselayer-button-clicked {
+	background: #fff !important;
+	background: rgba(255,255,255,.9) !important;
+}
+
+

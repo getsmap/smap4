@@ -169,7 +169,11 @@ sMap.cmd = {
 	},
 	
 	hidealllayers: function() {
-		sMap.layer.hideAllLayers();
+		sMap.layer.hideAllLayers(false);
+	},
+
+	removealllayers: function() {
+		sMap.layer.hideAllLayers(true);
 	},
 	
 	/**
@@ -1434,6 +1438,40 @@ sMap.Layer = OpenLayers.Class({
 		for (var i=0,len=layers.length; i<len; i++) {
 			layerName = layers[i];
 			this.hideLayer(layerName);
+		}
+	},
+
+	/**
+	 * Remove all overlays currently visible.
+	 * @param {Boolean} remove Remove instead of hiding layers
+	 * @returns {void}
+	 */
+	hideAllLayers: function(remove) {
+		remove = remove || false;
+
+		var overlays = sMap.config.layers.overlays,
+			layers = [],
+			layer = null,
+			layerName = null,
+			foundLayers = null,
+			t = null;
+		for (var i=0,len=overlays.length; i<len; i++) {
+			foundLayers = this.map.getLayersByName(overlays[i].name);
+			layer = foundLayers.length ? foundLayers[0] : null;
+			if (layer && layer.getVisibility() && !layer.isBaseLayer && layer.displayInLayerSwitcher) {
+				layers.push(layer.name);
+			}
+		}
+		
+		for (var i=0,len=layers.length; i<len; i++) {
+			layerName = layers[i];
+			if (remove === true) {
+				this.removeLayer( this.map.getLayersByName(layerName)[0] );
+			}
+			else {
+				this.hideLayer(layerName);
+				
+			}
 		}
 	},
 	
@@ -3056,7 +3094,13 @@ sMap.WebParams = OpenLayers.Class({
 		}
 		
 		if (paramsObj.BL) { //&& this.map.getLayersByName(paramsObj.BL).length) {
-			this.map.setBaseLayer(paramsObj.BL);
+			// sMap.layer.setBaseLayer(paramsObj.BL);
+			sMap.events.triggerEvent("setbaselayer", this, {layerName: paramsObj.BL});
+			
+			// var bl = this.map.getLayersByName(paramsObj.BL);
+			// if (bl) {
+			// 	this.map.setBaseLayer(bl);
+			// }
 		}
 		if (paramsObj.OL) {
 			var olArr = paramsObj.OL instanceof Array ? paramsObj.OL : paramsObj.OL.split(","),
@@ -4437,7 +4481,7 @@ sMap.Module.BaselayerSwitcher = OpenLayers.Class(sMap.Module, {
 		
 		// Store all baselayers config in an ass. array keyed by category name.
 		var cats = {};
-		sMap.events.triggerEvent("blswitcher_makearr", this, {cats: cats});
+		// sMap.events.triggerEvent("blswitcher_makearr", this, {cats: cats});
 		
 		for (var i=0,len=sMap.config.layers.baselayers.length; i<len; i++) {
 			var t = $.extend(true, {}, sMap.config.layers.baselayers[i]);
@@ -7124,7 +7168,7 @@ sMap.Module.CopyLink = OpenLayers.Class(sMap.Module, {
  */
 
 sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
-	
+
 	/**
 	 * The events that this module will listen to. Each event listener
 	 * is connected to a method defined in this module, with the same
@@ -7134,7 +7178,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 	 * 
 	 * Look at the event listeners as a public API of the module.
 	 */
-	EVENT_LISTENERS : ["blswitcher_makearr"],
+	EVENT_LISTENERS : [],
 	
 	/**
 	 * The events triggered from this module. Note that some modules
@@ -7193,162 +7237,153 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
      * @returns {void}
      */
 	drawContent : function() {
-		// sMap.events.register("modulesadded", this, function(e) {
-		// 	this.init();
-		// });
-		this.init();
-	},
-
-	init: function() {
-		if (!$("#baselayerDiv").length) {
-			// This module requires baselayer switcher module
-			return false;
+		this.$div = $('<div class="smap-clayers-container" />');
+		$("#mapDiv").append(this.$div);
+		this._drawHeaders();
+		if (this.right) {
+			this.$div.css("right", this.right+"px");
 		}
 	},
 
-	blswitcher_makearr: function(e) {
-		var cats = e.cats || {},
-			ls = this.layers || {},
-			t, arr,
-			blSwitcherInst = e.caller;
-		this.blSwitcherInst = blSwitcherInst;
-		for (var category in ls) {
-			arr = ls[ blSwitcherInst.replaceOddChars(category) ];
-			for (var i=0,len=arr.length; i<len; i++) {
-				t = arr[i];
-				t.name = $.trim(t.displayName.replace(/[^\x00-\x7F]/g, "")).replace(/\s/g, "_");
-				t.onClick = this.onRowClick;
-				t.category = category;
-			}
-		}
-
-		for (var category in cats) {
-			arr = cats[ blSwitcherInst.replaceOddChars(category) ];
-			if (ls[category]) {
-				cats[category] = cats[category].concat( ls[category] );
-			}
-		}
-		for (var category in ls) {
-			if (!cats[category]) {
-				cats[category] = ls[category];
-			}
-
-		}
-
-
-		// $.extend(true, cats, ls);
-		// var a;
+	onOptionSpanClick: function(e) {
+		$(this).prev().prop("checked", true).change();
 	},
 
+	// _getDropDown: function(headerIndex) {
+	// 	return this.$div.find(".smap-clayers-dropdown:eq("+headerIndex+")");
+	// },
 
-	getConfig: function(layerName) {
-		var ls = this.layers || {},
-			t, arr;
-		for (var category in ls) {
-			arr = ls[category];
-			for (var i=0,len=arr.length; i<len; i++) {
-				t = arr[i];
-				if (t.name === layerName) {
-					return t;
-				}
-			}
-		}
-		return null;
+	// _getHeader: function(dropDownIndex) {
+	// 	var headerIndex = dropDownIndex - this.$div.find(".smap-clayers-header").length;
+	// 	return this.$div.find(".smap-clayers-header:eq("+headerIndex+")");
+	// },
+
+	onHeaderOver: function() {
+		var $this = $(this);
+		var $dropDown = $(".smap-clayers-container").find(".smap-clayers-dropdown:eq("+$this.index()+")");
+		$this.addClass("hover");
+		$dropDown.addClass("visible");
 	},
 
-	onRowClick: function(e) {
-		var ctrls = sMap.map.getControlsByClass("sMap.Module.BaselayerSwitcher");
-		if (!ctrls) {
-			return false;
-		}
-		var ctrl = ctrls[0];
-		var self = sMap.map.getControlsByClass("sMap.Module.CustomLayers")[0],
-			layTreeInst = sMap.map.getControlsByClass("sMap.Module.LayerTree")[0];
-		var layerName = $(this).prop("id").split(ctrl.delim)[1];
-		var opened = layTreeInst.collapseAllHeaders();
+	onHeaderOut: function() {
+		var $this = $(this);
+		var $dropDown = $(".smap-clayers-container").find(".smap-clayers-dropdown:eq("+$this.index()+")");
+		$this.removeClass("hover");
+		$dropDown.removeClass("visible");
+	},
 
-		if (e !== true) {
-			ctrl.pressRadioButton(layerName, false);
-			var b = ctrl.getButton(layerName);
-			ctrl.markButton(b);
-		}
+	onDropDownOver: function() {
+		var $this = $(this);
+		var nbr = $(".smap-clayers-container").find(".smap-clayers-header").length;
+		var $header = $(".smap-clayers-container").find(".smap-clayers-header:eq("+($this.index()-nbr)+")");
+		$header.addClass("hover");
+		$this.addClass("visible");
+	},
 
-		// -- Parse parameters --
+	onDropDownOut: function() {
+		var $this = $(this);
+		var nbr = $(".smap-clayers-container").find(".smap-clayers-header").length;
+		var $header = $(".smap-clayers-container").find(".smap-clayers-header:eq("+($this.index()-nbr)+")");
+		$header.removeClass("hover");
+		$this.removeClass("visible");
+	},
 
-		var t = self.getConfig(layerName);
-		var p = t.params;
-		var pArr = p.split("&");
+	stringToObject: function(pString) {
+		var pArr = pString.split("&");
 		var out = {};
 		for (var i=0,len=pArr.length; i<len; i++) {
 			var keyVal = pArr[i].split("=");
 			out[keyVal[0]] = keyVal[1];
 		}
-		p = OpenLayers.Util.upperCaseObject(out);
-		
-		sMap.cmd.hidealllayers();
-		sMap.webParams.applyDefaultParams(p, {noZoomExtentFallback: true});
-		
-		function delayed() {
-			if (p.OL) {
-				var olArr = p.OL.split(",");
-				var arrLayersToAdd = [];
-				for (var i=0,len=olArr.length; i<len; i++) {
-					var layerName = olArr[i];
-					// var t = sMap.cmd.getLayerConfig(layerName);
-					// t.startVisible = true;	
-					// if (paramsObj.BUFFER){
-					// 	t.options.buffer = paramsObj.BUFFER;
-					// }
-					// arrLayersToAdd.push(t);
-					
-					// sMap.cmd.showlayer({layerName: layerName});
+		return OpenLayers.Util.upperCaseObject(out);
+	},
 
-					layTreeInst.checkBox(layerName);
-				}
+	applyParams: function(pObj) {
+		sMap.cmd.removealllayers();
+		sMap.webParams.applyDefaultParams(pObj, {noZoomExtentFallback: true});
+	},
+
+	onChange: function(e) {
+		// When a radio button changes - apply the params
+		var $this = $(e.target);
+		var pString = $this.parent().data("params");
+		var pObj = this.stringToObject(pString);
+		this.applyParams(pObj);
+
+	},
+
+	_drawHeaders: function() {
+		var obj = this.layers || {};
+		var t, arrOptions, title,
+			$header, $dropDown, $option;
+
+		var dropDowns = [];
+		var w = 0;
+		for (title in obj) {
+			arrOptions = obj[title];
+			$header = $('<div class="smap-clayers-header">'+title+'</div>');
+			this.$div.append($header);
+			$header
+				.on("mouseenter", this.onHeaderOver)
+				.on("mouseleave", this.onHeaderOut);
+			$dropDown = $('<div class="smap-clayers-dropdown"></div>');
+			$dropDown
+				.on("mouseenter", this.onDropDownOver)
+				.on("mouseleave", this.onDropDownOut);
+			for (var i = 0; i < arrOptions.length; i++) {
+				t = arrOptions[i];
+				$option = $('<div class="smap-clayers-option"><input name="clayers-radios" type="radio"></input><span>'+t.displayName+'</span></div>');
+				$option.data("params", t.params);
+				$option.find("span").on("click", this.onOptionSpanClick);
+				$dropDown.append($option);
+				$dropDown.css("left", w+"px");
 			}
-			var bl = sMap.map.baseLayer;
-			if (p.BL) {
-				bl = sMap.map.getLayersByName(p.BL)[0];
-			}
-			sMap.map.setBaseLayer( bl );
+			dropDowns.push($dropDown);
+			w += $header.outerWidth();
+
 		}
-		delayed();
-		var $inp = $(this).find("input");
-		setTimeout(function() {
-			// Bug fix. Input gets unchecked for some reason.
-			$inp.prop("checked", true);
-		}, 1);
-
-		return false;
-
+		// Append at the last
+		for (var i = 0; i < dropDowns.length; i++) {
+			this.$div.append(dropDowns[i]);
+		}
+		this._onChange = $.proxy(this.onChange, this);
+		this.$div.find("input[type=radio]").on("change", this._onChange);
 	},
 
 
 
-	// parseParams: function(p) {
-	// 	if (p)
-	// },
-
-	// addHeader: function(headerText) {
-	// 	var encHeaderText = encodeURIComponent(headerText).replace(/\W/g, '');
-	// 	var h = $('<div class="ui-widget-content ui-state-default baselayer-button" id="bLayerSwitcher___'+encHeaderText+'">'+headerText+'</div>');
-	// 	$("#baselayerDiv").append(h);
-	// 	return h;
-	// },
-
-	// addRow: function(t) {
-	// 	var h = $("#baselayerDiv .baselayer-button:contains("+t.header+")");
-	// 	if (!h.length) {
-	// 		h = this.addHeader();
-	// 	}
-	// 	var r = 
 
 
 
 
 
 
-	// },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	// Class name needed when you want to fetch your module...
 	// should correspond to the real class name.
@@ -7360,7 +7395,11 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		 * If true, calls module's methods "activate" after methods
 		 * "initialize" and "drawContent" have been called.
 		 */ 
-		activateFromStart : false
+		activateFromStart : false,
+
+		right: 300
+
+
 };
 sMap.Lang.lang.CustomLayers = {
 	"sv-SE" : {
