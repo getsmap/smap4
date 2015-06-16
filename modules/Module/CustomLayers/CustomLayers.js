@@ -142,6 +142,26 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 	applyParams: function(pObj) {
 		sMap.cmd.removealllayers();
 		sMap.webParams.applyDefaultParams(pObj, {noZoomExtentFallback: true});
+
+		if (pObj) {
+			var olArr = pObj.OL.split(",");
+			var arrLayersToAdd = [];
+			var layTreeInsts = sMap.map.getControlsByClass("sMap.Module.LayerTree");
+			if (layTreeInsts.length) {
+				var layTreeInst = layTreeInsts[0];
+				var opened = layTreeInst.collapseAllHeaders();
+				for (var i=0,len=olArr.length; i<len; i++) {
+					var layerName = olArr[i];
+					layTreeInst.checkBox(layerName);
+				}
+			}
+		}
+		// var bl = sMap.map.baseLayer;
+		// if (p.BL) {
+		// 	bl = sMap.map.getLayersByName(p.BL)[0];
+		// }
+		// sMap.map.setBaseLayer( bl );
+		
 	},
 
 	onChange: function(e) {
