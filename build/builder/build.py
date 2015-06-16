@@ -22,7 +22,7 @@ import sys
 import getopt
 
 pathEnv = "config_env.json" # path to the required configuration file
-pathSources = "config_sources.json" # path to the config of sources
+pathSources = "config_sources_malmo.json" # path to the config of sources
 
 def checkConfigEnv(configEnv):
 	paths = [configEnv["outPathJS"], configEnv["outPathCSS"], configEnv["tempPathJS"], configEnv["tempPathCSS"]]
