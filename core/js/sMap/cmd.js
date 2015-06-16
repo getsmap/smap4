@@ -142,7 +142,11 @@ sMap.cmd = {
 	},
 	
 	hidealllayers: function() {
-		sMap.layer.hideAllLayers();
+		sMap.layer.hideAllLayers(false);
+	},
+
+	removealllayers: function() {
+		sMap.layer.hideAllLayers(true);
 	},
 	
 	/**

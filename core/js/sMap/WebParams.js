@@ -226,7 +226,13 @@ sMap.WebParams = OpenLayers.Class({
 		}
 		
 		if (paramsObj.BL) { //&& this.map.getLayersByName(paramsObj.BL).length) {
-			this.map.setBaseLayer(paramsObj.BL);
+			// sMap.layer.setBaseLayer(paramsObj.BL);
+			sMap.events.triggerEvent("setbaselayer", this, {layerName: paramsObj.BL});
+			
+			// var bl = this.map.getLayersByName(paramsObj.BL);
+			// if (bl) {
+			// 	this.map.setBaseLayer(bl);
+			// }
 		}
 		if (paramsObj.OL) {
 			var olArr = paramsObj.OL instanceof Array ? paramsObj.OL : paramsObj.OL.split(","),

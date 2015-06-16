@@ -400,6 +400,40 @@ sMap.Layer = OpenLayers.Class({
 			this.hideLayer(layerName);
 		}
 	},
+
+	/**
+	 * Remove all overlays currently visible.
+	 * @param {Boolean} remove Remove instead of hiding layers
+	 * @returns {void}
+	 */
+	hideAllLayers: function(remove) {
+		remove = remove || false;
+
+		var overlays = sMap.config.layers.overlays,
+			layers = [],
+			layer = null,
+			layerName = null,
+			foundLayers = null,
+			t = null;
+		for (var i=0,len=overlays.length; i<len; i++) {
+			foundLayers = this.map.getLayersByName(overlays[i].name);
+			layer = foundLayers.length ? foundLayers[0] : null;
+			if (layer && layer.getVisibility() && !layer.isBaseLayer && layer.displayInLayerSwitcher) {
+				layers.push(layer.name);
+			}
+		}
+		
+		for (var i=0,len=layers.length; i<len; i++) {
+			layerName = layers[i];
+			if (remove === true) {
+				this.removeLayer( this.map.getLayersByName(layerName)[0] );
+			}
+			else {
+				this.hideLayer(layerName);
+				
+			}
+		}
+	},
 	
 	/**
 	 * Change the baselayer to the one with this name.
