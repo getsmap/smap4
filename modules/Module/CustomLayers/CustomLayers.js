@@ -143,7 +143,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		sMap.cmd.removealllayers();
 		sMap.webParams.applyDefaultParams(pObj, {noZoomExtentFallback: true});
 
-		if (pObj) {
+		if (pObj && pObj.OL) {
 			var olArr = pObj.OL.split(",");
 			var arrLayersToAdd = [];
 			var layTreeInsts = sMap.map.getControlsByClass("sMap.Module.LayerTree");
