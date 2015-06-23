@@ -143,17 +143,18 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		sMap.cmd.removealllayers();
 		sMap.webParams.applyDefaultParams(pObj, {noZoomExtentFallback: true});
 
+		var layTreeInsts = sMap.map.getControlsByClass("sMap.Module.LayerTree");
+		if (!layTreeInsts.length) {
+			return false;
+		}
+		var layTreeInst = layTreeInsts[0];
+		var opened = layTreeInst.collapseAllHeaders();
 		if (pObj && pObj.OL) {
 			var olArr = pObj.OL.split(",");
 			var arrLayersToAdd = [];
-			var layTreeInsts = sMap.map.getControlsByClass("sMap.Module.LayerTree");
-			if (layTreeInsts.length) {
-				var layTreeInst = layTreeInsts[0];
-				var opened = layTreeInst.collapseAllHeaders();
-				for (var i=0,len=olArr.length; i<len; i++) {
-					var layerName = olArr[i];
-					layTreeInst.checkBox(layerName);
-				}
+			for (var i=0,len=olArr.length; i<len; i++) {
+				var layerName = olArr[i];
+				layTreeInst.checkBox(layerName);
 			}
 		}
 		// var bl = sMap.map.baseLayer;
