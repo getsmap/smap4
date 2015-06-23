@@ -37,6 +37,11 @@ a {
 	background: rgba(255,255,255,.9) !important;
 }
 
+.ui-widget-header {
+	background: #dfdfdf !important;
+	font-weight: normal !important;
+}
+
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
 	border: 1px solid #cdcdcd !important;
 	background: #dfdfdf !important;
