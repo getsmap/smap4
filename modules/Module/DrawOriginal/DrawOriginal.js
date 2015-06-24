@@ -240,28 +240,33 @@ sMap.Module.DrawOriginal = OpenLayers.Class(sMap.Module, {
 	 * Set temporary style when drawing points with external graphic
 	 */
 	setPointTempStyle : function(){
-		var divselected = $("#draw-divsymbolseleced"),
-			backgroundImg = divselected[0].style.backgroundImage,
+		var divselected = $("#draw-divsymbolseleced");
+		if (!divselected.length) {
+			return false;
+		}
+		var backgroundImg = divselected[0].style ? divselected[0].style.backgroundImage : null,
 			symbol= "",
 			size = sMap.util.takeAwayPx(divselected[0].style.size);
-		if (backgroundImg.substring(4,5)=='"'){
-			symbol = (sMap.util.rightStrip(backgroundImg,2)).substring(5); //FF has extra "" in string like: url("...")
-		}else{
-			symbol = (sMap.util.rightStrip(backgroundImg,1)).substring(4); //and the others like: url(...)
-		}
-		var index = null;
-		for (var i = 0; i < this.symbols.length;i++){
-			if (this.symbols[i].url == symbol){
-				index = i;
+		if (backgroundImg) {
+			if (backgroundImg.substring(4,5)=='"'){
+				symbol = (sMap.util.rightStrip(backgroundImg,2)).substring(5); //FF has extra "" in string like: url("...")
+			}else{
+				symbol = (sMap.util.rightStrip(backgroundImg,1)).substring(4); //and the others like: url(...)
 			}
+			var index = null;
+			for (var i = 0; i < this.symbols.length;i++){
+				if (this.symbols[i].url == symbol){
+					index = i;
+				}
+			}
+			if (symbol!=""){
+				this.editLayer.styleMap.styles.temporary.defaultStyle.externalGraphic = symbol;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.pointRadius = size/2;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.fillOpacity = 1;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.graphicYOffset = this.symbols[index].offsety ? this.symbols[index].offsety : null;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.graphicXOffset = this.symbols[index].offsetx ? this.symbols[index].offsetx : null;
+			};
 		}
-		if (symbol!=""){
-			this.editLayer.styleMap.styles.temporary.defaultStyle.externalGraphic = symbol;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.pointRadius = size/2;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.fillOpacity = 1;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.graphicYOffset = this.symbols[index].offsety ? this.symbols[index].offsety : null;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.graphicXOffset = this.symbols[index].offsetx ? this.symbols[index].offsetx : null;
-		};
 	},
 	/**
 	 * Restore temporary style when drawing lines, polys and points with no external graphic
@@ -299,7 +304,7 @@ sMap.Module.DrawOriginal = OpenLayers.Class(sMap.Module, {
 		var dialogDiv = $("<div id='drawDialogDiv' class='mxDiv' />");	
 		var mxEditBtnsDiv = this.makeEditButtons(); // the edit buttons
 		this.addColorPicker(mxEditBtnsDiv);
-		this.addSymbolPicker(mxEditBtnsDiv);
+		// this.addSymbolPicker(mxEditBtnsDiv);
 		dialogDiv.append(mxEditBtnsDiv);
 		var mxDescDiv = this.makeDescrDiv(); // the describe field
 		dialogDiv.append(mxDescDiv);

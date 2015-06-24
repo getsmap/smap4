@@ -81,23 +81,23 @@ sMap.moduleConfig.DrawOriginal = {
 		 * If no size is given the defaultSymbolsSize i used
 		 */
        symbols : [
-				{url:"http://www.smap.se/mapsymbols/camping_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/hotell_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/stuga_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/vandrarhem_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/overnatt_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32}
+				{url:"mapsymbols/camping_mini.png", size : 20},
+				{url:"mapsymbols/hotell_mini.png"},
+				{url:"mapsymbols/stuga_mini.png", size : 20},
+				{url:"mapsymbols/vandrarhem_mini.png", size : 20},
+				{url:"mapsymbols/overnatt_mini.png"},
+				{url:"mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32}
 	           ],
 	    /**
 	     * Adjust the height of the symbol picker to contain all symbols
