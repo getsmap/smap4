@@ -7301,6 +7301,27 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 	applyParams: function(pObj) {
 		sMap.cmd.removealllayers();
 		sMap.webParams.applyDefaultParams(pObj, {noZoomExtentFallback: true});
+
+		var layTreeInsts = sMap.map.getControlsByClass("sMap.Module.LayerTree");
+		if (!layTreeInsts.length) {
+			return false;
+		}
+		var layTreeInst = layTreeInsts[0];
+		var opened = layTreeInst.collapseAllHeaders();
+		if (pObj && pObj.OL) {
+			var olArr = pObj.OL.split(",");
+			var arrLayersToAdd = [];
+			for (var i=0,len=olArr.length; i<len; i++) {
+				var layerName = olArr[i];
+				layTreeInst.checkBox(layerName);
+			}
+		}
+		// var bl = sMap.map.baseLayer;
+		// if (p.BL) {
+		// 	bl = sMap.map.getLayersByName(p.BL)[0];
+		// }
+		// sMap.map.setBaseLayer( bl );
+		
 	},
 
 	onChange: function(e) {
@@ -7651,28 +7672,33 @@ sMap.Module.DrawOriginal = OpenLayers.Class(sMap.Module, {
 	 * Set temporary style when drawing points with external graphic
 	 */
 	setPointTempStyle : function(){
-		var divselected = $("#draw-divsymbolseleced"),
-			backgroundImg = divselected[0].style.backgroundImage,
+		var divselected = $("#draw-divsymbolseleced");
+		if (!divselected.length) {
+			return false;
+		}
+		var backgroundImg = divselected[0].style ? divselected[0].style.backgroundImage : null,
 			symbol= "",
 			size = sMap.util.takeAwayPx(divselected[0].style.size);
-		if (backgroundImg.substring(4,5)=='"'){
-			symbol = (sMap.util.rightStrip(backgroundImg,2)).substring(5); //FF has extra "" in string like: url("...")
-		}else{
-			symbol = (sMap.util.rightStrip(backgroundImg,1)).substring(4); //and the others like: url(...)
-		}
-		var index = null;
-		for (var i = 0; i < this.symbols.length;i++){
-			if (this.symbols[i].url == symbol){
-				index = i;
+		if (backgroundImg) {
+			if (backgroundImg.substring(4,5)=='"'){
+				symbol = (sMap.util.rightStrip(backgroundImg,2)).substring(5); //FF has extra "" in string like: url("...")
+			}else{
+				symbol = (sMap.util.rightStrip(backgroundImg,1)).substring(4); //and the others like: url(...)
 			}
+			var index = null;
+			for (var i = 0; i < this.symbols.length;i++){
+				if (this.symbols[i].url == symbol){
+					index = i;
+				}
+			}
+			if (symbol!=""){
+				this.editLayer.styleMap.styles.temporary.defaultStyle.externalGraphic = symbol;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.pointRadius = size/2;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.fillOpacity = 1;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.graphicYOffset = this.symbols[index].offsety ? this.symbols[index].offsety : null;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.graphicXOffset = this.symbols[index].offsetx ? this.symbols[index].offsetx : null;
+			};
 		}
-		if (symbol!=""){
-			this.editLayer.styleMap.styles.temporary.defaultStyle.externalGraphic = symbol;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.pointRadius = size/2;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.fillOpacity = 1;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.graphicYOffset = this.symbols[index].offsety ? this.symbols[index].offsety : null;
-			this.editLayer.styleMap.styles.temporary.defaultStyle.graphicXOffset = this.symbols[index].offsetx ? this.symbols[index].offsetx : null;
-		};
 	},
 	/**
 	 * Restore temporary style when drawing lines, polys and points with no external graphic
@@ -7710,7 +7736,7 @@ sMap.Module.DrawOriginal = OpenLayers.Class(sMap.Module, {
 		var dialogDiv = $("<div id='drawDialogDiv' class='mxDiv' />");	
 		var mxEditBtnsDiv = this.makeEditButtons(); // the edit buttons
 		this.addColorPicker(mxEditBtnsDiv);
-		this.addSymbolPicker(mxEditBtnsDiv);
+		// this.addSymbolPicker(mxEditBtnsDiv);
 		dialogDiv.append(mxEditBtnsDiv);
 		var mxDescDiv = this.makeDescrDiv(); // the describe field
 		dialogDiv.append(mxDescDiv);
@@ -8675,23 +8701,23 @@ sMap.Module.DrawOriginal = OpenLayers.Class(sMap.Module, {
 		 * If no size is given the defaultSymbolsSize i used
 		 */
        symbols : [
-				{url:"http://www.smap.se/mapsymbols/camping_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/hotell_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/stuga_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/vandrarhem_mini.png", size : 20},
-				{url:"http://www.smap.se/mapsymbols/overnatt_mini.png"},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
-				{url:"http://www.smap.se/mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32}
+				{url:"mapsymbols/camping_mini.png", size : 20},
+				{url:"mapsymbols/hotell_mini.png"},
+				{url:"mapsymbols/stuga_mini.png", size : 20},
+				{url:"mapsymbols/vandrarhem_mini.png", size : 20},
+				{url:"mapsymbols/overnatt_mini.png"},
+				{url:"mapsymbols/Ikoner/Transport/Buss.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Busshallplats.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Flyg.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Parkering.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Transport/Tag.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Kultur/Konsert.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Kultur/Museum.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"mapsymbols/Ikoner/Kultur/Teater.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"mapsymbols/Ikoner/Utbildning/Forskola.png", size : 38, width: 33, height : 38, offsety:-33},
+				{url:"mapsymbols/Ikoner/Utbildning/Grundskola.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Utbildning/Gymnasium.png", size : 37, width: 33, height : 37, offsety:-32},
+				{url:"mapsymbols/Ikoner/Utbildning/EftergymnUtb.png", size : 37, width: 33, height : 37, offsety:-32}
 	           ],
 	    /**
 	     * Adjust the height of the symbol picker to contain all symbols
@@ -16023,900 +16049,6 @@ sMap.Lang.lang.Popup = {
  * @requires sMap/Module.js
  */
 
-sMap.Module.Print = OpenLayers.Class(sMap.Module, {
-	
-	/**
-	 * The layer where the print extent is shown. This layer
-	 * is removed on event "beforeprint" and added again on 
-	 * "afterprint".
-	 */
-	layer : null,
-	
-	/**
-	 * The ID of the div that is being printed, containing the
-	 * image and an optional header.
-	 */
-	divID : "print-div",
-	
-	EVENT_LISTENERS : ["beforeprint", "afterprint"],
-	
-	/**
-	 * 	 - beforeprint: When this event is triggered, other modules can listen
-	 *   		to the event and add/remove layers from the map.layers array
-	 *   		as they like. Note! If the module likes to keep the layer
-	 *   		after printing it has to listen to the "afterprint" event.
-	 *   - afterprint: Allow modules to put removed layers back to the map.
-	 */
-	EVENT_TRIGGERS : ["beforeprint", "afterprint"],
-	
-	/**
-	 * The print dialog window
-	 */
-	dialogDiv : null,
-	
-	initialize : function(options) {
-		options = options || {};
-		
-		this.EVENT_LISTENERS =
-			sMap.Module.Print.prototype.EVENT_LISTENERS.concat(
-				sMap.Module.prototype.EVENT_LISTENERS
-        );
-		this.EVENT_TRIGGERS =
-			sMap.Module.Print.prototype.EVENT_TRIGGERS.concat(
-				sMap.Module.prototype.EVENT_TRIGGERS
-        );
-		
-		this.is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-		
-		// This allows your control to be extended by sending in a parameter hash object
-		// For example overriding a method in this class or in the parent class (see next step).
-		OpenLayers.Util.extend(this, options);
-		// This calls the parent class's constructor and allows to
-		// extend it (e.g. override methods).
-		sMap.Module.prototype.initialize.apply(this, [options]);
-	},
-	
-	activate : function() {
-		if (this.active===true) {
-			return false;
-		}
-		this.createLayer();
-		
-		var size = this.map.getSize();
-		this.addExtentFeature(size.h-50, size.h-50);
-		
-		// Open the print window
-		this.createDialog();
-		
-		// Register listeners
-		this.map.events.register("moveend", this, this.recenterExtentFeature);
-		this.map.events.register("zoomend", this, this.recenterExtentFeature);
-		
-		// Call the activate function of the parent class
-		return sMap.Module.prototype.activate.apply(
-	            this, arguments);
-	},
-	
-	deactivate : function() {
-		if (this.active!==true) {
-			return false;
-		}
-		// Unregister events
-		this.map.events.unregister("moveend", this, this.recenterExtentFeature);
-		this.map.events.unregister("zoomend", this, this.recenterExtentFeature);
-		
-		if (this.layer) {
-			//this.map.removeLayer(layer);
-			this.layer.destroy();
-			this.layer = null;
-		}
-		// Close the print window
-		if (this.dialogDiv && this.dialogDiv.length) {
-			this.dialogDiv.dialog("destroy");
-			this.dialogDiv.empty().remove();
-			this.dialogDiv = null;
-		}
-		$("#"+this.divID).empty().remove();
-		
-		this.loading(false);
-		
-		// Call the deactivate function of the parent class
-		return sMap.Module.prototype.deactivate.apply(
-	            this, arguments
-	        );
-	},
-	
-	destroy : function() {
-		return sMap.Module.prototype.destroy.apply(this, arguments);
-	},
-	
-    /**
-     * Draws the non-default HTML-content. Called when all modules
-     * are initialized. All initial HTML should be produced from here.
-     * @returns {void}
-     */
-	drawContent : function() {
-		/**
-		 * Only use proxy if useProxy is true. Using a proxy with the
-		 * print script sometimes means problems.
-		 */
-		this.proxyHost = this.useProxy ? (sMap.config.proxyHost || "") : "";
-		
-		var options = {
-				index : this.toolbarIndex,
-				hoverText : this.lang.labelText,
-				iconCSS : "ui-icon-print",
-				label : this.lang.btnPrint,
-				tagID : "btn-print",
-				menuId: this.addToToolsMenu
-		};
-		var event = this.addToToolsMenu ? "addtomenu" : "addtoolbutton";
-		if (this.addToToolsMenu) {
-			options.label = this.lang.btnPrintInMenu;
-		}
-		sMap.events.triggerEvent(event, this, options);
-		
-		
-	},
-	
-	/**
-	 * Remove layers which we don't want to be printed.
-	 * Each module has a responsibility to remove their own
-	 * layers which should not be printed. They should listen
-	 * to "beforeprint" for removing any layers and "afterprint"
-	 * to put the layers back again.
-	 * @param e {Object}
-	 * @returns {void}
-	 */
-	beforeprint: function(e) {
-		if (this.map.getLayersByName(this.layer.name).length) {
-			this.map.removeLayer(this.layer);
-		}
-	},
-	
-	/**
-	 * When printing/exporting is done - destroy the print-map
-	 * and put back the extent layer to the map.
-	 * @param e {Object}
-	 * @returns {void}
-	 */
-	afterprint: function(e) {
-		this.map.addLayer(this.layer); // Put the extent layer back again.
-		this.layer.setZIndex(699);
-		$("#"+this.divID).empty().remove();
-		this.loading(false);
-		this.posting = false;
-	},
-	
-	/**
-	 * Notify the user that the map is loading.
-	 * @param change {Boolean} true: show, false: hide
-	 */
-	loading: function(change, text) {
-		change = change || false;
-		text = text || this.lang.textLoadingPrint;
-		
-		if (change === true) {
-			OpenLayers.Element.addClass(this.map.viewPortDiv, "olCursorWait");
-			sMap.cmd.loading(true, {
-				text: text
-			});
-		}
-		else {
-			OpenLayers.Element.removeClass(this.map.viewPortDiv, "olCursorWait");
-			sMap.cmd.loading(false);
-		}
-	},
-	
-	recenterExtentFeature: function() {
-		this.addExtentFeature(this.width, this.height);
-	},
-	
-	/**
-	 * Create and add the layers which shows the print extent.
-	 * @returns {void}
-	 */
-	createLayer: function() {
-		var styleMap = new OpenLayers.StyleMap({
-			"default": this.defaultStyle
-		});
-		this.layer = new OpenLayers.Layer.Vector("printlayer", {
-			styleMap: styleMap
-		});
-		this.map.addLayer(this.layer);
-		this.layer.setZIndex(699);
-	},
-	
-	/**
-	 * Add an extent feature to the center of the map
-	 * with an extent equal to the given width and height.
-	 * 
-	 * @param width {Integer}
-	 * @param height {Integer}
-	 * @returns {void}
-	 */
-	addExtentFeature: function(width, height) {
-		
-		this.layer.destroyFeatures();
-		
-		var size = this.map.getCurrentSize(); // map size
-		
-		// Extent of map in px
-		var mapH = size.h,
-			mapW = size.w;
-		
-		// Feature's width and height in px
-		var h = width || size.h - 50;
-		var w = height || h; // make it square
-		
-		// Store width and height of current print area.
-		this.width = w;
-		this.height = h;
-		
-		// Calculate the features position from the left in the viewport
-		// to make it centered.
-		var left = mapW/2 - w/2,
-			top = mapH/2 - h/2;
-		
-		// Now, convert this to lonLat
-		var sw = this.map.getLonLatFromViewPortPx( new OpenLayers.Pixel( left, top+h ) ),
-			ne = this.map.getLonLatFromViewPortPx( new OpenLayers.Pixel( left+w, top ) );
-		
-		var bounds = new OpenLayers.Bounds(sw.lon, sw.lat, ne.lon, ne.lat);
-		var geom = bounds.toGeometry();
-		var feature = new OpenLayers.Feature.Vector(geom);
-		this.layer.addFeatures([feature]);
-	},
-	
-	createDialog : function() {
-		
-		var dialogDiv = $("<div id='print-dialog' />");
-		this.dialogDiv = dialogDiv;
-		
-		var self = this;
-		sMap.util.createDialog(dialogDiv, {
-			width : 220,
-			height : 258,
-			resizable: false,
-			titleText: this.lang.dialogTitle,
-			onClose: function() {
-				self.deactivate();
-			}
-		});
-		dialogDiv.dialog("open");
-		this.fillDialog();
-	},
-	
-	fillDialog: function() {
-		var self = this;
-		
-		/*
-		 * Make tabs for print and export.
-		 */
-		var tabsContainer = $("<div id='printwindow-tabscontainer' />");
-		this.dialogDiv.append(tabsContainer);
-		
-		var tabs = $("<ul><li><a href='#printwindow-printdiv'>"+this.lang.btnPrint+"</a></li><li><a href='#printwindow-exportdiv'>"+this.lang.btnExport
-				+"</a></li></ul>");
-		tabsContainer.append(tabs);
-		var printDiv = $("<div id='printwindow-printdiv' class='print-tabcontent' />"),
-			exportDiv = $("<div id='printwindow-exportdiv' class='print-tabcontent' />");
-		tabsContainer.append(printDiv).append(exportDiv);
-		tabsContainer.tabs({
-			select: function(e, ui) {
-				if (ui.tab.hash == "#printwindow-printdiv") {
-					self.dialogDiv.dialog("option", "height", 258);
-				}
-				else {
-					self.dialogDiv.dialog("option", "height", 192);
-				}
-				
-			}
-		});
-		
-		/*
-		 * Make:
-		 * 	- a textarea tag
-		 * 	- resize buttons (+/-)
-		 * 	- image format select tag
-		 */
-		// Headers for the inputs
-		var descriptionHeader = $("<div id='print-description-header'>"+this.lang.description+"</div>"),
-			descriptionTag = $("<input type='text' id='print-description-tag' />"),
-			extentHeader = $("<div id='print-extentslider-header'>"+this.lang.printArea+"</div>"),
-			extentSlider = $("<div id='print-extentslider' />"),
-			btnExport = $("<button id='print-btnexport'>"+this.lang.btnExport+"</button>"),
-			btnPrint = $("<button id='print-btnprint'>"+this.lang.btnPrint+"</button>");
-			
-		// Add to COMMON div
-		this.dialogDiv.append(extentHeader).append(extentSlider);
-		
-		// Add to PRINT div
-		printDiv.append(descriptionHeader).append(descriptionTag).append(btnPrint);
-		
-		// Add to EXPORT div
-		exportDiv.append(btnExport);
-		
-		btnExport.button({
-			icons : {
-				primary : "ui-icon-document"
-			}
-		});
-		btnPrint.button({
-			icons : {
-				primary : "ui-icon-print"
-			}
-		});
-		
-		var size = this.map.getCurrentSize(); // map size
-		extentSlider.slider({
-			animate: false,
-			max: size.h-50,
-			min: 100,
-			step: 5,
-			value: size.h-50, // Starting value
-			slide: function(e, ui) {
-				self.addExtentFeature(ui.value, ui.value);
-			}
-		});
-		this.extentSlider = extentSlider;
-		
-		/**
-		 * Define on click
-		 */
-		
-		// Print the extent
-		btnPrint.click(function() {
-			
-			/**
-			 * Get URL to current map and make width
-			 * and height exactly the same as the extent 
-			 * feature.
-			 */
-			self.loading(self.lang.textLoadingPrint);
-			self.preparePrint({
-				type: "print"
-			});
-		});
-		btnExport.click(function() {
-			
-			/**
-			 * Get URL to current map and make width
-			 * and height exactly the same as the extent 
-			 * feature.
-			 */
-			self.loading(self.lang.textLoadingExport);
-			self.preparePrint({
-				type: "export"
-			});
-		});
-	},
-	
-	preparePrint: function(config) {
-		
-		// Get width and height (they have same value since image is a square)
-		var val = this.extentSlider.slider("option", "value");
-		$.extend(config, {
-			val: val,
-			headerText: $("#print-description-tag").val() || null
-		});
-		this.storeLayers();
-		this.createMap(config);
-		this.print(config);
-	},
-	
-	/**
-	 * Store all layers Array({OpenLayers.Layer}) that
-	 * are currently visible.
-	 * @returns {void}
-	 */
-	storeLayers: function() {
-		
-		/**
-		 * The reason for having this event is only so that modules
-		 * can remove their own layer(s) to omit them from printed layers.
-		 * For example, this module (the print module) removes its own
-		 * layer (showing the print extent) at this time. The layer is put
-		 * back on "afterprint".
-		 */
-		sMap.events.triggerEvent("beforeprint", this, {});
-		
-		var _layers = this.map.layers.slice(0),
-			layers = [];
-		var BL = null; // Make sure the baselayer is added to the end of the array
-		for (var i=0,len=_layers.length; i<len; i++) {
-			var layer = _layers[i];
-			if (!layer.getVisibility()) {
-	        	continue;
-	        }
-	        if (!layer.calculateInRange()) {
-	        	continue;
-	        }
-	        if (layer.features && !layer.features.length) {
-	        	continue;
-	        }
-	        if (layer.isBaseLayer===true) {
-	        	BL = layer;
-	        	continue;
-	        }
-	        if (layer.protocol) {
-	        	// Create a new empty vector layer and add the features to it
-	        	// since WFS-layers will give problems otherwise (The print box
-	        	// is not moving, etc…).
-	        	var newLayer = new OpenLayers.Layer.Vector(layer.name, {
-//	        		styleMap: new OpenLayers.StyleMap({
-//	        		})
-	        	});
-	        	
-	        	// Copy all features to the empty layer.
-	        	var fs = layer.features,
-	        		newFeatures = [];
-	        	for (var j=0,jlen=fs.length; j<jlen; j++) {
-	        		newFeatures.push( fs[j].clone() );
-	        	}
-	        	newLayer.styleMap = layer.styleMap;
-	        	newLayer.addFeatures( newFeatures );
-	        	layers.push( newLayer );
-	        	continue;
-	        }
-			layers.push(layer.clone());
-		}
-		if (BL) {
-			layers.push(BL.clone());
-		}
-		sMap.db.printLayers = layers;
-	},
-	
-	/************************************************************************************************************/
-	
-	createMap: function(config) {
-		var mapConfig = sMap.config;
-		var maxExtent = mapConfig.maxExtent,
-			layers = sMap.db.printLayers,
-			mapDiv = $("<div id='print-mapdiv' />");
-		$("#smapDiv").append(mapDiv);
-		mapDiv.css({
-			"width": config.val+"px",
-			"height": config.val+"px"
-		});
-		
-		var map = new OpenLayers.Map("print-mapdiv", {
-			projection: mapConfig.projection,
-			resolutions : mapConfig.resolutions,
-			units: "m",
-			allOverlays: this.map.allOverlays,
-			layers: layers,
-			maxExtent : new OpenLayers.Bounds(maxExtent.w, maxExtent.s,
-					maxExtent.e, maxExtent.n)
-		});
-		this.printMap = map;
-		if (map.allOverlays!==true) {
-			map.setBaseLayer(layers[layers.length-1]); // Make last item in array the baselayer
-		}
-		this.setZoomAndCenter();
-		mapDiv.hide(); // Make it invisible
-	},
-	
-	setZoomAndCenter: function() {
-		var paramsObj = sMap.cmd.getParamsAsObject();
-		var zoom = paramsObj.ZOOM != undefined ? parseInt(paramsObj.ZOOM) : 0;
-		// Fix issue where it zooms in automatically when prining/exporting.
-		if (zoom===0) {
-			this.printMap.zoomTo(1);
-		}
-		if (paramsObj.CENTER && paramsObj.CENTER instanceof Array) {
-			this.printMap.setCenter(new OpenLayers.LonLat(parseFloat(paramsObj.CENTER[0]), parseFloat(paramsObj.CENTER[1])), zoom);
-		}
-	},
-	
-	print: function(config) {
-		config = config || {};
-		
-		var doNotPrint = false; // If layers are not supported fpr printing at all – set this to true.
-		
-		var layers = this.printMap.layers;
-		var nbOfLayers = layers.length;
-		var loadEnd = "loadend";
-		
-		var self = this;
-		var onLoadEnd = function(e) {
-			nbOfLayers -= 1;
-			// Unbind this listener.
-			if (e.object) {
-				e.object.events.unregister(loadEnd, self, this);
-			}
-			if (nbOfLayers <= 0) {
-				var json = self.getPrintConfig(self.printMap);
-				self.postToServer(json, config);
-			}
-		};
-		
-		var atLeastOneLayerSupportsEvent = false,
-			dontBindEventsArr = ["Google", "Vector"],
-			notSupported = [];
-		
-		for (var i=0,len=layers.length; i<len; i++) {
-			var layer = layers[i];
-			if (layer.CLASS_NAME == "OpenLayers.Layer.Google") {
-				alert("Google-lager stöds inte vid utskrift p.g.a. av dess begränsade API.");
-				doNotPrint = true;
-			}
-			var ns = true;
-			if ($.inArray(layer.CLASS_NAME.split(".")[2], dontBindEventsArr) !== -1) {
-				notSupported.push(layer.name);
-				ns = false; // Keep track of if layer is supported or not
-			}
-			
-			if (ns===false) {
-				nbOfLayers -= 1; // Don't wait for this layer to trigger "loadend".
-				continue;
-			}
-			else {
-				// When all layers, supporting this event, have been loaded the map
-				// will be printed.
-				layer.events.register(loadEnd, this, onLoadEnd);
-				atLeastOneLayerSupportsEvent = true;
-			}
-			
-			// This solves the problem where map extent changes on print.
-			this.printMap.removeLayer(layer);
-			this.printMap.addLayer(layer);
-		}
-		if (doNotPrint) {
-			sMap.events.triggerEvent("afterprint", this, {});
-			return false;
-		}
-		
-		if (notSupported.length) {
-			debug.warn("Module Print says: "+this.lang.layersNotSupported + notSupported.join(", "));
-		}
-		if (atLeastOneLayerSupportsEvent !== true) {
-			onLoadEnd();
-		}
-	},
-	
-	/**
-	 * If the image creation was a big success, use the image
-	 * for some purpose - e.g. printing or exporting...
-	 * @param e
-	 * @returns
-	 */
-	onSuccess: function(e) {
-		var url = e.url;
-		if (e.type === "export") {
-			location = e.url;
-			
-			/*var btnDownload = $("<button id='print-btndownload'>"+this.lang.btnDownload+"</button>");
-			$("#printwindow-exportdiv").append(btnDownload);
-			btnDownload.button({
-				text: false,
-				icons: {
-					primary: "ui-icon-circle-arrow-s"
-				}
-			});
-			btnDownload.click(function() {
-				window.location = url;
-			});
-			//btnDownload.click();
-			//btnDownload.addClass("ui-state-active");
-			var tip = $("<div class='print-downloadtip' id='print-downloadtip'>"+this.lang.downloadTip+"</div>"),
-				line = $("<div class='print-downloadtip' id='print-downloadtip-line' />");
-			$("#printwindow-exportdiv").append(tip).append(line);
-			$(".print-downloadtip").hide().slideToggle(500).delay(3000).slideToggle(500);*/
-			
-			sMap.events.triggerEvent("afterprint", this, {});
-		}
-		else if (e.type==="print") {
-			var image = $("<img id='print-image' />"),
-				header = $("<h1 id='print-header'>"+(e.headerText || "")+"</h1>");
-			
-			var div = $("<div id='"+this.divID+"' />");
-			
-			
-			var WIDTH_A4 = sMap.db.browser.msie ? 640 : 850, // 595
-				HEIGHT_A4 = sMap.db.browser.msie ? 550 : 842; //1000; // 842
-			var w = e.val;
-			var left = parseInt(WIDTH_A4/2 - w/2);
-			left = left < 0 ? 0 : left; // Don't make it less than 0 if that would happen... should not happen; 
-			
-			div.css({
-				"font-size": "12px",
-				"width": WIDTH_A4+"px",
-				"height": HEIGHT_A4+"px",
-				"position": "absolute",
-				"left": "0px",
-				"top": "0px"
-				//"border": "1px solid #000"
-			});
-			header.css({
-				"position": "relative",
-				"top": "100px",
-				"font-family": "arial",
-				"font-size": "36px",
-				"text-align": "center"
-			});
-			
-			var imgWidth = w > WIDTH_A4 ? WIDTH_A4 : w;
-			image.css({
-				"position": "absolute",
-				"top": "200px",
-				"left": left+"px",
-				"width": imgWidth+"px"
-			});			
-			image.load(function(e) {
-				
-				//if (self.is_chrome) {
-					$(window).bind("focus click", function(e) {
-						sMap.events.triggerEvent("afterprint", this, {});
-						$(window).unbind("focus click");
-					});
-				//}
-				//else {					
-				//	sMap.events.triggerEvent("afterprint", this, {});
-				//}
-				window.print(); // Note! Print is sometimes ignored by chrome.
-			});
-			$("body").append(div);
-			div.append(header).append(image);
-			image.attr("src", url);
-		}
-	},
-	
-	postToServer: function(json, config) {
-		config = config || {};
-		
-		// Hack: IE seems to post many times...
-		if (this.posting) {
-			return false;
-		}
-		this.posting = true;
-		
-		var	size = this.printMap.getSize(),
-			scale = 0; //this.map.resolutions[this.map.zoom];
-		var outputPath = this.privateExportFolder + "img.png";
-		
-		// Remove trailing "/" if given
-		if (this.webContentRoot.slice(this.webContentRoot.length-1) == "/") {
-			this.webContentRoot = this.webContentRoot.slice(0, this.webContentRoot.length-1);
-		}
-		
-		$.ajax({
-			type: 'POST',
-			url: this.proxyHost + this.printScriptsFolderPath + "printIt.py",
-			context: this,
-			data : {
-				width : size.w,
-				height : size.h,
-				layers : json,
-				outputPath : outputPath,
-				quality : 90,
-				headerText : config.headerText || null,
-				webContentPath : this.webContentRoot,
-				scale : scale
-			},
-			success: function(text) {
-				this.printMap.destroy(); // Important! Otherwise print won't work next time.
-				$("#print-mapdiv").empty().remove(); // Remove print-mapdiv
-				if (text.search(/error/i)!==-1) {
-					$("body").empty().append(text).css({
-						"overflow": "auto"
-					});
-					return false;
-				}
-				text = text.replace(/\n/g, "");
-				var picURL = this.publicExportFolder + text;
-				OpenLayers.Util.applyDefaults(config, {
-					url: picURL
-				});
-				this.onSuccess(config);
-			}
-		});
-	},
-	
-	
-	getPrintConfig : function(map) {
-		// go through all layers, and collect a list of objects
-	    // each object is a tile's URL and the tile's pixel location relative to the viewport
-
-		var layersArr = [];
-		
-	    var size = map.getSize(); // Used for determining if vector features are within bounds or not.
-	    var viewPortBounds = new OpenLayers.Bounds(0, 0, size.w, size.h);
-	    
-	    var layers = map.layers;
-	    
-	    for (var index=0,layerLength=layers.length; index<layerLength; index++) {
-	    	
-	    	// if the layer isn't visible at this range, or is turned off, skip it
-	        var layer = layers[index];
-	        var layerName = layer.name;
-			var t = sMap.cmd.getLayerConfig(layerName) || {};
-			
-	        if (!layer.getVisibility()) {
-	        	continue;
-	        }
-	        if (!layer.calculateInRange()) {
-	        	continue;
-	        }
-	        var zIndex = layer.zIndex || layer.getZIndex();
-	        
-	        // Ugly hard-coded hack – but I did not solve it any other way
-	        // for some – surely logical – reason.
-	        if (layerName == "selectLayer") {
-	        	zIndex = "699";
-	        }
-	        
-	        // ---------- Store the layer style ----------------------------------------------------------
-	        if (layer.CLASS_NAME=="OpenLayers.Layer.Vector" && layer.features && layer.features.length) {
-	        	var s = layer.styleMap.styles["default"].defaultStyle;
-	        	var features = layer.features;
-	        	var layerConfig = {
-	        			url : 				s.externalGraphic || null,
-	        			zIndex :			zIndex || null,
-	        			layerType :			"vector",
-						layerName : 		t.displayName || s.name || null,
-						legendImage :		s.externalGraphic || null,
-						fillColor : 		s.fillColor || null,
-						fillOpacity : 		s.fillOpacity ? parseInt(s.fillOpacity*255) : 255,
-						graphicWidth :		s.graphicWidth || null,
-						graphicHeight : 	s.graphicHeight || null,
-						strokeColor :		s.strokeColor || null,
-						strokeOpacity : 	s.strokeOpacity ? parseInt(s.strokeOpacity*255) : 255,
-						strokeWidth : 		s.strokeWidth || 1,
-						pointRadius :		s.pointRadius || null,
-						features : []
-	        	};
-	        	
-	        	var graphicXOffset = s.graphicXOffset ? parseInt(s.graphicXOffset) : 0;
-	        	var graphicYOffset = s.graphicYOffset ? parseInt(s.graphicYOffset) : 0;
-	        	
-	        	// ----- Iterate through all features in this layer and store each feature's position. -----------
-	        	var featuresArr = [];
-	        	for (var i=0, len=features.length; i<len; i++) {
-	        		var f = features[i];
-	        		var geometry = f.geometry;
-	        		var nodes = geometry.getVertices();
-	        		
-	        		var geomType = sMap.util.getGeomType(geometry);
-	        		
-	        		var lenJ = nodes.length;
-	        		var nodesArr = []; // Holds the coordinates {Array([x1,y1], [x2,y2])} for each feature
-	        		
-	        		// Make all nodes into view port pixels instead of lon-lat,
-	        		// so that they can be drawn in the image on server-side.
-	        		for (var j=0; j<lenJ; j++) {
-	        			var n = nodes[j];
-	        			var lonLat = new OpenLayers.LonLat(n.x, n.y);
-	        			
-	        			
-	        			// Only store node if within view port.
-        				var px = map.getPixelFromLonLat(lonLat);
-	        			px = new OpenLayers.Pixel(px.x+graphicXOffset, px.y+graphicYOffset);
-        				if (geomType == "point" && !viewPortBounds.containsPixel(px)) {
-        					continue;
-        					// Note! If checking intersection polylines or polygons PARTLY
-        					// outside the print rectangle will sometimes be cut. Therefore, I skip this
-        					// check for lines and polygones.
-	        			}
-        				nodesArr.push([px.x, px.y]);
-	        			
-	        		}
-	        		
-	        		// Don't store a node outside view port, in the featuresArr.
-	        		if (nodesArr.length==0) {
-	        			continue;
-	        		}
-	        		
-	        		// Extend this layers config with specific data for this feature (nodes and geomType).
-	        		var featureConfig = {
-	        				geomType : 	geomType,
-	        				nodes : 	nodesArr
-	        		};
-	        		featuresArr.push(featureConfig);
-	        	}
-	        	layerConfig.features = featuresArr;
-	        	layersArr.push(layerConfig);
-	        	
-	        }
-	        else {
-	        	// iterate through their grid's tiles, collecting each tile's extent and pixel location at this moment
-		        var grid = layer.grid || [];
-	        	for (var i=0,len=grid.length; i<len; i++) {
-	        		var tilerow = grid[i];
-	        		for (var j=0,jlen=tilerow.length; j<jlen; j++) {
-	        			var tile = tilerow[j];
-		                var url      = layer.getURL(tile.bounds),
-		                	position = tile.position,
-		                	opacity  = layer.opacity ? parseInt(255*layer.opacity) : 255;
-		                layersArr.push({
-		                	url: url,
-		                	zIndex: zIndex,
-		                	x: position.x,
-		                	y: position.y,
-		                	opacity: opacity,
-		                	layerType : "tile",
-							layerName : t.displayName || layer.name || null,
-							legendImage : t.markerImage || null
-		                });
-		                
-		            }
-		        }
-	        }
-	        debug.log(layersArr[index].zIndex);
-	    }
-	    
-	    var layersArr_json = JSON.stringify(layersArr);
-	    
-	    return layersArr_json;
-	},
-	
-	// Class name needed when you want to fetch your module...
-	// should correspond to the real class name.
-	CLASS_NAME : "sMap.Module.Print"
-	
-});sMap.moduleConfig.Print = {
-		
-		/**
-		 * If true, calls module's methods "activate" after methods
-		 * "initialize" and "drawContent" have been called.
-		 */
-		activateFromStart : false,
-		
-		webContentRoot: "/Library/WebServer/Documents/sMap/",
-		publicExportFolder: "/Library/WebServer/Documents/temp/print/",
-		privateExportFolder: "http://localhost/temp/print/",
-		printScriptsFolderPath: "/Library/WebServer/CGI-Executables/WS/print/",
-		
-		// Style of the layer showing the print extent.
-		defaultStyle : {
-			pointRadius : 8,
-			strokeWidth : 3,
-			strokeColor: "#ff0000",
-			fillColor: 	"#ff0000",
-			strokeOpacity : 1,
-			fillOpacity: 0.1
-		}
-		
-		
-};
-sMap.Lang.lang.Print = {
-	"sv-SE" : {
-		btnPrint : "Skriv ut",
-		btnPrintInMenu : "Skriv ut karta",
-		dialogTitle: "Skriv ut/exportera",
-		btnExport: "Exportera",
-		description: "Rubrik (valfritt)",
-		printArea: "Utskriftsområde",
-		btnDownload: "",
-		downloadTip: "Tryck här för att ladda ner bilden",
-		labelText: "Skriv ut eller exportera kartan",
-		textLoadingPrint: "Skriver ut...",
-		textLoadingExport: "Exporterar..."
-	},
-	en : {
-		btnPrint : "Print",
-		btnPrintInMenu : "Print map",
-		dialogTitle: "Print/Export",
-		btnExport: "Export",
-		description: "Header (optional)",
-		printArea: "Print extent",
-		btnDownload: "",
-		downloadTip: "Press here to download the image",
-		labelText: "Print or export the map",
-		textLoadingPrint: "Printing...",
-		textLoadingExport: "Exporting..."
-	}
-	
-};/**
- * @author Your Name
- * @copyright Your office or the organisation that pays you
- * @license MIT license
- */
-
-/**
- * @requires sMap/Module.js
- */
-
 sMap.Module.RedirectClick = OpenLayers.Class(sMap.Module, {
 	
 	/**
@@ -20974,53 +20106,9 @@ sMap.Module.SPrint = OpenLayers.Class(sMap.Module, {
 		// For displaying correct scales in the dialog scale selector,
 		// default is otherwise 72.
 		DOTS_PER_INCH: 96,
-		/**
-		 * Path to print servlet
-		 */
-		 
-		/**
-		 * Enable a tool for creatinga a mask in the print
-		 */
-		usePrintMask : false,
-
-		useAcceptDialog: false,
-
-		dialogStartPosition: {my: "center", at: "center"},
-
-		// Default DPI (selected on dialog open)
-		defaultDpi: 96,
-
-		paperFormatsPrint: ["A3", "A4", "A5"],
-		paperFormatsExport: ["A3", "A4", "A5"],
-
-		/**
-		 * Available print resolutions. Does not care for the resolutions in the map.
-		 */
-		// printResolutions : [ 132.2919, 52.91677, 26.45839, 13.229193, 5.291677, 2.645839, 1.322919, 0.529168, 0.264584 ],
-		/**
-		 * Pixel sizes in the print layouts [format(A3/A4/A5)]_[portrait or landscape(p/l)_[print or export(p/x)]]
-		 */
-		layoutSizes : {
-			A5_p_p : {w:337,h:471},
-			A5_l_p : {w:511,h:297},
-			A5_p_x : {w:393,h:538},
-			A5_l_x : {w:525,h:393},
-			A4_p_p : {w:511,h:718},
-			A4_l_p : {w:758,h:471},
-			A4_p_x : {w:595,h:842},
-			A4_l_x : {w:842,h:595},
-			A3_p_p : {w:758,h:1067},
-			A3_l_p : {w:1107,h:718},
-			A3_p_x : {w:842,h:1191},
-			A3_l_x : {w:1191,h:842},
-			A2_p_p : {w:1107,h:1560},
-			A2_l_p : {w:1600,h:1067},
-			A2_p_x : {w:1191,h:1684},
-			A2_l_x : {w:1684,h:1191}
-		},
+		
 		printCopyrightNotice: '<div id="print-dialog-userconditions" class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0" style="width: auto; min-height: 0px; height: 183px;">För utdrag från kartan/flygfotot till tryck eller annan publicering, krävs tillstånd från Malmö Stadsbyggnadskontor. Vid frågor om tillstånd, användningsområden eller kartprodukter kontaktas Stadsbyggnadskontorets kartförsäljning: 040-34 24 35 eller <a href="mailto:sbk.sma@malmo.se?subject=Best%E4lla karta">sbk.sma@malmo.se</a>.<br><strong>Accepterar du villkoren?</strong></div>'
-};
-sMap.Lang.lang.SPrint = {
+};sMap.Lang.lang.SPrint = {
 	"sv-SE" : {
 		buttonText : "Skriv ut"
 	},
@@ -21067,30 +20155,6 @@ sMap.Lang.lang.SPrint = {
 	
 	Core.prototype.activate = function() {
 		this.dialog.dialog.dialog("open");
-		var dpi = this.module.defaultDpi || $("#sprint_Print_slctResolution option:first").val();
-		$("#sprint_Print_slctResolution").val(dpi);
-		$("#sprint_Export_slctResolution").val(dpi);
-
-		if (this.module.paperFormatsPrint) {
-			// First empty, then add
-			$("#sprint_Print_slctPrintFormat").empty();
-			var f, option;
-			for (var i = 0; i < this.module.paperFormatsPrint.length; i++) {
-				f = this.module.paperFormatsPrint[i];
-				option = '<option value="'+f+'">'+f+'</option>';
-				$("#sprint_Print_slctPrintFormat").append(option);
-			}
-		}
-		if (this.module.paperFormatsExport) {
-			// First empty, then add
-			$("#sprint_Export_slctPrintFormat").empty();
-			var f, option;
-			for (var i = 0; i < this.module.paperFormatsExport.length; i++) {
-				f = this.module.paperFormatsExport[i];
-				option = '<option value="'+f+'">'+f+'</option>';
-				$("#sprint_Export_slctPrintFormat").append(option);
-			}
-		}
 		this.dialogClosed = false;
 	};
 	
@@ -21197,7 +20261,7 @@ sMap.Lang.lang.SPrint = {
 		this.dialog = $('<div></div>');
 
 		// load markup from remote source
-		this.dialog.load('modules/Module/SPrint/PrintControlDialog.html', Core.bind(this, this.init));
+		this.dialog.load('modules/Module/SPrintOriginal/PrintControlDialog.html', Core.bind(this, this.init));
 	};
 
 	PrintControlDialog.prototype.setCurrentScale = function() {
@@ -21212,44 +20276,36 @@ sMap.Lang.lang.SPrint = {
 		var service = print ? "Print_" : "Export_";
 		
 		var self = this;
-
-		// Vill man ha dialogen ta bort detta och lägg till det nedan
 		
-		if (this.core.module.useAcceptDialog) {
-			$("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
-				title: "Användarvillkor",
-				autoOpen: true,
-				modal: true,
-				close: function() {
-					$(this).dialog("destroy").empty().remove();
-					
-				},
-				buttons: [
-				          {
-				        	  text: "Nej",
-				        	  click: function() {
-					        	  	$(this).dialog("close");
-					          	}
-				          },
-				          {
-				        	  text: "Jag accepterar",
-				        	  click: function() {
-				        	  		$(this).dialog("close");
-					        	  	self.print(service, printFormat, {
-					        	  		orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-										format: $(".sprint-paperformat:visible").val() || "A4"
-					        	  	});
-				          		}
-				          }
-				]
-			});
-		}
-		else {
-			self.print(service, printFormat, {
-				orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
-				format: $(".sprint-paperformat:visible").val() || "A4"
-			});
-		}
+		
+		$("<div>"+this.core.module.printCopyrightNotice+"</div>").dialog({
+			title: "Användarvillkor",
+			autoOpen: true,
+			modal: true,
+			close: function() {
+				$(this).dialog("destroy").empty().remove();
+				
+			},
+			buttons: [
+			          {
+			        	  text: "Nej",
+			        	  click: function() {
+				        	  	$(this).dialog("close");
+				          	}
+			          },
+			          {
+			        	  text: "Jag accepterar",
+			        	  click: function() {
+			        	  		$(this).dialog("close");
+				        	  	self.print(service, printFormat, {
+				        	  		orientation: $(".sprint-orientation:visible:checked").val() || "Portrait",
+									format: $(".sprint-paperformat:visible").val() || "A4"
+				        	  	});
+			          		}
+			          }
+			]
+		});
+		
 		
 	};
 	
@@ -21280,21 +20336,19 @@ sMap.Lang.lang.SPrint = {
 		this.dialog.dialog({
 			title : 'Utskrift',
 			width : 370,
-			position : this.core.module.dialogStartPosition || {my: "center", at: "center"},
 			resizable : false,
 			closeOnEscape : false,
 			open : function(e, ui) {
 				self.updateScales();
 				self.showExtent();
 				self.setCurrentScale();
-				//self.map.events.register("zoomend", self, self.setCurrentScale);
-				//self.map.events.register("changebaselayer", self, self.updateScales);
+				self.map.events.register("zoomend", self, self.setCurrentScale);
+				self.map.events.register("changebaselayer", self, self.updateScales);
 				self.map.events.register("zoomend", self, self.showExtent);
 				self.map.events.register("moveend", self, self.showExtent);
 				
 				// $(".ui-dialog-titlebar-close", ui.dialog).hide();
 			},
-			beforeClose : Core.bind(this, this.beforeDialogclose),
 			close : Core.bind(this, this.onDialogclose),
 			autoOpen: false
 		});
@@ -21307,25 +20361,6 @@ sMap.Lang.lang.SPrint = {
 		});
 
 		var that = this;
-
-		
-		if(!this.core.module.usePrintMask){
-			$("#sprint_Print_chkUseMask").click(function() {
-				that.toggleMaskEditing();
-			});
-			$("#sprint_Print_chkUseMask").hide();
-			$("#sprint_Print_chkUseMaskLbl").hide();
-			$("#sprint_Print_btnDraw").button();
-			$("#sprint_Print_btnDraw").click(function() {
-				that.toggleDraw();
-			});
-			$("#sprint_Print_btnDraw").hide();
-			$("#sprint_Print_btnClear").button();
-			$("#sprint_Print_btnClear").click(function() {
-				that.clearDraw();
-			});
-			$("#sprint_Print_btnClear").hide();
-		}
 		$("#sprint_Print_btnPrint").button();
 		$("#sprint_Print_btnPrint").click(function() {
 			that.acceptCopyright(true, "PDF");
@@ -21367,7 +20402,7 @@ sMap.Lang.lang.SPrint = {
 	PrintControlDialog.prototype.updateScales = function() {
 		$(".sprint-selectscale").empty();
 		var scale, option, res,
-			resolutions = this.core.module.printResolutions || this.map.resolutions || []; //this.map.baseLayer.resolutions || this.map.resolutions || [];
+			resolutions = this.map.baseLayer.resolutions || this.map.resolutions || [];
 		for (var i=0,len=resolutions.length; i<len; i++) {
 			res = resolutions[i];
 			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
@@ -21376,146 +20411,9 @@ sMap.Lang.lang.SPrint = {
 				$(this).append(option.clone());
 			});
 		}
-		//this.setCurrentScale(); // set scale also
+		this.setCurrentScale(); // set scale also
 	};
-	/*
-	 * Toggles draw and clear buttons for print mask
-	 */
-	PrintControlDialog.prototype.toggleMaskEditing = function(){
-		if ($("#sprint_Print_btnDraw").is(":visible")) {
-			$("#sprint_Print_btnDraw").hide();
-			$("#sprint_Print_btnClear").hide();
-			this.maskEditingLayer.setVisibility(false);
-		}else{
-			$("#sprint_Print_btnDraw").show();
-			$("#sprint_Print_btnClear").show();
-			this.addMaskEditingLayer();
-		}
-	};
-	/*
-	 * Adds a vector layer for mask editing with an OL drawfeature control
-	 */
-	PrintControlDialog.prototype.addMaskEditingLayer = function(){
-		if (!this.maskEditingLayer) {
-			this.maskEditingLayer = new OpenLayers.Layer.Vector("sprint_maskeditlayer", {
-				styleMap: new OpenLayers.StyleMap({
-					"default": new OpenLayers.Style({
-						fillOpacity: 0,
-						fillColor: "#FFF",
-						strokeWidth: 1,
-						strokeOpacity: 1,
-						strokeColor: "#F00"
-					}),
-					"temporary": new OpenLayers.Style({
-						fillOpacity: 0,
-						fillColor: "#FFF",
-						strokeWidth: 1,
-						strokeOpacity: 1,
-						strokeColor: "#F00"
-					})
-				})
-			});
-			this.map.addLayer(this.maskEditingLayer);
-			this.maskEditingLayer.events.register("featureadded", this, function(e) {
-				this.toggleDraw();
-				this.centerAndFitExtent(e.feature);
-			});
-			this.drawPolygon = new OpenLayers.Control.DrawFeature(
-					this.maskEditingLayer, OpenLayers.Handler.Polygon, {
-						title: "Rita",
-						multi: true
-				});
-			this.map.addControl(this.drawPolygon);
-		}
-		else{
-			this.maskEditingLayer.setVisibility(true);
-		}
 		
-	};
-	/*
-	 * Toggles the OL drawfeature control
-	 */
-	PrintControlDialog.prototype.toggleDraw = function(){
-		if (this.drawPolygon.active){
-			this.drawPolygon.deactivate();
-		}
-		else{
-			this.drawPolygon.activate();
-		}
-	};
-	/*
-	 * Clears all drawed features
-	 */
-	PrintControlDialog.prototype.clearDraw = function(){
-		this.maskEditingLayer.removeAllFeatures();
-	};
-	/*
-	 * Adds a vector layer when printing. The layer contains the extent feature minus the drawed features in a white style
-	 */
-	PrintControlDialog.prototype.addMaskLayer = function(){
-		if (this.maskEditingLayer.features.length>0){
-			if (!this.maskLayer) {
-				this.maskLayer = new OpenLayers.Layer.Vector("sprint_masklayer", {
-					styleMap: new OpenLayers.StyleMap({
-						"default": new OpenLayers.Style({
-							fillOpacity: 1,
-							fillColor: "#ffffff",
-							strokeWidth: 1,
-							strokeOpacity: 1,
-							strokeColor: "#ffffff"
-						})
-					})
-				});
-				this.map.addLayer(this.maskLayer);
-			}
-			var P = OpenLayers.Geometry.Point,
-				ext = this.map.maxExtent,
-				geomPolygon = new OpenLayers.Geometry.Polygon(
-				[new OpenLayers.Geometry.LinearRing(
-					[new P(ext.left, ext.bottom), new P(ext.right, ext.bottom), new P(ext.right, ext.top), new P(ext.left, ext.top), new P(ext.left, ext.bottom)] 
-				)]
-			);
-			var extPolygon = new OpenLayers.Feature.Vector(geomPolygon);
-			var maskFeature = this.subtract(extPolygon, this.maskEditingLayer.features); //this.extentLayer.features[0]
-			this.maskLayer.addFeatures([maskFeature]);
-		}
-	};
-	
-	PrintControlDialog.prototype.subtract = function(bigFeature, smallFeatures) {
-	    var newPolygon = new OpenLayers.Geometry.Polygon(bigFeature.geometry.components);
-	    var newFeature = new OpenLayers.Feature.Vector(newPolygon);
-	    //Add Inner DONUT HOLES!
-	    for (var i = 0; i<smallFeatures.length;i++){
-	    	newPolygon.addComponent(smallFeatures[i].geometry.components[0].components[0]);
-	    }
-
-	    return newFeature;
-	};
-	PrintControlDialog.prototype.centerAndFitExtent = function(feature) {
-		var bounds = feature.geometry.getBounds(),
-			c = bounds.getCenterLonLat(),
-			fw = bounds.getWidth(),
-			fh = bounds.getHeight();
-		this.map.setCenter([c.lon,c.lat]);
-		var format = $(".sprint-paperformat:visible").val() || "A4",
-			portrait = $(".sprint-orientation:visible:checked").val(),
-			isPrint = $("#sprint_Print_btnPrint").is(":visible") ? "p" : "x";
-		portrait = portrait.toUpperCase() === "PORTRAIT" ? "p" : "l"; //p or l
-		var layout = this.core.module.layoutSizes[format + "_" + portrait + "_" + isPrint];
-		var scalex = fw*72/(layout.w*0.0254);
-		var scaley = fh*72/(layout.h*0.0254);
-		var maxscale = (scalex > scaley) ? scalex : scaley;
-		var scale, res, scaleres,
-			resolutions = this.core.module.printResolutions || this.map.resolutions || [];//this.map.baseLayer.resolutions || this.map.resolutions || [];
-		for (var i=0,len=resolutions.length; i<len; i++) {
-			res = resolutions[i];
-			scale = parseInt( Math.round(sMap.util.getScaleFromResolution(res)) );
-			if (scale>maxscale){
-				scaleres = scale+':'+res;
-			}
-		}
-		$(".sprint-selectscale").val(scaleres).change();
-	};
 	PrintControlDialog.prototype.showExtent = function(scale) {
 		if (!scale || typeof(scale) !== "number") {
 			scale = this.printScale || this.map.getScale();
@@ -21525,6 +20423,7 @@ sMap.Lang.lang.SPrint = {
 		var format,
 			portrait = true,
 			isPrint = $("#sprint_Print_btnPrint").is(":visible");
+			pxWidth, pxHeight;
 		portrait = $(".sprint-orientation:visible:checked").val();
 		portrait = portrait && typeof(portrait) === "string" ? portrait.toUpperCase() === "PORTRAIT" : true; // convert to boolean
 		format = $(".sprint-paperformat:visible").val() || "A4";
@@ -21547,105 +20446,80 @@ sMap.Lang.lang.SPrint = {
 			this.extentLayer.destroyFeatures(); // clean layer
 		}
 		
-		var pxWidth, pxHeight, ls = this.core.module.layoutSizes;
+		var pxWidth, pxHeight;
 		switch(format) {
-		case "A2":
-			if (isPrint) {
-				if (portrait === true) {
-					pxWidth = ls.A2_p_p.w * (96/72);
-					pxHeight = ls.A2_p_p.h * (96/72);					
-				}
-				else {
-					// Landscape
-					pxWidth = ls.A2_l_p.w * (96/72);
-					pxHeight = ls.A2_l_p.h * (96/72);
-				}
-			}
-			else {
-				// Export
-				if (portrait === true) {
-					pxWidth = ls.A2_p_x.w * (96/72);
-					pxHeight = ls.A2_p_x.h * (96/72);					
-				}
-				else {
-					// Landscape
-					pxWidth = ls.A2_l_x.w * (96/72);
-					pxHeight = ls.A2_l_x.h * (96/72);	
-				}
-			}
-			break;
 		case "A3":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = ls.A3_p_p.w * (96/72);
-					pxHeight = ls.A3_p_p.h * (96/72);					
+					pxWidth = 758 * (96/72);
+					pxHeight = 1067 * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = ls.A3_l_p.w * (96/72);
-					pxHeight = ls.A3_l_p.h * (96/72);
+					pxWidth = 1107 * (96/72);
+					pxHeight = 718 * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = ls.A3_p_x.w * (96/72);
-					pxHeight = ls.A3_p_x.h * (96/72);					
+					pxWidth = 842 * (96/72);
+					pxHeight = 1191 * (96/72);					
 				}
 				else {
 					// Landscape
-					pxWidth = ls.A3_l_x.w * (96/72);
-					pxHeight = ls.A3_l_x.h * (96/72);	
+					pxWidth = 1191 * (96/72);
+					pxHeight = 842 * (96/72);	
 				}
 			}
 			break;
 		case "A4":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = ls.A4_p_p.w * (96/72);
-					pxHeight = ls.A4_p_p.h * (96/72);					
+					pxWidth = 511 * (96/72);
+					pxHeight = 718 * (96/72);				
 				}
 				else {
 					// Landscape
-					pxWidth = ls.A4_l_p.w * (96/72);
-					pxHeight = ls.A4_l_p.h * (96/72);
+					pxWidth = 758 * (96/72);
+					pxHeight = 471 * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = ls.A4_p_x.w * (96/72);
-					pxHeight = ls.A4_p_x.h * (96/72);					
+					pxWidth = 595 * (96/72);
+					pxHeight = 842 * (96/72);				
 				}
 				else {
 					// Landscape
-					pxWidth = ls.A4_l_x.w * (96/72);
-					pxHeight = ls.A4_l_x.h * (96/72);	
+					pxWidth = 842 * (96/72);
+					pxHeight = 595 * (96/72);
 				}
 			}
 			break;
 		case "A5":
 			if (isPrint) {
 				if (portrait === true) {
-					pxWidth = ls.A5_p_p.w * (96/72);
-					pxHeight = ls.A5_p_p.h * (96/72);					
+					pxWidth = 337 * (96/72);
+					pxHeight = 471 * (96/72);				
 				}
 				else {
 					// Landscape
-					pxWidth = ls.A5_l_p.w * (96/72);
-					pxHeight = ls.A5_l_p.h * (96/72);
+					pxWidth = 511 * (96/72);
+					pxHeight = 297 * (96/72);
 				}
 			}
 			else {
 				// Export
 				if (portrait === true) {
-					pxWidth = ls.A5_p_x.w * (96/72);
-					pxHeight = ls.A5_p_x.h * (96/72);					
+					pxWidth = 393 * (96/72);
+					pxHeight = 538 * (96/72);				
 				}
 				else {
 					// Landscape
-					pxWidth = ls.A5_l_x.w * (96/72);
-					pxHeight = ls.A5_l_x.h * (96/72);	
+					pxWidth = 525 * (96/72);
+					pxHeight = 393 * (96/72);
 				}
 			}
 			break;
@@ -21729,15 +20603,10 @@ sMap.Lang.lang.SPrint = {
 		    onComplete = options.onComplete || null,
 		    orientation = options.orientation || "Portrait"; // portrait or landscape
 		
-		if ($("#sprint_Print_chkUseMask:checked").val() !== undefined) {
-			this.addMaskLayer();
-		}
-		if (this.maskEditingLayer) {
-			this.maskEditingLayer.setVisibility(false);			
-		}
 		if (this.extentLayer) {
 			this.map.removeLayer(this.extentLayer);			
 		}
+		
 		this.service = service;  //K-M
 		var that = this;
 		var map = options.map || this.core.module.map;
@@ -21838,12 +20707,12 @@ sMap.Lang.lang.SPrint = {
 					$(this).dialog("destroy").empty().remove();
 				}
 			});
-			sMap.cmd.loading(false);
+			sMap.cmd.loading(false)
 		}else {
 			$.ajax({
 				type: "POST",
 				url : "/print-servlet/" + serviceName + "/create.json",
-				timeout: options.timeout || 30000, // in ms
+				timeout: options.timeout || 20000, // in ms
 				data : JSON.stringify(jsonData),
 				contentType: "application/json; charset=UTF-8",
 				dataType: "json",
@@ -21874,19 +20743,9 @@ sMap.Lang.lang.SPrint = {
 				}
 			});
 		}
-		// Remove the mask
-		if (this.maskLayer) {
-			this.maskLayer.destroyFeatures();
-			this.map.removeLayer(this.maskLayer);	
-			this.maskLayer.destroy();
-			this.maskLayer = null;
-		}
 		// Put it back again
 		if (this.extentLayer) {
 			this.map.addLayer(this.extentLayer);			
-		}
-		if (this.maskEditingLayer) {
-			this.maskEditingLayer.setVisibility(true);			
 		}
 	};
 	/**
@@ -22115,21 +20974,6 @@ sMap.Lang.lang.SPrint = {
 						if (style.fontColor) {
 							style.fontColor = this.to16Bit(style.fontColor);
 						}
-						if (style.pointRadius) {
-							if (style.externalGraphic||feature.layer.name=="theInfoLayer"){ //symbols with radius in pixels
-								style.pointRadius = style.pointRadius*72/96;
-							}else{ // graphic with radius in meter
-								var scaleRes = $(".sprint-selectscale:visible").val(), //this.getCurrentScale();
-									res = parseFloat(scaleRes.split(":")[1]);			
-								style.pointRadius = style.pointRadius*72/96*this.map.resolution/res;
-							}
-						}
-						if (style.fontSize) {
-							style.fontSize = style.fontSize*72/96;
-						}
-						if (style.strokeWidth) {
-							style.strokeWidth = style.strokeWidth*72/96;
-						}
 						styleDict[dictKey] = styleName = nextId++;
 						if (style.externalGraphic) {
 							// Replaced Ext.applyIf not same as extend
@@ -22138,7 +20982,6 @@ sMap.Lang.lang.SPrint = {
 								externalGraphic : style.externalGraphic
 							}, style);
 						} else {
-							delete style.externalGraphic;
 							encStyles[styleName] = style;
 						}
 					}
@@ -22279,23 +21122,15 @@ sMap.Lang.lang.SPrint = {
 		}
 		return a.href;
 	};
-	/*
-	 * Turn off mask editing before close of the dialog
-	 */
-	PrintControlDialog.prototype.beforeDialogclose = function(e) {
-		if (this.maskEditingLayer && this.maskEditingLayer.visibility){
-			$('#sprint_Print_chkUseMask').prop('checked', false);
-			this.toggleMaskEditing();
-		}
-	};
+
 	PrintControlDialog.prototype.onDialogclose = function(e) {
 		this.core.module.deactivate();
 		//this.core.dialogCloseClicked = true;
 		
 		// unbind update extent event(s)
 		this.map.events.unregister("zoomend", this, this.showExtent);
-		//this.map.events.unregister("zoomend", this, this.setCurrentScale);
-		//this.map.events.unregister("changebaselayer", this, this.updateScales);
+		this.map.events.unregister("zoomend", this, this.setCurrentScale);
+		this.map.events.unregister("changebaselayer", this, this.updateScales);
 		this.map.events.unregister("moveend", this, this.showExtent);
 		
 		// Destroy the extent layer

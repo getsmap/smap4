@@ -122,10 +122,6 @@
 		"modules/Module/Popup/Popup_conf.js",
 		"modules/Module/Popup/Popup_lang.js",
 		
-		"modules/Module/Print/Print.js",
-		"modules/Module/Print/Print_conf.js",
-		"modules/Module/Print/Print_lang.js",
-		
 		"modules/Module/RedirectClick/RedirectClick.js",
 		"modules/Module/RedirectClick/RedirectClick_conf.js",
 		"modules/Module/RedirectClick/RedirectClick_lang.js",
@@ -162,11 +158,11 @@
 		"modules/Module/SimpleSelect/SimpleSelect_conf.js",
 		"modules/Module/SimpleSelect/SimpleSelect_lang.js",
 		
-		"modules/Module/Sprint/Sprint.js",
-		"modules/Module/Sprint/Sprint_conf.js",
-		"modules/Module/Sprint/Sprint_lang.js",
-		"modules/Module/Sprint/Core.js",
-		"modules/Module/Sprint/PrintControlDialog.js",
+		"modules/Module/SprintOriginal/Sprint.js",
+		"modules/Module/SprintOriginal/Sprint_conf.js",
+		"modules/Module/SprintOriginal/Sprint_lang.js",
+		"modules/Module/SprintOriginal/Core.js",
+		"modules/Module/SprintOriginal/PrintControlDialog.js",
 		
 		"modules/Module/Toolbar/Toolbar.js",
 		"modules/Module/Toolbar/Toolbar_conf.js",
