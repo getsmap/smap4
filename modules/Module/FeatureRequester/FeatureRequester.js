@@ -567,7 +567,12 @@ sMap.Module.FeatureRequester = OpenLayers.Class(sMap.Module, {
                     	}
                     	val = OpenLayers.Util.upperCaseObject(OpenLayers.Util.getParameters(val));
                     	
-                    	var item = this.typeNameTolayerName[val.TYPENAME.replace('"','')],
+                    	var key = val.TYPENAME.replace('"','');
+                    	if (key.search(">") > -1) {
+                    		// Johan: fixes #35
+                    		key = key.substring(0, key.search(">"));
+                    	}
+                    	var item = this.typeNameTolayerName[key],
                     		layerName = null,
                     		f = null;
                     	if (item instanceof Array) {

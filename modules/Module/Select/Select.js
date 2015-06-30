@@ -733,18 +733,23 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 				var f = features[i];
 				var name = f.layerName,
 					rowId = OpenLayers.Util.createUniqueID("selectrowfeature_");
+				if (!name) {
+					continue;
+				}
 				this.fDict[rowId] = f;
 				
 				var t = sMap.cmd.getLayerConfig(name),
 					style;
-				if (t) {
-					style = t.style || null;
-					if (style) {
-						style = style["default"];
-					}
-					else {
-						style = t.defaultStyle;						
-					}
+				if (!t) {
+					continue;
+				}
+				
+				style = t.style || null;
+				if (style) {
+					style = style["default"];
+				}
+				else {
+					style = t.defaultStyle;						
 				}
 				var iconURL = style ? style.externalGraphic : null;
 				
