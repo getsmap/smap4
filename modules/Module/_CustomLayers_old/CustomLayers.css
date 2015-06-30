@@ -1,0 +1,18 @@
+
+.smap-clayers-container {
+	position: absolute;
+	top: 5px;
+	right: 300px;
+	z-index: 1007;
+}
+
+.smap-clayers-header {
+	padding: .3em .6em;
+	font-size: 1em;
+	background-color: #dfdfdf;
+	color: #000;
+}
+
+/*.smap-clayers-header.ui-state-active {
+
+}*/
