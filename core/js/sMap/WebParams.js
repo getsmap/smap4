@@ -112,6 +112,9 @@ sMap.WebParams = OpenLayers.Class({
 		if (orgParams.CONFIG) {
 			obj.CONFIG = orgParams.CONFIG;
 		}
+		if (orgParams.PRESET) {
+			obj.PRESET = orgParams.PRESET;
+		}
 
 		sMap.db.webParams = obj;
 		
@@ -191,7 +194,6 @@ sMap.WebParams = OpenLayers.Class({
 		sMap.events.triggerEvent("beforeapplyingwebparams", this, {} );
 		
 		this.applyDefaultParams(params);
-		
 		sMap.events.triggerEvent("afterapplyingwebparams", this, {
 			params: params
 		});

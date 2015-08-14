@@ -60,7 +60,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 	 * The events triggered from this module. Note that some modules
 	 * both listens to and trigger events.
 	 */
-	EVENT_TRIGGERS : [],
+	EVENT_TRIGGERS : ['layertreecreated'],
 	
 	initialize : function(options) {
 		options = options || {};
@@ -296,6 +296,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				// Extract layer names from nodes
 				var layerNames = self.getLayerNamesFromNodes.call(self, nodes);
 				self.changeVisibility(layerNames, flag);
+		sMap.events.triggerEvent("layertreecreated", this, {});
 				
 			},
 			children: [],

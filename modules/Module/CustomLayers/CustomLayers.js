@@ -19,7 +19,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 	 * 
 	 * Look at the event listeners as a public API of the module.
 	 */
-	EVENT_LISTENERS : [],
+	EVENT_LISTENERS : ['layertreecreated', 'creatingwebparams'],
 	
 	/**
 	 * The events triggered from this module. Note that some modules
@@ -47,7 +47,47 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		sMap.Module.prototype.initialize.apply(this, [options]);
 		
 	},
-	
+
+	creatingwebparams: function() {
+		// preset-parameter undefined means user have selected the return-to-default item. Delete parameter so it can't end up in CopyLink.
+		if (this.preset) {
+			if (this.preset === 'undefined') {
+				delete sMap.db.webParams.PRESET;
+			}
+			else {
+				sMap.db.webParams.PRESET = this.preset;
+			}
+		}
+	},	
+
+	layertreecreated: function(){
+		if (!this.layersSelected) {
+			this.applyUrlParams();
+		}
+		if (!this.presetChecked) {
+			this.checkPresetRadio();
+		}
+	},
+
+	applyUrlParams: function() {
+		// selects layers once based on url-parameters
+		this.layersSelected = true;
+		var pString = sMap.cmd.getParamsAsString();
+		var pObj = this.stringToObject(pString);
+		this.applyParams(pObj);
+		
+	},
+
+	checkPresetRadio: function() {
+		// checks radio according to PRESET-parameter in url
+		var presetId = sMap.cmd.getParamsAsObject().PRESET;
+		if (presetId) {
+			this.presetChecked = true;
+			$('#' + presetId).prev().prop("checked", true);
+			this.preset = presetId;
+		}
+	},
+
 	activate : function() {
 		if (this.active===true) {
 			return false;
@@ -170,8 +210,9 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		var $this = $(e.target);
 		var pString = $this.parent().data("params");
 		var pObj = this.stringToObject(pString);
+		this.preset = $this.next().attr('id');
+		this.presetChecked = true;
 		this.applyParams(pObj);
-
 	},
 
 	_drawHeaders: function() {
@@ -194,7 +235,8 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 				.on("mouseleave", this.onDropDownOut);
 			for (var i = 0; i < arrOptions.length; i++) {
 				t = arrOptions[i];
-				$option = $('<div class="smap-clayers-option"><input name="clayers-radios" type="radio"></input><span>'+t.displayName+'</span></div>');
+				t.id = this.stringToObject(t.params).PRESET;
+				$option = $('<div class="smap-clayers-option"><input name="clayers-radios" type="radio"></input><span id="'+t.id+'">'+t.displayName+'</span></div>');
 				$option.data("params", t.params);
 				$option.find("span").on("click", this.onOptionSpanClick);
 				$dropDown.append($option);
