@@ -69,19 +69,16 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 			 // Workaround to solve IE-problem where no layers is shown in mapDiv although loaded on page-load. Params now applies later during load.
 			if ($.browser.msie) {
 				if (sMap.events.mapInitiated) {
-					console.log('msie-apply');
 					this.applyUrlParams();
 				}
 				else {
 					window.setTimeout( function() {
-						console.debug('trigger')
 						sMap.events.triggerEvent("layertreecreated", this, {});
 					}, 1000);
 				}
 			}
 
 			else {
-				console.log('applyurlparams');
 				this.applyUrlParams();
 			}
 		}
