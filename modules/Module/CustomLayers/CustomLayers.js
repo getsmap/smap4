@@ -239,7 +239,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		var w = 0;
 		for (title in obj) {
 			arrOptions = obj[title];
-			$header = $('<div class="smap-clayers-header">'+title+'</div>');
+			$header = $('<div class="smap-clayers-header">'+title+'</div>').css('background-color', this.buttonColor);
 			this.$div.append($header);
 			$header
 				.on("mouseenter", this.onHeaderOver)
