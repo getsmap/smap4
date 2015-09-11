@@ -54,7 +54,14 @@ sMap.Module.IntroDialog = OpenLayers.Class(sMap.Module, {
 		if (this.active===true) {
 			return false;
 		}
-		var dontShow = this.checkboxDontShow && $.cookie('smap_introdialog_dontshowagain') && $.cookie('smap_introdialog_dontshowagain') === "1" ? true : false;
+
+		// if custom cookieName exists, remove default cookie. User then will be shown default dialog when things are back to normal.
+		if (this.dialogOptions.cookieName && this.dialogOptions.cookieName !== $.cookie(this.defaultDialogOptions.cookieName)) {
+			$.removeCookie(this.defaultDialogOptions.cookieName);
+		}
+
+		var options = $.extend(this.defaultDialogOptions, this.dialogOptions);
+		var dontShow = this.checkboxDontShow && $.cookie(options.cookieName) && $.cookie(options.cookieName) === "1" ? true : false;
 		if (dontShow === true) {
 			debug.log("User has cookie smap_introdialog_dontshowagain. Not showing intro dialog");
 			return false;
@@ -99,12 +106,13 @@ sMap.Module.IntroDialog = OpenLayers.Class(sMap.Module, {
 			var self = this;
 			this.dialog = $("<div id='introdialog-dialog'></div>");
 			var options = $.extend(this.defaultDialogOptions, this.dialogOptions);
+			var cookieName = options.cookieName;
 			
 			options.close = function() {
 				var isChecked = $("#introdialog-checkboxdiv input").prop("checked");
     	  		if (isChecked === true) {
     	  			// Add cookie
-    	  			$.cookie('smap_introdialog_dontshowagain', "1", {expires: 365});
+    	  			$.cookie(cookieName, "1", {expires: 365});
     	  		}
     	  		// destroy dialog and free memory
 				$(this).empty().remove();

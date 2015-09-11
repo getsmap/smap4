@@ -32,6 +32,7 @@ sMap.moduleConfig.IntroDialog = {
 			height: "auto",
 			modal: false,
 			autoOpen: false,
-			position: "center"
+			position: "center",
+			cookieName: 'smap_introdialog_dontshowagain'
 		}
 };
