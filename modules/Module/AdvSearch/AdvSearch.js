@@ -545,10 +545,14 @@ sMap.Module.AdvSearch = OpenLayers.Class(sMap.Module, {
 							sMap.map.setCenter(new OpenLayers.LonLat(fbounds.left, fbounds.top), self.pointZoomLevel);
 						}
 						else{
-							this.sMap.map.zoomToExtent(fbounds);
+							var z = this.sMap.map.getZoomForExtent(fbounds);
+							if (z > 10) {z = 10}
+							var c = fbounds.getCenterLonLat();
+							sMap.map.setCenter(c, z);
+							//this.sMap.map.zoomToExtent(fbounds);
 						}
 						// Find the right place for the popup. Otherwise it gets the last clicked position.
-						var px = self.map.getViewPortPxFromLonLat(new OpenLayers.LonLat((fbounds.right+fbounds.left)/2, (fbounds.top-fbounds.bottom)/2));
+						var px = self.map.getViewPortPxFromLonLat(new OpenLayers.LonLat((fbounds.right+fbounds.left)/2, (fbounds.top+fbounds.bottom)/2));
 						//To find out the right layer for the response, since it is asynch.
 						var rightLayer = null;
 						var typeName = features[0].fid.split(".");
