@@ -432,7 +432,14 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 	 */
 	
 	cleanlayer : function(e) {
-		e.layer.destroyFeatures();
+		if (e.layer){
+			e.layer.destroyFeatures();
+		}else{
+			var poiLayer = this.map.getLayersByName("poiLayer")[0] || null;
+			if (poiLayer){
+				poiLayer.destroyFeatures();
+			}
+		}
 		this.lastSearchedPoi = e.poi || null;
 		this.lastSearchedCoords = e.coords || null;
 	},
@@ -729,8 +736,10 @@ sMap.Module.Search = OpenLayers.Class(sMap.Module, {
 		var self = this,
 			catOptions = self.dropDownItems[category],
 			searchBox = $("#searchBox input");
-		
-		searchBox.val(catOptions.searchBoxText);
+		var currentText = searchBox.val();
+		if (currentText.substring(0, 4)=="Ange"){
+			searchBox.val(catOptions.searchBoxText);
+		}
 		
 		//Remove autocomplete and previous event-handlers in namespace "box" (if any).
 		searchBox.unautocomplete().off('.box');
