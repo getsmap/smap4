@@ -715,8 +715,12 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 			var pos = sMap.util.getMapOrigo();
 			var x = pos.left + 50,
 				y = pos.top + 3,
-				createDialog = false;
-			
+				createDialog = false,
+				xy = this.handlers.click && this.handlers.click.evt && this.handlers.click.active ? this.handlers.click.evt.xy : null;
+				if (xy){
+					x=xy.x;
+					y=xy.y;
+				}
 			if (!dialogDiv.length) {
 				dialogDiv = $("<div id='select-selectdialog'></div>");
 				createDialog=true;
@@ -813,7 +817,6 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 					
 					$(this).removeClass("selectdialog-rowtag-mousedown");
 					$("#select-selectdialog").dialog("close");
-					
 					// Destroy all other features connected to the dialog
 					// except the selected one, to clean up memory.
 					$(this).siblings().each(function() {
@@ -834,7 +837,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 				sMap.util.createDialog(dialogDiv, {
 					title : this.lang.chooseFeature,
 					width: "auto",
-					close: function() {
+					onClose: function() {
 						$(this).dialog("destroy");
 					},
 					height: "auto",
