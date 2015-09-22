@@ -118,6 +118,9 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	layervisible: function(e) {
 		if (this.editLayer){
 			this.editLayer.setZIndex(this.zIndex);
+			if (e.layer.name == this.editLayer.name && e.layer.visibility){
+				$("#draw-cbvisible").prop('checked', true);
+			}
 		}
 	},
 	/**
@@ -197,7 +200,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			if(!isNaN(this.value)){
 				if (tempStyle.externalGraphic != "") {tempStyle.pointRadius = this.value;}//symbols and texts
 				if (tempStyle.strokeOpacity == 0.9) {tempStyle.pointRadius = this.value / sMap.map.getResolution();}// points without external graphic (circle with radius)
-				if (tempStyle.strokeOpacity == 0) {tempStyle.fontSize = this.value * 2}; //Only texts
+				if (tempStyle.strokeOpacity == 0) {tempStyle.fontSize = this.value * 2;}; //Only texts
 				tempStyle.strokeWidth = (tempStyle.strokeOpacity == 1) ? this.value : tempStyle.strokeWidth; //Lines and polys this.value, points current value
 				if(self.selectedFeature) {
 					self.selectedFeature.attributes.size = this.value;
@@ -446,6 +449,19 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			}
 		});
 		dialogDiv.append(cbAddMeasure);
+		var cbVisible = $("<span id='draw-lbvisible' title='"+this.lang.lblVisibleTitle+"'>"+this.lang.lblVisible+"</span><input id='draw-cbvisible' type='checkbox' checked/>");
+		cbVisible.change(function(){
+			if (self.editLayer.visibility){
+				sMap.events.triggerEvent("hidelayer", self, {
+					layerName : self.editLayer.name
+				});
+			}else{
+				sMap.events.triggerEvent("showlayer", self, {
+					layerName : self.editLayer.name
+				});
+			}
+		});
+		dialogDiv.append(cbVisible);
 		var mxDescDiv = this.makeDescrDiv(); // the describe field
 		dialogDiv.append(mxDescDiv);
 		var mxButtonDiv = this.makeButtons();
@@ -454,6 +470,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		dialogDiv.append(resultdiv);
 		return dialogDiv;
 	},
+	
 	/**
 	 * Make the div with copylink, load and save buttons.
 	 * @return {div}
@@ -461,12 +478,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	makeButtons : function() {
 		var self = this;
 		var mxButtonDiv = $("<div id='mxButtonDiv' />");
-		var button = $("<button id='draw-opencopylink'>"+this.lang.btnCopylink+"</button>");
-		button.click(function() {
-			sMap.events.triggerEvent("showlink", this, {});
-		});
-		button.button();
-		mxButtonDiv.append(button);
+		
 		if (this.useLoadSave){
 			var loadbutton = $("<button id='draw-load' title='"+this.lang.btnLoadHoverText+"'>"+this.lang.btnLoad+"</button>");
 			loadbutton.click(function() {
@@ -501,10 +513,13 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			});
 			importbutton.button();
 			mxButtonDiv.append(importbutton);
-			var importdia = $("<div id='draw-import-dialog' title='"+this.lang.importDlgTitle+"'>"+this.lang.importText+"<iframe src="+this.importFilePath+" style=\"width: 250px; border-width: 0px;\"></iframe></div>");
+			var importdia = $("<div id='draw-import-dialog' title='"+this.lang.importDlgTitle+"'>"+this.lang.importText+"<iframe id='draw-import-iframe' src="+this.importFilePath+" style=\"width: 250px; border-width: 0px;\"></iframe></div>");
 			importdia.dialog({
 				autoOpen: false,
 				modal: true,
+				close : function( event, ui ) {
+					$("#draw-import-iframe").prop("src",self.importFilePath);
+					},
 				buttons : {
 					"Importera!" : function() {
 						self.importGeoJSON();
@@ -515,7 +530,34 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 					}
 				}
 			});
+		} else {
+			var button = $("<button id='draw-opencopylink'>"+this.lang.btnCopylink+"</button>");
+			button.click(function() {
+				sMap.events.triggerEvent("showlink", this, {});
+			});
+			button.button();
+			mxButtonDiv.append(button);
 		}
+		var clearbutton = $("<button id='draw-clear' title='"+this.lang.btnClearHoverText+"'>"+this.lang.btnClear+"</button>");
+		clearbutton.click(function() {
+			self.confirmClear();
+		});
+		clearbutton.button();
+		mxButtonDiv.append(clearbutton);
+		var confirm = $("<div id='draw-clear-dialog' title='"+this.lang.comfirmDlgTitle+"'>"+this.lang.confirmClearText+"</div>");
+		confirm.dialog({
+			autoOpen: false,
+			modal: true,
+			buttons : {
+				"Rensa" : function() {
+					self.editLayer.removeAllFeatures();
+					$(this).dialog("close");
+				},
+				"Avbryt" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
 		return mxButtonDiv;
 	},
 	/**
@@ -524,6 +566,14 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	confirmSave : function(){
 		var conf = $("#draw-conf-dialog");
 		conf.dialog("open");
+	},
+	/**
+	* Opens the confirm clear dialog
+	*/
+	confirmClear : function(){
+		var conf = $("#draw-clear-dialog");
+		conf.dialog("open");
+		$('#draw-clear').removeClass('ui-state-focus');
 	},
 	/**
 	 * Make edit buttons. Editing is actually activated from this function.
@@ -537,7 +587,6 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		
 		var mxEditBtnsDiv = $("<div id='mxEditBtnsDiv' />");
 		var mxEditLbl = $("<div id='mxEditLbl' />");
-		var mxEditStyle = $("<div id='mxEditStyle' />");
 		
 		// Append text and the help link to the "label".
 		var infoText = $("<span>"+ this.lang.helpText+"</span>");
@@ -574,7 +623,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			var s = this.drawLayerConfig.style;
 			var context = {
                 getSize: function(feature) {
-					if (feature.attributes["eg"]){ // text and symbols
+					if (feature.attributes["eg"] || feature.attributes["gn"]=="cross"){ // text and symbols
 						return feature.attributes["size"];
 					}
 					else{ 
@@ -706,13 +755,14 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 				  multi: false
 		});
 		drawPoint.events.register("activate", this, function(e) {this.setPointTempStyle();this.map.getControlsByClass("sMap.Module.Select")[0].deactivate();});
-		drawPoint.events.register("deactivate", this, function(e) {this.map.getControlsByClass("sMap.Module.Select")[0].activate();});
 		var drawText = new OpenLayers.Control.DrawFeature(
 				  this.editLayer, OpenLayers.Handler.Point, {
 					  multi: false
 			});
-		drawText.events.register("activate", this, function(e) {this.setTextTempStyle();this.map.getControlsByClass("sMap.Module.Select")[0].deactivate();});
-		drawText.events.register("deactivate", this, function(e) {this.map.getControlsByClass("sMap.Module.Select")[0].activate();});
+		drawText.events.register("activate", this, function(e) {
+			this.setTextTempStyle();
+			this.map.getControlsByClass("sMap.Module.Select")[0].deactivate();
+			});
 		var drawLine = new OpenLayers.Control.DrawFeature(
 				this.editLayer, OpenLayers.Handler.Path, {
 					multi: true
@@ -731,7 +781,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			this.editLayer, OpenLayers.Handler.Point, {
 				multi: false
 		});
-		drawCircle.events.register("activate", this, function(e) {this.setGraphicTempStyle();});
+		drawCircle.events.register("activate", this, function(e) {this.setGraphicTempStyle();this.map.getControlsByClass("sMap.Module.Select")[0].deactivate();});
 		var move = new OpenLayers.Control.DragFeature(this.editLayer, {
 			onComplete : function(f){
 				self.alterMeasureText(f);
@@ -836,20 +886,23 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			}
 		});
 		this.editLayer.events.register("featureadded", this, function(e) {
-			if (this.autoDeactivateTool){
-				this.deactivateButtonsAndControls();
-			}
 			var feature = e.feature;
 			this.showHideEditLayer();
-			this.alterMeasureText(feature);
-			if (feature.state=="Insert"){this.selectFeature(feature);} //only newly added features
+			if (feature.state=="Insert"){ //only newly added features
+				this.alterMeasureText(feature);
+				this.selectFeature(feature);
+			}
 			sMap.events.triggerEvent("updatelinkentries", this, {});
 			this.editLayer.redraw();
 			OpenLayers.Event.stop(e);
+			if (this.autoDeactivateTool){
+				this.deactivateButtonsAndControls();
+			}
+			window.setTimeout(function(){sMap.map.getControlsByClass("sMap.Module.Select")[0].activate();},2000);
 		});
 		this.editLayer.events.register("beforefeaturemodified", this, function(e) {
 			this.checkEditable(e);
-			//this.selectFeature(e.feature);
+			this.selectFeature(e.feature);
 		});
 		this.editLayer.events.register("featuremodified", this, function(e) {
 			this.unselectFeatures();
@@ -895,8 +948,9 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 		}
 		if (f.geometry.id.indexOf("Point")>0 && f.attributes.eg!=""){
 			var decConst = Math.pow(10, this.decimals); 
-			f.attributes.text =  "Norr="+Math.round(f.geometry.y*decConst)/decConst + ", Öst="+Math.round(f.geometry.x*decConst)/decConst;
+			f.attributes.text =  "N:"+Math.round(f.geometry.y*decConst)/decConst + ", E:"+Math.round(f.geometry.x*decConst)/decConst;
 			f.attributes.la = "lb";
+			f.attributes.color = "#000000";
 		}
 	},
 	checkEditable : function(e){
@@ -957,6 +1011,9 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 				$("#draw-buttoncolorselect").css({
 					"background-color": f.attributes.color
 				});
+				this.editLayer.styleMap.styles.temporary.defaultStyle.fillColor = f.attributes.color;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.strokeColor = f.attributes.color;
+				this.editLayer.styleMap.styles.temporary.defaultStyle.fontColor = f.attributes.color;
 				$("#draw-graphicsize").val(f.attributes.size);
 				if (f.attributes.eg && f.attributes.eg!=this.blankSymbol){
 					this.showSymbolPicker(); 
@@ -1013,8 +1070,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 	 * @return
 	 */
 	makeDescrDiv : function() {
-		self = this;
-		
+
 		var mxDescrDiv = $("<div id='mxDescrDiv' />");
 		var mxDescrLbl = $("<div id='mxDescrLbl' class='mxLbl' />");
 		mxDescrLbl.text(this.lang.descrLblText);
@@ -1225,11 +1281,11 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 					
 					// Replace the comma in the WKT-string since this could cause problems when
 					// sending over platforms, although decodeURLComponent would work in theory.
-					var wkt = f.geometry.toString(),
-						wktArr = null,
-						geomStart = null,
-						geomEnd = null;
-					
+					var wkt = f.geometry.toString();
+//						wktArr = null,
+//						geomStart = null,
+//						geomEnd = null;
+//					
 					var markerWkt = encodeURIComponent(wkt);
 					
 					// Add a feature separator.
@@ -1245,13 +1301,13 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 					//text = f.attributes.text ? "1" : "0"; // 2:text=measure, 1: true, 0: false
 					if (f.attributes.text){
 						if (f.attributes.measure){
-							text = "2"
+							text = "2";
 						}else{
-							text = "1"
+							text = "1";
 						}
 					}
 					else{
-						text = "0"
+						text = "0";
 					}
 					texts = texts + text + splitSign;
 					
@@ -1269,6 +1325,9 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 						for (var k=0;k<this.colors.length;k++){
 							if (f.attributes.color == this.colors[k]){
 								index = k;
+							}
+							else {
+								index = f.attributes.color;
 							}
 						}
 						style = "c" + index;
@@ -1378,16 +1437,23 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 							f.attributes = {};
 							if (fp.typ!="acad_label"){
 								self.editLayer.addFeatures([f]);
-							}
-							//if (ljson.name.indexOf("ritlager")>-1){
 								if (fp){
 									f.attributes.color = fp.color ? self.importColor(fp.color) : f.attributes.color;
+									f.attributes.fo = fp.color ? fp.color.split(",")[3]/100 : f.attributes.fo;
+									f.attributes.gn = fp.gn ? fp.gn : f.attributes.gn;
 									f.attributes.info = fp.info ? fp.info : "";
 									f.attributes.text = fp.text ? fp.text : "";
-									f.attributes.size = fp.size ? fp.size : "";
-									f.attributes.eg = fp.eg ? fp.eg : "";
+									f.attributes.size = fp.size ? fp.size : f.attributes.size;
+									if (ljson.name=="ritlager_p" || fp.typ=="ritlager_p"){  // Punkter
+										f.attributes.la = "lb";
+										f.attributes.sw = 0.3;
+										f.attributes.fo = 1;
+									}
+									if (!(ljson.name=="ritlager_t" || fp.typ=="ritlager_t")){  // Alla utom texter
+										f.attributes.eg = fp.eg ? fp.eg : "";
+									}
 								}
-							//}
+							}
 						}
 					}
 				}
@@ -1478,7 +1544,7 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			var styleArr = (styles.search(splitSign)!=-1) ? styles.split(splitSign) : [styles];
 			var sizeArr = (sizes.search(splitSign)!=-1) ? sizes.split(splitSign) : [sizes];
 			
-			var wkt=null, info=null;
+			var info=null;
 			for (var i=0; i<featureWktArr.length; i++) {
 				// Decode the wkt and its pop-up text.
 				featureWktArr[i] = decodeURIComponent(featureWktArr[i]).replace(commaSignRegExp, ",");
@@ -1551,7 +1617,11 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 				feature.attributes.fo = 1;
 			}
 			if (style.substring(0,1)=="c"){		//color
-				feature.attributes.color = this.colors[index];
+				if (style.substring(1,2)=="#"){ //hexvalue
+					feature.attributes.color = index;
+				}else{							//color index
+					feature.attributes.color = this.colors[index];
+				}
 				if (gtype=="POINT"){  //Points with radius
 					feature.attributes.so = 0.9;
 				}else{  //lines and polys
@@ -1563,11 +1633,14 @@ sMap.Module.Draw = OpenLayers.Class(sMap.Module, {
 			var textstring = "";
 			if (parseInt(text)==1) {
 				textstring = info;
-				feature.attributes.eg = this.blankSymbol;
-				feature.attributes.so = 0;
-				feature.attributes.fo = 1;
-				feature.attributes.fontsize = size;
-				feature.attributes.size = size/2;
+				feature.attributes.sw = this.defaultStrokeWidth;
+				if (gtype=="POINT"){
+					feature.attributes.eg = this.blankSymbol;
+					feature.attributes.so = 0;
+					feature.attributes.fo = 1;
+					feature.attributes.fontsize = size;
+					feature.attributes.size = size/2;
+				}
 			}
 			feature.attributes.text = textstring;
 			

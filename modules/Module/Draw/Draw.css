@@ -97,20 +97,16 @@
 
 /* All headers/labels in the mx window */
 .mxLbl {
-	font-family: "Trebuchet MS", "DejaVu Sans", “Bitstream Vera Sans”, "sans-serif";
-	font-weight: 600;
-	font-size: 1.1em;
-	text-align: left;
-	float: left;
+
 }
 
 /*------ Edit buttons div ------*/
 #mxEditBtnsDiv {
 	position: absolute;
 	left: 0px;
-	top: 0px;
-	width: 200px;
-	height: 90px;
+	top: 22px;
+	width: 270px;
+	height: 125px;
 	z-index: 1;
 }
 
@@ -123,19 +119,20 @@
 	position: absolute;
 	top: 170px;
 	left: 0px;
-	width: 200px;
+	width: 260px;
 	height: 75px;
 }
 
 #mxDescrLbl {
-
+	position: absolute;
+	top: 5px;
 }
 
 #mxDescrEntry {
-	position: relative;
+	position: absolute;
 	left: 0px;
-	top: 10px;
-	width: 170px;
+	top: 20px;
+	width: 255px;
 	height: 43px;
 	font-family: arial;
 }
@@ -363,44 +360,60 @@ textarea{
 #draw-cbaddmeasure{
 	position: absolute;
 	top: 150px;
-	left: 100px;
+	left: 0px;
 }
 #draw-lbaddmeasure{
 	position: absolute;
-	top: 150px;
+	top: 152px;
+	left: 25px;
+}
+#draw-cbvisible{
+	position: absolute;
+	top: 0px;
 	left: 0px;
+}
+#draw-lbvisible{
+	position: absolute;
+	top: 2px;
+	left: 25px;
 }
 #mxButtonDiv{
 	position: absolute;
 	top: 260px;
 	left: 0px;
 	width: 170px;
-	height: 30px;
-}
-#draw-opencopylink{
-	width: 170px;
+	height: 80px;
 }
 #draw-load{
-	width: 70px;
+	width: 125px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+#draw-import{
+	width: 125px;
+	position: absolute;
+	top: 0px;
+	left: 135px;
+}
+#draw-save{
+	width: 125px;
 	position: absolute;
 	top: 35px;
 	left: 0px;
 }
-#draw-save{
-	width: 70px;
+#draw-clear{
+	width: 125px;
 	position: absolute;
 	top: 35px;
-	left: 80px;
+	left: 135px;
 }
-#draw-import{
-	width: 70px;
-	position: absolute;
-	top: 35px;
-	left: 160px;
+#draw-opencopylink{
+	width: 170px;
 }
 #draw-result{
 	position: absolute;
 	top : 330px;
-	width: 170px;
+	width: 220px;
 	color: #023f88;
 }
