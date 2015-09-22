@@ -11,7 +11,11 @@ sMap.Lang.lang.Export = {
 		lblEmail : "e-post",
 		lblExtent : "Avgränsa område med:",
 		btnPoly : "Polygon",
-		btnBox : "Ruta"
+		btnPolyTitle : "Rita en fri begränsningsfigur. Avsluta med dubbelklick",
+		btnBox : "Ruta",
+		btnBoxTitle : "Rita en begränsningsruta",
+		btnCopy : "Urval",
+		btnCopyTitle : "Kopiera begränsning från valt objekt"
 	},
 	en : { 
 		buttonText : "Export",
@@ -24,7 +28,11 @@ sMap.Lang.lang.Export = {
 		lblEmail : "email",
 		lblExtent : "Select area by:",
 		btnPoly : "Polygon",
-		btnBox : "Box"
+		btnPolyTitle : "Draw a polygon. Finish with doubleclick",
+		btnBox : "Box",
+		btnBoxTitle : "Draw a box",
+		btnCopy : "Selection",
+		btnCopyTitle : "Copy from selected object"
 	}
 	
 };

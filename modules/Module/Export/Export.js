@@ -155,18 +155,37 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 		}
 		dialogDiv.append(selectCRS);
 		dialogDiv.append("<BR /><BR />"+this.lang.lblExtent+"<BR />");
-		var polybtn = $("<button id='export-polyextent'>"+this.lang.btnPoly+"</button>");
+		var polybtn = $("<button id='export-polyextent' title='"+this.lang.btnPolyTitle+"'>"+this.lang.btnPoly+"</button>");
 		polybtn.button();
 		polybtn.click(function() {
 			self.toggleDraw("poly");
 		});
 		dialogDiv.append(polybtn);
-		var boxbtn = $("<button id='export-boxextent'>"+this.lang.btnBox+"</button>");
+		var boxbtn = $("<button id='export-boxextent' title='"+this.lang.btnBoxTitle+"'>"+this.lang.btnBox+"</button>");
 		boxbtn.button();
 		boxbtn.click(function() {
 			self.toggleDraw("box");
 		});
 		dialogDiv.append(boxbtn);
+		var copybtn = $("<button id='export-copyextent' title='"+this.lang.btnCopyTitle+"'>"+this.lang.btnCopy+"</button>");
+		copybtn.button();
+		copybtn.click(function() {
+			var sl = self.map.getLayersByName("selectLayer")[0];
+			if (sl && sl.features.length>0){
+				self.addExportExtentLayer();
+				self.clearDraw();
+				var sf = sl.features[0].clone();
+				sMap.events.triggerEvent("unselect", this, {});
+				var f = new OpenLayers.Feature.Vector(sf.geometry);
+				self.exportExtentLayer.addFeatures(f);
+				//self.exportExtentLayer.redraw();
+			}
+			else{
+				alert('Markera något och klicka sedan på knappen!');
+				$('#export-copyextent').removeClass('ui-state-focus');
+			}
+		});
+		dialogDiv.append(copybtn);
 		dialogDiv.append("<BR /><BR />");
 		
 		var button = $("<button id='export-submit'>"+this.lang.btnExport+"</button>");
@@ -189,7 +208,8 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 					"default": new OpenLayers.Style({
 						fillOpacity: 0,
 						fillColor: "#FFF",
-						strokeWidth: 1,
+						strokeWidth: 2,
+						strokeDashstyle: "dash",
 						strokeOpacity: 1,
 						strokeColor: "#F00"
 					}),
@@ -200,9 +220,11 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 						strokeOpacity: 1,
 						strokeColor: "#F00"
 					})
-				})
+				}),
+				rendererOptions: {yOrdering: true, zIndexing: true}
 			});
 			this.map.addLayer(this.exportExtentLayer);
+			this.exportExtentLayer.setZIndex(this.zIndex);
 			this.exportExtentLayer.events.register("featureadded", this, function(e) {
 				this.toggleDraw("finished");
 			});
@@ -259,6 +281,7 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 				if (this.drawRegularPolygon.active){
 					this.deactivateBox();
 				}
+				$('#export-copyextent').removeClass('ui-state-focus');
 				break;
 		}
 	},
@@ -293,16 +316,15 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			routine = this.exportRoutines[$("#export-selectRoutine").val()],
 			crs = $("#export-crsSelectTag").val(),
 			data = {};//,
-			//url = routine.url + "L=";
 		if (routine.layerlist){
-			//url += routine.layerlist;
 			data.L = routine.layerlist;
 		}
 		if (routine.addVisibleLayers){
 			var t = {},
 				visibleLayerNames = "",
 				layercount = 0,
-				layer = {};
+				layer = {},
+				encFeatures = [];
 			for (var i=0;i<map.layers.length;i++){
 				layer = map.layers[i];
 				t = sMap.cmd.getLayerConfig(layer.name);
@@ -322,21 +344,21 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 					}
 					layercount++;
 				}else if (layer.visibility && layer.CLASS_NAME == "OpenLayers.Layer.Vector" && (layer.name == "theDrawLayer" || layer.name == "theInfoLayer")&& layer.features.length){ //theDrawLayer vector
-						var encFeatures = [];
-						var features = layer.features;
-						var featureFormat = new OpenLayers.Format.GeoJSON();
-						var feature;
-						for ( var j = 0, len = features.length; j < len; ++j) {
-							feature = features[j];
-							var featureGeoJson = featureFormat.extract.feature.call(
-								featureFormat, feature);
-							encFeatures.push(featureGeoJson);
-						}
-					data.J = JSON.stringify(encFeatures);
+					var features = layer.features;
+					var featureFormat = new OpenLayers.Format.GeoJSON();
+					var feature;
+					for ( var j = 0, len = features.length; j < len; ++j) {
+						feature = features[j];
+						var featureGeoJson = featureFormat.extract.feature.call(
+							featureFormat, feature);
+						encFeatures.push(featureGeoJson);
+					}
 				}
 			}
+			if (encFeatures.length>0){
+				data.J = JSON.stringify(encFeatures);
+			}
 			if (visibleLayerNames){
-				//url += visibleLayerNames;
 				data.L = visibleLayerNames;
 			}
 			if (layercount > this.maxlayers) {
@@ -344,17 +366,7 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 				return;
 			}
 		}
-		if (routine.addBaseLayer){
-			if (routine.emptyBaseLayer){
-				//url += "&BL=";
-				data.BL = "";
-			} else{
-				//url += "&BL="+map.baseLayer.name;
-				data.BL = map.baseLayer.name;
-			}
-		}
 		if (routine.format){
-			//url += "&FF="+routine.format;
 			data.FF = routine.format;
 		}
 		var bp = "";
@@ -370,7 +382,6 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 					}
 					bp += Math.round(fv[i].x) + "," + Math.round(fv[i].y);
 				}
-				//url += "&BP=" + bp;
 				data.BP = bp;
 			}
 		}else{
@@ -381,17 +392,21 @@ sMap.Module.Export = OpenLayers.Class(sMap.Module, {
 			bp += "," + Math.round(extent.bottom);
 			bp += "," + Math.round(extent.right);
 			bp += "," + Math.round(extent.top);
-			//url += "&B=" + bp;
 			data.B = bp;
 		}
-		//url += "&C=" + crs;
+		if (routine.addBaseLayer){
+			if (routine.emptyBaseLayer){
+				data.BL = "";
+			} else{
+				data.BL = map.baseLayer.name;
+			}
+			var extx = extent.right - extent.left,
+				exty = extent.top - extent.bottom,
+				maxext = (extx > exty) ? extx : exty,
+				q = Math.round(maxext/this.map.getScale()*this.serviceDPI*100/2.54);
+			data.Q = q;
+		}
 		data.C = crs;
-		var extx = extent.right - extent.left,
-			exty = extent.top - extent.bottom,
-			maxext = (extx > exty) ? extx : exty,
-			q = Math.round(maxext/this.map.getScale()*this.serviceDPI*100/2.54);
-		//url += "&Q=" + q;
-		data.Q = q;
 		//alert(url);
 		//$('#export_result').prop('src', url);
 		$.ajax({

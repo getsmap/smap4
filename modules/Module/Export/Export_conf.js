@@ -20,6 +20,10 @@ sMap.moduleConfig.Export = {
 		width : 240,
 		height : 410,
 		/**
+		 * Makes the drawlayer to be drawn over the overlays
+		 */
+		zIndex: 698,
+		/**
 		 * Path to the service recieving the POST-form
 		 */
 		 postURL : "/wkartor/export/tillfPOST.php",
