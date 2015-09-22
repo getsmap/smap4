@@ -211,8 +211,9 @@ sMap.Module.GetFeatureInfo = OpenLayers.Class(sMap.Module, {
 	            }
 	        }
 	    }
+		var dstyle = this.infoLayerConfig.style["default"];
 		var geometry = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat),
-			attributes = {info:text},
+			attributes = {info:text,color:dstyle.fillColor,text:text,gn:dstyle.graphicName,size:dstyle.pointRadius,fontsize:dstyle.fontSize},
 			feature = new OpenLayers.Feature.Vector(geometry,attributes),
 			addlabels = $("#gfi-addlabels").prop('checked');
 		if (!addlabels){
