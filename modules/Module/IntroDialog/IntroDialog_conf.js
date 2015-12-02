@@ -33,6 +33,7 @@ sMap.moduleConfig.IntroDialog = {
 			modal: false,
 			autoOpen: false,
 			position: "center",
-			cookieName: 'smap_introdialog_dontshowagain'
+			cookieName: 'smap_introdialog_dontshowagain',
+			cookieExpiresDays: 365 // null = session cookie
 		}
 };
