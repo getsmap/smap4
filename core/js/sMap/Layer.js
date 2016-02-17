@@ -8,6 +8,12 @@ sMap.Layer = OpenLayers.Class({
 	 * added so that one layer is not added twice.
 	 */
 	addedLayers : [],
+
+	/**
+	 * Layers which have an extra layer defined, visible at certain scales
+	 * @type {Array}
+	 */
+	_doubleLayers: [],
 	
 	initialize : function(map, options) {
 		options = options || {};
@@ -23,6 +29,84 @@ sMap.Layer = OpenLayers.Class({
 				}
 			}
 		});
+
+		// -- Implementing issue #42 (split layers) --
+
+		function addSplitLayers() {
+			this._doubleLayers.forEach( (function(lay) {
+				var splitLayer = lay.options._splitLayer;
+				sMap.events.unregister("maploaded", this, addSplitLayers);
+
+				setTimeout( (function() {
+					this.map.addLayer(splitLayer);
+					splitLayer.setVisibility(lay.getVisibility() || false);
+				}).bind(this), 0)
+			}).bind(this) );
+		}
+
+		sMap.events.register("maploaded", this, addSplitLayers);
+
+
+
+		var onShowHide = function(e) {
+			var show = e.type === "showlayer" ? true : false;
+
+			var layer, layerName;
+			var baseLayers = [];
+			if (e.type === "changebaselayer") {
+				layer = e.layer;
+				layerName = layer.name;
+				baseLayers = this._doubleLayers.filter(function(lay) {
+					return lay.options.isBaseLayer && lay.options.isBaseLayer === true;
+				});
+				
+				baseLayers.forEach(function(lay) {
+					var splitLayer = lay.options._splitLayer;
+					setTimeout(function() {
+						if (lay.name === layerName) {
+							splitLayer.setVisibility(true);
+						}
+						else {
+							splitLayer.setVisibility(false);
+						}
+					}, 1000)
+				});
+
+			}
+			else {
+				var doubleLayerNames = this._doubleLayers.map(function(item) {
+					return item.name;
+				});
+				if (doubleLayerNames.indexOf(layerName) > -1) {
+					var t = sMap.cmd.getLayerConfig(layerName);
+					if (t && t.options && t.options.splitLayer) {
+						var layers = this.map.getLayersByName(t.options.splitLayer.name);
+						layer = layers.length ? layers[0] : null;
+						if (show === true) {
+							// if (!layer) {
+							// 	// Create layer
+							// 	var layer = this.createLayer(t.options.splitLayer);
+							// 	layer.displayInLayerSwitcher = false;
+							// 	layer.options.isBaseLayer = false;
+							// 	this.map.addLayer(layer);
+
+							// }
+							// else {
+							layer.setVisibility(true);
+							// }
+						}
+						else {
+							if (layer) {
+								layer.setVisibility(false);
+							}
+						}
+					}
+				}
+			}
+		}
+		sMap.events.register("showlayer", this, onShowHide);
+		sMap.events.register("hidelayer", this, onShowHide);
+		this.map.events.register("changebaselayer", this, onShowHide);
 	},
 	
 	/**
@@ -78,15 +162,23 @@ sMap.Layer = OpenLayers.Class({
 			layer: layer
 		});
 	},
+
+	/**
+	 * Create layer and add to the map.
+	 * @param {[type]} t [description]
+	 */
+	addLayerWithConfig: function(t) {
+		var layer = this.createLayer(t);
+		this.addLayer(layer);
+	},
 	
 	/**
-	 * Make a layer based on standard sMap configuration and add
-	 * the layer to the map.
+	 * Make a layer based on standard sMap configuration.
 	 * 
 	 * @param t {Object} See specifications for sMap layers (baselayers and overlays).
 	 * @returns {void}
 	 */
-	addLayerWithConfig : function(t) {
+	createLayer : function(t) {
 		t = t || {};
 		
 		if (!t.layerType) {
@@ -139,7 +231,7 @@ sMap.Layer = OpenLayers.Class({
 				t.params,
 				t.options
 			);
-			if (t.params.format == "image/jpeg") {  //Hack. Otherwise if image/jpeg OL sets png.
+			if (t.params.format == "image/jpeg") {  //Hack. Otherwise if image/jpeg OL sets png. Actually, should probably use `noMagic: false` instead.
 				layer.params.FORMAT = "image/jpeg";
 			}
 		}
@@ -295,7 +387,60 @@ sMap.Layer = OpenLayers.Class({
 			layer.options.displayInLayerSwitcher = true;
 		}
 		layer.selectable = t.selectable || false;
-		this.addLayer(layer);
+
+		// -- Implementing issue #42 (split layers) --
+		
+		if (t.options.splitLayer) {
+			this._doubleLayers.push(layer);
+			// Add at once
+			var splitLayer = this.createLayer(t.options.splitLayer);
+			splitLayer.setZIndex(layer.zIndex ? layer.zIndex : splitLayer.zIndex); // make it appear on top of parent layer
+			t.options._splitLayer = splitLayer; // store in config
+			layer.options._splitLayer = splitLayer; // store in layer
+			splitLayer.displayInLayerSwitcher = false;
+			splitLayer.options.isBaseLayer = false;
+			splitLayer.isBaseLayer = false;
+
+
+			var _switchOpacity = function() {
+				sMap.events.unregister("maploaded", this, _switchOpacity);
+
+				// Update visibility for split layers and their parent (if splitRange was defined)
+				if (this._doubleLayers.length) {
+					this._doubleLayers.forEach(function(lay) {
+						var _splitLayer = lay.options._splitLayer;
+						var splitRange = _splitLayer.options.splitRange,
+							curZoom = sMap.map.getZoom();
+						if (splitRange) {
+							var splitLayerShouldBeVisible = curZoom >= splitRange[0] && curZoom <= splitRange[1];
+							if (splitLayerShouldBeVisible) {
+								lay.setOpacity(0);
+								_splitLayer.setOpacity(1);
+								_splitLayer.setZIndex(lay.zIndex); // required
+							}
+							else {
+								lay.setOpacity(1);
+								_splitLayer.setOpacity(0);
+							}
+						}
+					});
+				}
+			}
+
+			var switchOpacity = function() {
+				if (sMap.events.mapLoaded) {
+					_switchOpacity.call(this);
+				}
+				else {
+					sMap.events.register("maploaded", this, _switchOpacity);
+				}
+			}
+			this.map.events.register("zoomend", this, switchOpacity);
+
+		}
+		// -- End -- implementing issue #42 (split layers) --
+
+		return layer;
 	},
 
 	/**
