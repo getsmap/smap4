@@ -19,13 +19,13 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 * 
 	 * Look at the event listeners as a public API of the module.
 	 */
-	EVENT_LISTENERS : ["layervisible","layerhidden","setbaselayer","delopacityrow","addopacityrow","creatingwebparams","afterapplyingwebparams"],
+	EVENT_LISTENERS : ["layervisible","layerhidden","setbaselayer","delopacityrow","addopacityrow", "creatingwebparams","afterapplyingwebparams"],
 	
 	/**
 	 * The events triggered from this module. Note that some modules
 	 * both listens to and trigger events.
 	 */
-	EVENT_TRIGGERS : [],
+	EVENT_TRIGGERS : ["layeropacitychanged"],
 	
 	/**
 	 * "allNamesInGUI" - keeps track of the layers in the opacityTool-dialog.
@@ -53,6 +53,15 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		// This calls the parent class's constructor and allows to
 		// extend it (e.g. override methods).
 		sMap.Module.prototype.initialize.apply(this, [options]);
+
+		//Create a div for all opacityrows.
+		var opacityRowsDiv = $("<div class='opacity-rowsdiv'></div>");
+		this.opacityRowsDiv = opacityRowsDiv;
+
+		var opacityDiv = $("<div id='opacity-maindiv' />");
+		this.opacityDiv = opacityDiv;
+
+		opacityDiv.append(opacityRowsDiv);
 		
 	},
 	
@@ -151,8 +160,8 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		}
 		
 		//When a layer is checked in overlayswitcher, it will appear in opacityTool as well.
-		var layerToAdd = this.map.getLayersByName(e.layer.name);
-		this.addopacityrow(layerToAdd);
+		var layersToAdd = this.map.getLayersByName(e.layer.name);
+		this.addopacityrow({layersToAdd: layersToAdd});
 	},
 	
 	/**
@@ -172,7 +181,7 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		}
 		
 		//When a layer is unchecked in overlayswitcher, it will disappear in opacityTool as well.
-		this.delopacityrow(e.layer.name);
+		this.delopacityrow({delLayer: e.layer.name});
 	},
 	
 	/**
@@ -194,11 +203,11 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		
 		//Remove the current BaseLayer from opacityTool
 		var oldBaseLayer = self.activeBaseLayer; 
-		self.delopacityrow(oldBaseLayer);
+		self.delopacityrow({delLayer: oldBaseLayer});
 		
 		//Add the new BaseLayer to opacityTool
 		var newBaseLayer = self.map.getLayersByName(e.layerName);
-		self.addopacityrow(newBaseLayer);
+		self.addopacityrow({layersToAdd: newBaseLayer});
 		
 		//Remember the new BaseLayer
 		self.activeBaseLayer = e.layerName;
@@ -213,17 +222,19 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 * @returns
 	 */
 	
-	delopacityrow : function(delLayer){
+	delopacityrow : function(e){
+		var delLayer = e.delLayer;
+
 		var allNamesInGUI = this.allNamesInGUI,
 		//If delLayer is an object - fetch the name. Otherwise take the argument as-is.
-		delLayer = ( typeof(delLayer) == "object" ) ? delLayer.name : delLayer;
+		delLayer = typeof(delLayer) == "object" ? delLayer.name : delLayer;
 		
 		//Find out which layer to delete in allNamesInGUI vector, and delete it.
-		var rowIndex = $.inArray(delLayer,allNamesInGUI);
-		allNamesInGUI.splice(rowIndex,1);
+		var rowIndex = $.inArray(delLayer, allNamesInGUI);
+		allNamesInGUI.splice(rowIndex, 1);
 		
 		//Delete the layer in the GUI
-		$(".opacity-rowsdiv").find("#"+delLayer).remove();
+		$(".opacity-rowsdiv").find(".opacityrow-"+delLayer).remove();
 	},
 	
 	/**
@@ -234,8 +245,8 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 *      
 	 * @returns
 	 */
-	
-	addopacityrow : function(layersToAdd) {
+	addopacityrow : function(e) {
+		var layersToAdd = e.layersToAdd || [];
 		var self = this,
 			allNamesInGUI = this.allNamesInGUI,
 			opacityRowsDiv = this.opacityRowsDiv;
@@ -250,7 +261,7 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			//		d) name != "poiLayer"
 			//		e) name != "theDrawLayer"
 			
-			if (t.displayInLayerSwitcher != true || t.visibility != true || t.name == "selectLayer" || t.name == "poiLayer" || t.name == "theDrawLayer"){
+			if ( (t.options && t.options.splitLayer && t.options.splitLayer.options && t.options.splitLayer.options.dontShowInOpacitySwitcher) || t.displayInLayerSwitcher != true || t.visibility != true || t.name == "selectLayer" || t.name == "poiLayer" || t.name == "theDrawLayer"){
 				continue; //Stop and begin a new iteration
 			}
 			
@@ -260,7 +271,7 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 				allNamesInGUI.push(t.name);
 			}
 			else{
-				alert("Layer " + t.name + " is already in list!");
+				console.log("Layer " + t.name + " is already in list!");
 				continue; //Stop and begin a new iteration
 			}
 			
@@ -271,6 +282,9 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			if (!layerConfig || !(layerConfig instanceof Object)) {
 				continue;
 			}
+			if ( opacityRowsDiv.find(".opacityrow-"+t.name).length > 0) {
+				continue;
+			}
 			var name = layerConfig.displayName,
 				theSliderDivId = OpenLayers.Util.createUniqueID(),
 				decVal = 1, 
@@ -279,8 +293,9 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			decVal = t.opacity != null ? t.opacity : decVal;
 			guiVal = Math.round(decVal * 100);
 			
-			var opacityRow = $("<div class='opacity-rows' id='" + t.name + "'><span class='opacity-mapname'>" + name + "</span>" + 
+			var opacityRow = $("<div class='opacity-rows opacityrow-"+t.name+"'><span class='opacity-mapname'>" + name + "</span>" + 
 					"<div class='opacity-sliderdiv' id='" + theSliderDivId + "'></div><span class='opacity-values'>" + guiVal + "</span></div>");
+			opacityRow.data("layerName", t.name);
 			
 			opacityRow.children("div#"+theSliderDivId).slider({
 				value: guiVal,
@@ -289,11 +304,19 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 				},
 				start: function(e, ui){},
 				animate: true,
-				slide: function(e, ui) {	
-					var internalMapName = $(this).parent().get(0).id;
-					var theMap = self.map.getLayersByName(internalMapName)[0];
-					theMap.setOpacity(ui.value / 100);
+				slide: function(e, ui) {
+					var internalLayerName = $(this).parent().data("layerName");
+					var theLayer = self.map.getLayersByName(internalLayerName)[0];
+					var oldOpacity = theLayer.opacity;
+					var newOpacity = ui.value / 100;
+					theLayer.setOpacity(newOpacity);
 					$(this).parent().children("span.opacity-values").text(ui.value);
+					sMap.events.triggerEvent("layeropacitychanged", this, {
+						layer: theLayer,
+						oldOpacity: oldOpacity,
+						newOpacity: newOpacity
+
+					});
 				},
 				stop: function(e, ui){
 					sMap.events.triggerEvent("updatelinkentries", this, {});
@@ -391,17 +414,15 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 * @returns opacityDiv {Object} jquery-object with content for the dialog.
 	 */
 	
-	createContent : function(opacityDiv) {
+	createContent : function() {
 		var self = this,
-			allLayers = this.map.layers,
-			opacityDiv = $("<div id='opacity-maindiv' />");
-		
-		//Create a div for all opacityrows.
-		var opacityRowsDiv = $("<div class='opacity-rowsdiv'></div>");
-		self.opacityRowsDiv = opacityRowsDiv;
+			allLayers = this.map.layers;
+
+		var opacityDiv = this.opacityDiv;
+		var opacityRowsDiv = this.opacityRowsDiv;
 		
 		//Add row(s) for layer(s) in vector allLayers.
-		self.addopacityrow(allLayers);
+		self.addopacityrow({layersToAdd: allLayers});
 		
 		//Create a reset button that sets opacity to 1 for all layers.
 		var resetButton = $("<div id='opacity-btndiv'><button id='opacity-togglebtn'>" + self.lang.resetButtonText + "</button></div>");
@@ -418,7 +439,6 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			});
 		});
 		
-		opacityDiv.append(opacityRowsDiv);
 		opacityDiv.append(resetButton);
 		resetButton.find("button").button();
 		

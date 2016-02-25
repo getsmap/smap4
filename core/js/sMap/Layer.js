@@ -46,7 +46,24 @@ sMap.Layer = OpenLayers.Class({
 
 		sMap.events.register("maploaded", this, addSplitLayers);
 
-
+		var _addOpacityRow = function(parentLayer) {
+			var clonedLayer = $.extend(true, {}, parentLayer);
+			clonedLayer.visibility = true;
+			var mods = sMap.map.getControlsByClass("sMap.Module.Opacity");
+			var opacModule = mods.length ? mods[0] : null;
+			sMap.events.triggerEvent("addopacityrow", opacModule, {
+				layersToAdd: [clonedLayer]
+			});
+		};
+		var _removeOpacityRow = function(parentLayer) {
+			var clonedLayer = $.extend(true, {}, parentLayer);
+			clonedLayer.visibility = true;
+			var mods = sMap.map.getControlsByClass("sMap.Module.Opacity");
+			var opacModule = mods.length ? mods[0] : null;
+			sMap.events.triggerEvent("delopacityrow", opacModule, {
+				delLayer: clonedLayer
+			});
+		};
 
 		var onShowHide = function(e) {
 			var show = e.type === "showlayer" ? true : false;
@@ -56,6 +73,7 @@ sMap.Layer = OpenLayers.Class({
 			if (e.type === "changebaselayer") {
 				layer = e.layer;
 				layerName = layer.name;
+				// console.log("baselayerchange: "+layerName);
 				baseLayers = this._doubleLayers.filter(function(lay) {
 					return lay.options.isBaseLayer && lay.options.isBaseLayer === true;
 				});
@@ -65,11 +83,13 @@ sMap.Layer = OpenLayers.Class({
 					setTimeout(function() {
 						if (lay.name === layerName) {
 							splitLayer.setVisibility(true);
+							// _addOpacityRow(lay); // might need to add this on showlayer also for overlays-splitlayers to work with opacity???
 						}
 						else {
 							splitLayer.setVisibility(false);
+							// _removeOpacityRow(lay);
 						}
-					}, 1000)
+					}, 1000);
 				});
 
 			}
@@ -92,12 +112,15 @@ sMap.Layer = OpenLayers.Class({
 
 							// }
 							// else {
-							layer.setVisibility(true);
+							layer.setOpacity(1);
+							// _addOpacityRow(lay);
+
 							// }
 						}
 						else {
 							if (layer) {
-								layer.setVisibility(false);
+								layer.setOpacity(0);
+								// _removeOpacityRow(lay);
 							}
 						}
 					}
@@ -107,8 +130,28 @@ sMap.Layer = OpenLayers.Class({
 		sMap.events.register("showlayer", this, onShowHide);
 		sMap.events.register("hidelayer", this, onShowHide);
 		this.map.events.register("changebaselayer", this, onShowHide);
+		sMap.events.register("layeropacitychanged", this, function(e) {
+			// Make sure the split layer gets same opacity as its parent (only works for custom event layeropacitychanged!)
+			var layerIndex = this._doubleLayers.indexOf(e.layer);
+			if ( layerIndex > -1 ) {
+				var layer = this._doubleLayers[layerIndex];
+				if (layer.options._splitLayer) {
+					var splitRange = layer.options._splitLayer.options.splitRange;
+					var curZoom = sMap.map.getZoom();
+					var splitLayerShouldBeVisible = curZoom >= splitRange[0] && curZoom <= splitRange[1];
+					if (splitLayerShouldBeVisible) {
+						layer.options._splitLayer.setOpacity(layer.opacity);
+						layer.setOpacity(0);
+					}
+					else {
+						layer.options._splitLayer.setOpacity(0);
+					}
+				}
+			}
+		});
+		
 	},
-	
+
 	/**
 	 * Standard method for adding a layer to the map.
 	 * An array keeps track of which layers have been
@@ -391,6 +434,7 @@ sMap.Layer = OpenLayers.Class({
 		// -- Implementing issue #42 (split layers) --
 		
 		if (t.options.splitLayer) {
+			t.options.splitLayer.options.dontShowInOpacitySwitcher = true;
 			this._doubleLayers.push(layer);
 			// Add at once
 			var splitLayer = this.createLayer(t.options.splitLayer);
@@ -402,8 +446,8 @@ sMap.Layer = OpenLayers.Class({
 			splitLayer.isBaseLayer = false;
 
 
-			var _switchOpacity = function() {
-				sMap.events.unregister("maploaded", this, _switchOpacity);
+			var _switchVisibility = function() {
+				sMap.events.unregister("maploaded", this, _switchVisibility);
 
 				// Update visibility for split layers and their parent (if splitRange was defined)
 				if (this._doubleLayers.length) {
@@ -427,16 +471,15 @@ sMap.Layer = OpenLayers.Class({
 				}
 			}
 
-			var switchOpacity = function() {
+			var switchVisibility = function() {
 				if (sMap.events.mapLoaded) {
-					_switchOpacity.call(this);
+					_switchVisibility.call(this);
 				}
 				else {
-					sMap.events.register("maploaded", this, _switchOpacity);
+					sMap.events.register("maploaded", this, _switchVisibility);
 				}
 			}
-			this.map.events.register("zoomend", this, switchOpacity);
-
+			this.map.events.register("zoomend", this, switchVisibility);
 		}
 		// -- End -- implementing issue #42 (split layers) --
 
