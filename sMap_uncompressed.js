@@ -1048,6 +1048,12 @@ sMap.Layer = OpenLayers.Class({
 	 * added so that one layer is not added twice.
 	 */
 	addedLayers : [],
+
+	/**
+	 * Layers which have an extra layer defined, visible at certain scales
+	 * @type {Array}
+	 */
+	_doubleLayers: [],
 	
 	initialize : function(map, options) {
 		options = options || {};
@@ -1063,8 +1069,129 @@ sMap.Layer = OpenLayers.Class({
 				}
 			}
 		});
+
+		// -- Implementing issue #42 (split layers) --
+
+		function addSplitLayers() {
+			this._doubleLayers.forEach( (function(lay) {
+				var splitLayer = lay.options._splitLayer;
+				sMap.events.unregister("maploaded", this, addSplitLayers);
+
+				setTimeout( (function() {
+					this.map.addLayer(splitLayer);
+					splitLayer.setVisibility(lay.getVisibility() || false);
+				}).bind(this), 0)
+			}).bind(this) );
+		}
+
+		sMap.events.register("maploaded", this, addSplitLayers);
+
+		var _addOpacityRow = function(parentLayer) {
+			var clonedLayer = $.extend(true, {}, parentLayer);
+			clonedLayer.visibility = true;
+			var mods = sMap.map.getControlsByClass("sMap.Module.Opacity");
+			var opacModule = mods.length ? mods[0] : null;
+			sMap.events.triggerEvent("addopacityrow", opacModule, {
+				layersToAdd: [clonedLayer]
+			});
+		};
+		var _removeOpacityRow = function(parentLayer) {
+			var clonedLayer = $.extend(true, {}, parentLayer);
+			clonedLayer.visibility = true;
+			var mods = sMap.map.getControlsByClass("sMap.Module.Opacity");
+			var opacModule = mods.length ? mods[0] : null;
+			sMap.events.triggerEvent("delopacityrow", opacModule, {
+				delLayer: clonedLayer
+			});
+		};
+
+		var onShowHide = function(e) {
+			var show = e.type === "showlayer" ? true : false;
+
+			var layer, layerName;
+			var baseLayers = [];
+			if (e.type === "changebaselayer") {
+				layer = e.layer;
+				layerName = layer.name;
+				// console.log("baselayerchange: "+layerName);
+				baseLayers = this._doubleLayers.filter(function(lay) {
+					return lay.options.isBaseLayer && lay.options.isBaseLayer === true;
+				});
+				
+				baseLayers.forEach(function(lay) {
+					var splitLayer = lay.options._splitLayer;
+					setTimeout(function() {
+						if (lay.name === layerName) {
+							splitLayer.setVisibility(true);
+							// _addOpacityRow(lay); // might need to add this on showlayer also for overlays-splitlayers to work with opacity???
+						}
+						else {
+							splitLayer.setVisibility(false);
+							// _removeOpacityRow(lay);
+						}
+					}, 1000);
+				});
+
+			}
+			else {
+				var doubleLayerNames = this._doubleLayers.map(function(item) {
+					return item.name;
+				});
+				if (doubleLayerNames.indexOf(layerName) > -1) {
+					var t = sMap.cmd.getLayerConfig(layerName);
+					if (t && t.options && t.options.splitLayer) {
+						var layers = this.map.getLayersByName(t.options.splitLayer.name);
+						layer = layers.length ? layers[0] : null;
+						if (show === true) {
+							// if (!layer) {
+							// 	// Create layer
+							// 	var layer = this.createLayer(t.options.splitLayer);
+							// 	layer.displayInLayerSwitcher = false;
+							// 	layer.options.isBaseLayer = false;
+							// 	this.map.addLayer(layer);
+
+							// }
+							// else {
+							layer.setOpacity(1);
+							// _addOpacityRow(lay);
+
+							// }
+						}
+						else {
+							if (layer) {
+								layer.setOpacity(0);
+								// _removeOpacityRow(lay);
+							}
+						}
+					}
+				}
+			}
+		}
+		sMap.events.register("showlayer", this, onShowHide);
+		sMap.events.register("hidelayer", this, onShowHide);
+		this.map.events.register("changebaselayer", this, onShowHide);
+		sMap.events.register("layeropacitychanged", this, function(e) {
+			// Make sure the split layer gets same opacity as its parent (only works for custom event layeropacitychanged!)
+			var layerIndex = this._doubleLayers.indexOf(e.layer);
+			if ( layerIndex > -1 ) {
+				var layer = this._doubleLayers[layerIndex];
+				if (layer.options._splitLayer) {
+					var splitRange = layer.options._splitLayer.options.splitRange;
+					var curZoom = sMap.map.getZoom();
+					var splitLayerShouldBeVisible = curZoom >= splitRange[0] && curZoom <= splitRange[1];
+					if (splitLayerShouldBeVisible) {
+						layer.options._splitLayer.setOpacity(layer.opacity);
+						layer.setOpacity(0);
+					}
+					else {
+						layer.options._splitLayer.setOpacity(0);
+					}
+				}
+			}
+		});
+		
 	},
-	
+
 	/**
 	 * Standard method for adding a layer to the map.
 	 * An array keeps track of which layers have been
@@ -1118,15 +1245,23 @@ sMap.Layer = OpenLayers.Class({
 			layer: layer
 		});
 	},
+
+	/**
+	 * Create layer and add to the map.
+	 * @param {[type]} t [description]
+	 */
+	addLayerWithConfig: function(t) {
+		var layer = this.createLayer(t);
+		this.addLayer(layer);
+	},
 	
 	/**
-	 * Make a layer based on standard sMap configuration and add
-	 * the layer to the map.
+	 * Make a layer based on standard sMap configuration.
 	 * 
 	 * @param t {Object} See specifications for sMap layers (baselayers and overlays).
 	 * @returns {void}
 	 */
-	addLayerWithConfig : function(t) {
+	createLayer : function(t) {
 		t = t || {};
 		
 		if (!t.layerType) {
@@ -1179,7 +1314,7 @@ sMap.Layer = OpenLayers.Class({
 				t.params,
 				t.options
 			);
-			if (t.params.format == "image/jpeg") {  //Hack. Otherwise if image/jpeg OL sets png.
+			if (t.params.format == "image/jpeg") {  //Hack. Otherwise if image/jpeg OL sets png. Actually, should probably use `noMagic: false` instead.
 				layer.params.FORMAT = "image/jpeg";
 			}
 		}
@@ -1335,7 +1470,60 @@ sMap.Layer = OpenLayers.Class({
 			layer.options.displayInLayerSwitcher = true;
 		}
 		layer.selectable = t.selectable || false;
-		this.addLayer(layer);
+
+		// -- Implementing issue #42 (split layers) --
+		
+		if (t.options.splitLayer) {
+			t.options.splitLayer.options.dontShowInOpacitySwitcher = true;
+			this._doubleLayers.push(layer);
+			// Add at once
+			var splitLayer = this.createLayer(t.options.splitLayer);
+			splitLayer.setZIndex(layer.zIndex ? layer.zIndex : splitLayer.zIndex); // make it appear on top of parent layer
+			t.options._splitLayer = splitLayer; // store in config
+			layer.options._splitLayer = splitLayer; // store in layer
+			splitLayer.displayInLayerSwitcher = false;
+			splitLayer.options.isBaseLayer = false;
+			splitLayer.isBaseLayer = false;
+
+
+			var _switchVisibility = function() {
+				sMap.events.unregister("maploaded", this, _switchVisibility);
+
+				// Update visibility for split layers and their parent (if splitRange was defined)
+				if (this._doubleLayers.length) {
+					this._doubleLayers.forEach(function(lay) {
+						var _splitLayer = lay.options._splitLayer;
+						var splitRange = _splitLayer.options.splitRange,
+							curZoom = sMap.map.getZoom();
+						if (splitRange) {
+							var splitLayerShouldBeVisible = curZoom >= splitRange[0] && curZoom <= splitRange[1];
+							if (splitLayerShouldBeVisible) {
+								lay.setOpacity(0);
+								_splitLayer.setOpacity(1);
+								_splitLayer.setZIndex(lay.zIndex); // required
+							}
+							else {
+								lay.setOpacity(1);
+								_splitLayer.setOpacity(0);
+							}
+						}
+					});
+				}
+			}
+
+			var switchVisibility = function() {
+				if (sMap.events.mapLoaded) {
+					_switchVisibility.call(this);
+				}
+				else {
+					sMap.events.register("maploaded", this, _switchVisibility);
+				}
+			}
+			this.map.events.register("zoomend", this, switchVisibility);
+		}
+		// -- End -- implementing issue #42 (split layers) --
+
+		return layer;
 	},
 
 	/**
@@ -2980,6 +3168,9 @@ sMap.WebParams = OpenLayers.Class({
 		if (orgParams.CONFIG) {
 			obj.CONFIG = orgParams.CONFIG;
 		}
+		if (orgParams.PRESET) {
+			obj.PRESET = orgParams.PRESET;
+		}
 
 		sMap.db.webParams = obj;
 		
@@ -3059,7 +3250,6 @@ sMap.WebParams = OpenLayers.Class({
 		sMap.events.triggerEvent("beforeapplyingwebparams", this, {} );
 		
 		this.applyDefaultParams(params);
-		
 		sMap.events.triggerEvent("afterapplyingwebparams", this, {
 			params: params
 		});
@@ -7178,7 +7368,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 	 * 
 	 * Look at the event listeners as a public API of the module.
 	 */
-	EVENT_LISTENERS : [],
+	EVENT_LISTENERS : ['layertreecreated', 'creatingwebparams'],
 	
 	/**
 	 * The events triggered from this module. Note that some modules
@@ -7206,7 +7396,62 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		sMap.Module.prototype.initialize.apply(this, [options]);
 		
 	},
-	
+
+	creatingwebparams: function() {
+		// preset-parameter undefined means user have selected the return-to-default item. Delete parameter so it can't end up in CopyLink.
+		if (this.preset) {
+			if (this.preset === 'undefined') {
+				delete sMap.db.webParams.PRESET;
+			}
+			else {
+				sMap.db.webParams.PRESET = this.preset;
+			}
+		}
+	},	
+
+	layertreecreated: function(){
+		if (!this.presetChecked) {
+			this.checkPresetRadio();
+		}
+
+		if (!this.layersSelected) {
+			 // Workaround to solve IE-problem where no layers is shown in mapDiv although loaded on page-load. Params now applies later during load.
+			if ($.browser.msie) {
+				if (sMap.events.mapInitiated) {
+					this.applyUrlParams();
+				}
+				else {
+					window.setTimeout( function() {
+						sMap.events.triggerEvent("layertreecreated", this, {});
+					}, 1000);
+				}
+			}
+
+			else {
+				this.applyUrlParams();
+			}
+		}
+	},
+
+	applyUrlParams: function() {
+		// selects layers once based on url-parameters
+		this.layersSelected = true;
+		var pString = sMap.cmd.getParamsAsString();
+		var pObj = this.stringToObject(pString);
+		this.applyParams(pObj);
+		
+	},
+
+	checkPresetRadio: function() {
+		// checks radio according to PRESET-parameter in url
+		var presetId = sMap.cmd.getParamsAsObject().PRESET;
+		if (presetId) {
+			this.presetChecked = true;
+			$('#' + presetId).prev().prop("checked", true);
+			this.preset = presetId;
+		}
+	},
+
 	activate : function() {
 		if (this.active===true) {
 			return false;
@@ -7329,8 +7574,9 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		var $this = $(e.target);
 		var pString = $this.parent().data("params");
 		var pObj = this.stringToObject(pString);
+		this.preset = $this.next().attr('id');
+		this.presetChecked = true;
 		this.applyParams(pObj);
-
 	},
 
 	_drawHeaders: function() {
@@ -7342,7 +7588,7 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 		var w = 0;
 		for (title in obj) {
 			arrOptions = obj[title];
-			$header = $('<div class="smap-clayers-header">'+title+'</div>');
+			$header = $('<div class="smap-clayers-header">'+title+'</div>').css('background-color', this.buttonColor);
 			this.$div.append($header);
 			$header
 				.on("mouseenter", this.onHeaderOver)
@@ -7353,7 +7599,8 @@ sMap.Module.CustomLayers = OpenLayers.Class(sMap.Module, {
 				.on("mouseleave", this.onDropDownOut);
 			for (var i = 0; i < arrOptions.length; i++) {
 				t = arrOptions[i];
-				$option = $('<div class="smap-clayers-option"><input name="clayers-radios" type="radio"></input><span>'+t.displayName+'</span></div>');
+				t.id = this.stringToObject(t.params).PRESET;
+				$option = $('<div class="smap-clayers-option"><input name="clayers-radios" type="radio"></input><span id="'+t.id+'">'+t.displayName+'</span></div>');
 				$option.data("params", t.params);
 				$option.find("span").on("click", this.onOptionSpanClick);
 				$dropDown.append($option);
@@ -10045,7 +10292,12 @@ sMap.Module.FeatureRequester = OpenLayers.Class(sMap.Module, {
                     	}
                     	val = OpenLayers.Util.upperCaseObject(OpenLayers.Util.getParameters(val));
                     	
-                    	var item = this.typeNameTolayerName[val.TYPENAME.replace('"','')],
+                    	var key = val.TYPENAME.replace('"','');
+                    	if (key.search(">") > -1) {
+                    		// Johan: fixes #35
+                    		key = key.substring(0, key.search(">"));
+                    	}
+                    	var item = this.typeNameTolayerName[key],
                     		layerName = null,
                     		f = null;
                     	if (item instanceof Array) {
@@ -10684,9 +10936,16 @@ sMap.Module.IntroDialog = OpenLayers.Class(sMap.Module, {
 		if (this.active===true) {
 			return false;
 		}
-		var dontShow = this.checkboxDontShow && $.cookie('smap_introdialog_dontshowagain') && $.cookie('smap_introdialog_dontshowagain') === "1" ? true : false;
+
+		// if custom cookieName exists, remove default cookie. User then will be shown default dialog when things are back to normal.
+		if (this.dialogOptions.cookieName && this.dialogOptions.cookieName !== $.cookie(this.defaultDialogOptions.cookieName)) {
+			$.removeCookie(this.defaultDialogOptions.cookieName);
+		}
+
+		var options = $.extend(this.defaultDialogOptions, this.dialogOptions);
+		var dontShow = this.checkboxDontShow && $.cookie(options.cookieName) && $.cookie(options.cookieName) === "1" ? true : false;
 		if (dontShow === true) {
-			debug.log("User has cookie smap_introdialog_dontshowagain. Not showing intro dialog");
+			debug.log("User has cookie " + options.cookieName + ". Not showing intro dialog");
 			return false;
 		}
 		this._makeDialog();
@@ -10729,12 +10988,14 @@ sMap.Module.IntroDialog = OpenLayers.Class(sMap.Module, {
 			var self = this;
 			this.dialog = $("<div id='introdialog-dialog'></div>");
 			var options = $.extend(this.defaultDialogOptions, this.dialogOptions);
+			var cookieName = options.cookieName;
+			var cookieExp = options.cookieExpiresDays;
 			
 			options.close = function() {
 				var isChecked = $("#introdialog-checkboxdiv input").prop("checked");
     	  		if (isChecked === true) {
     	  			// Add cookie
-    	  			$.cookie('smap_introdialog_dontshowagain', "1", {expires: 365});
+    	  			$.cookie(cookieName, "1", {expires: cookieExp});
     	  		}
     	  		// destroy dialog and free memory
 				$(this).empty().remove();
@@ -10814,7 +11075,9 @@ sMap.Module.IntroDialog = OpenLayers.Class(sMap.Module, {
 			height: "auto",
 			modal: false,
 			autoOpen: false,
-			position: "center"
+			position: "center",
+			cookieName: 'smap_introdialog_dontshowagain',
+			cookieExpiresDays: 365 // null = session cookie
 		}
 };
 sMap.Lang.lang.IntroDialog = {
@@ -11060,7 +11323,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 	 * The events triggered from this module. Note that some modules
 	 * both listens to and trigger events.
 	 */
-	EVENT_TRIGGERS : [],
+	EVENT_TRIGGERS : ['layertreecreated'],
 	
 	initialize : function(options) {
 		options = options || {};
@@ -11296,6 +11559,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				// Extract layer names from nodes
 				var layerNames = self.getLayerNamesFromNodes.call(self, nodes);
 				self.changeVisibility(layerNames, flag);
+		
 				
 			},
 			children: [],
@@ -11434,6 +11698,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		}
 		this.modifyNodes();
 		this.addHeaderDiv();
+		sMap.events.triggerEvent("layertreecreated", this, {});
 	},
 	
 	getLayerConfig: function(name) {
@@ -14637,13 +14902,13 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 * 
 	 * Look at the event listeners as a public API of the module.
 	 */
-	EVENT_LISTENERS : ["layervisible","layerhidden","setbaselayer","delopacityrow","addopacityrow","creatingwebparams","afterapplyingwebparams"],
+	EVENT_LISTENERS : ["layervisible","layerhidden","setbaselayer","delopacityrow","addopacityrow", "creatingwebparams","afterapplyingwebparams"],
 	
 	/**
 	 * The events triggered from this module. Note that some modules
 	 * both listens to and trigger events.
 	 */
-	EVENT_TRIGGERS : [],
+	EVENT_TRIGGERS : ["layeropacitychanged"],
 	
 	/**
 	 * "allNamesInGUI" - keeps track of the layers in the opacityTool-dialog.
@@ -14671,6 +14936,15 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		// This calls the parent class's constructor and allows to
 		// extend it (e.g. override methods).
 		sMap.Module.prototype.initialize.apply(this, [options]);
+
+		//Create a div for all opacityrows.
+		var opacityRowsDiv = $("<div class='opacity-rowsdiv'></div>");
+		this.opacityRowsDiv = opacityRowsDiv;
+
+		var opacityDiv = $("<div id='opacity-maindiv' />");
+		this.opacityDiv = opacityDiv;
+
+		opacityDiv.append(opacityRowsDiv);
 		
 	},
 	
@@ -14769,8 +15043,8 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		}
 		
 		//When a layer is checked in overlayswitcher, it will appear in opacityTool as well.
-		var layerToAdd = this.map.getLayersByName(e.layer.name);
-		this.addopacityrow(layerToAdd);
+		var layersToAdd = this.map.getLayersByName(e.layer.name);
+		this.addopacityrow({layersToAdd: layersToAdd});
 	},
 	
 	/**
@@ -14790,7 +15064,7 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		}
 		
 		//When a layer is unchecked in overlayswitcher, it will disappear in opacityTool as well.
-		this.delopacityrow(e.layer.name);
+		this.delopacityrow({delLayer: e.layer.name});
 	},
 	
 	/**
@@ -14812,11 +15086,11 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 		
 		//Remove the current BaseLayer from opacityTool
 		var oldBaseLayer = self.activeBaseLayer; 
-		self.delopacityrow(oldBaseLayer);
+		self.delopacityrow({delLayer: oldBaseLayer});
 		
 		//Add the new BaseLayer to opacityTool
 		var newBaseLayer = self.map.getLayersByName(e.layerName);
-		self.addopacityrow(newBaseLayer);
+		self.addopacityrow({layersToAdd: newBaseLayer});
 		
 		//Remember the new BaseLayer
 		self.activeBaseLayer = e.layerName;
@@ -14831,17 +15105,19 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 * @returns
 	 */
 	
-	delopacityrow : function(delLayer){
+	delopacityrow : function(e){
+		var delLayer = e.delLayer;
+
 		var allNamesInGUI = this.allNamesInGUI,
 		//If delLayer is an object - fetch the name. Otherwise take the argument as-is.
-		delLayer = ( typeof(delLayer) == "object" ) ? delLayer.name : delLayer;
+		delLayer = typeof(delLayer) == "object" ? delLayer.name : delLayer;
 		
 		//Find out which layer to delete in allNamesInGUI vector, and delete it.
-		var rowIndex = $.inArray(delLayer,allNamesInGUI);
-		allNamesInGUI.splice(rowIndex,1);
+		var rowIndex = $.inArray(delLayer, allNamesInGUI);
+		allNamesInGUI.splice(rowIndex, 1);
 		
 		//Delete the layer in the GUI
-		$(".opacity-rowsdiv").find("#"+delLayer).remove();
+		$(".opacity-rowsdiv").find(".opacityrow-"+delLayer).remove();
 	},
 	
 	/**
@@ -14852,8 +15128,8 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 *      
 	 * @returns
 	 */
-	
-	addopacityrow : function(layersToAdd) {
+	addopacityrow : function(e) {
+		var layersToAdd = e.layersToAdd || [];
 		var self = this,
 			allNamesInGUI = this.allNamesInGUI,
 			opacityRowsDiv = this.opacityRowsDiv;
@@ -14868,7 +15144,7 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			//		d) name != "poiLayer"
 			//		e) name != "theDrawLayer"
 			
-			if (t.displayInLayerSwitcher != true || t.visibility != true || t.name == "selectLayer" || t.name == "poiLayer" || t.name == "theDrawLayer"){
+			if ( (t.options && t.options.splitLayer && t.options.splitLayer.options && t.options.splitLayer.options.dontShowInOpacitySwitcher) || t.displayInLayerSwitcher != true || t.visibility != true || t.name == "selectLayer" || t.name == "poiLayer" || t.name == "theDrawLayer"){
 				continue; //Stop and begin a new iteration
 			}
 			
@@ -14878,7 +15154,7 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 				allNamesInGUI.push(t.name);
 			}
 			else{
-				alert("Layer " + t.name + " is already in list!");
+				console.log("Layer " + t.name + " is already in list!");
 				continue; //Stop and begin a new iteration
 			}
 			
@@ -14889,6 +15165,9 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			if (!layerConfig || !(layerConfig instanceof Object)) {
 				continue;
 			}
+			if ( opacityRowsDiv.find(".opacityrow-"+t.name).length > 0) {
+				continue;
+			}
 			var name = layerConfig.displayName,
 				theSliderDivId = OpenLayers.Util.createUniqueID(),
 				decVal = 1, 
@@ -14897,8 +15176,9 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			decVal = t.opacity != null ? t.opacity : decVal;
 			guiVal = Math.round(decVal * 100);
 			
-			var opacityRow = $("<div class='opacity-rows' id='" + t.name + "'><span class='opacity-mapname'>" + name + "</span>" + 
+			var opacityRow = $("<div class='opacity-rows opacityrow-"+t.name+"'><span class='opacity-mapname'>" + name + "</span>" + 
 					"<div class='opacity-sliderdiv' id='" + theSliderDivId + "'></div><span class='opacity-values'>" + guiVal + "</span></div>");
+			opacityRow.data("layerName", t.name);
 			
 			opacityRow.children("div#"+theSliderDivId).slider({
 				value: guiVal,
@@ -14907,11 +15187,19 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 				},
 				start: function(e, ui){},
 				animate: true,
-				slide: function(e, ui) {	
-					var internalMapName = $(this).parent().get(0).id;
-					var theMap = self.map.getLayersByName(internalMapName)[0];
-					theMap.setOpacity(ui.value / 100);
+				slide: function(e, ui) {
+					var internalLayerName = $(this).parent().data("layerName");
+					var theLayer = self.map.getLayersByName(internalLayerName)[0];
+					var oldOpacity = theLayer.opacity;
+					var newOpacity = ui.value / 100;
+					theLayer.setOpacity(newOpacity);
 					$(this).parent().children("span.opacity-values").text(ui.value);
+					sMap.events.triggerEvent("layeropacitychanged", this, {
+						layer: theLayer,
+						oldOpacity: oldOpacity,
+						newOpacity: newOpacity
+
+					});
 				},
 				stop: function(e, ui){
 					sMap.events.triggerEvent("updatelinkentries", this, {});
@@ -15009,17 +15297,15 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 	 * @returns opacityDiv {Object} jquery-object with content for the dialog.
 	 */
 	
-	createContent : function(opacityDiv) {
+	createContent : function() {
 		var self = this,
-			allLayers = this.map.layers,
-			opacityDiv = $("<div id='opacity-maindiv' />");
-		
-		//Create a div for all opacityrows.
-		var opacityRowsDiv = $("<div class='opacity-rowsdiv'></div>");
-		self.opacityRowsDiv = opacityRowsDiv;
+			allLayers = this.map.layers;
+
+		var opacityDiv = this.opacityDiv;
+		var opacityRowsDiv = this.opacityRowsDiv;
 		
 		//Add row(s) for layer(s) in vector allLayers.
-		self.addopacityrow(allLayers);
+		self.addopacityrow({layersToAdd: allLayers});
 		
 		//Create a reset button that sets opacity to 1 for all layers.
 		var resetButton = $("<div id='opacity-btndiv'><button id='opacity-togglebtn'>" + self.lang.resetButtonText + "</button></div>");
@@ -15036,7 +15322,6 @@ sMap.Module.Opacity = OpenLayers.Class(sMap.Module, {
 			});
 		});
 		
-		opacityDiv.append(opacityRowsDiv);
 		opacityDiv.append(resetButton);
 		resetButton.find("button").button();
 		
@@ -18783,18 +19068,23 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 				var f = features[i];
 				var name = f.layerName,
 					rowId = OpenLayers.Util.createUniqueID("selectrowfeature_");
+				if (!name) {
+					continue;
+				}
 				this.fDict[rowId] = f;
 				
 				var t = sMap.cmd.getLayerConfig(name),
 					style;
-				if (t) {
-					style = t.style || null;
-					if (style) {
-						style = style["default"];
-					}
-					else {
-						style = t.defaultStyle;						
-					}
+				if (!t) {
+					continue;
+				}
+				
+				style = t.style || null;
+				if (style) {
+					style = style["default"];
+				}
+				else {
+					style = t.defaultStyle;						
 				}
 				var iconURL = style ? style.externalGraphic : null;
 				
@@ -18826,7 +19116,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 						add : options.add,
 						xy: new OpenLayers.Pixel(px.x, px.y)
 					});
-					if (self.fitBoundsIfNotContained) {
+					if (self.zoomToExtent && self.fitBoundsIfNotContained) {
 						// Zoom to the feature's extent IF it's not contained in viewport.
 						var bounds = f.geometry.getBounds(),
 							viewportBounds = self.map.getExtent();
@@ -18942,6 +19232,18 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		 */
 		activateFromStart : true,
 		
+		/**
+		 * Zoom to extent of selected feature.
+		 * @type {Boolean}
+		 */
+		zoomToExtent: true,
+
+		/**
+		 * Zoom to extent of selected feature only if feature is not contained 
+		 * by current viewport.
+		 * @type {Boolean}
+		 * @requires zoomToExtent === true
+		 */
 		fitBoundsIfNotContained: true,
 		
 		
