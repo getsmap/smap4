@@ -252,6 +252,10 @@
 	margin-left: 3px;
 }
 
+.scroll-wrapper {
+    overflow-y: auto;
+}
+
 @media (min-width: 300px) {
     #sideDivRight {
         width: 50% !important;
