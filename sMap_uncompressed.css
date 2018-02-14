@@ -1358,8 +1358,10 @@ textarea{
     padding: 0 0 0 19px;	
 }
 .layertree-textwindow {
-	overflow: hidden !important;
+	overflow: auto !important;
 	padding: .2em;
+    height: 5000px !important;
+
 }
 .layertree-textwindow iframe {
 	width: 100%;
@@ -1403,6 +1405,12 @@ textarea{
 	cursor: pointer;
 	margin-left: 3px;
 }
+
+.scroll-wrapper {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll;
+}
+
 
 @media (min-width: 300px) {
     #sideDivRight {

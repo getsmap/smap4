@@ -12080,7 +12080,7 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		}
 		
 		// Create the textWindow dialog
-		var textWindow = $("<div class='layertree-textwindow' id='"+dialogId+"' />");
+		var textWindow = $("<div id='"+dialogId+"' />");
 		
 		if (this.iconSelectableLayerActive && this.iconSelectableLayer && img.attr("src") === this.iconSelectableLayer) {
 			// Add a little different icon for selectable layers to indicate
@@ -12174,31 +12174,32 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				});
 			});
 		}
-		textWindow.hide(); // Avoid interference with iframe scrolling
 		textWindow.empty();
 		if (content.substring(0, 4) == "http") {
 			// We are dealing with a URL.
-			
-			var iFrame = $('<iframe width="470" height="290" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0"></iframe>'); // scrolling='no'
-			iFrame.attr("src", content);
-			textWindow.append(iFrame);
-			if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-//				iFrame.css({
-//					"overflow": "auto",
-//					"-webkit-overflow-scrolling": "touch" 
-//				}).addClass("overthrow");
-				textWindow.css({
-					"overflow": "auto",
-					"-webkit-overflow-scrolling": "touch" 
-				}).addClass("overthrow");
-				iFrame.attr("height", "5000");
-				
-			}
+			// Use helper method to get HTML from the URL and append to the textWindow.
+			$(".ui-dialog-titlebar").css({'width': 'auto'});
+			this.htmlToDialog(content, textWindow);
+
 		}
 		else {
 			textWindow.html(content);
 		}
 		textWindow.dialog("open");
+	},
+
+	htmlToDialog: function(path, target) {
+		$.get(path, function(data) {
+
+			// Replace all relative paths in src-attributes.
+			var baseURL = path.match(/.*\//)[0]; //removes filename from end of URL
+			data = data.split('\n').map(function(x) {
+				var filePath = (x.match(/src="(?!http)(.*?)"/) != null) ? x.match(/src="(.*?)"/)[1]: '';
+				return x.replace(/src="(.*?)"/, 'src="' + baseURL + filePath + '"');
+			}).join('\n');
+
+			target.html(data);
+		});
 	},
 	
 	addItems: function() {

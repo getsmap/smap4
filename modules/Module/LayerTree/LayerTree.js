@@ -934,9 +934,8 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				var filePath = (x.match(/src="(?!http)(.*?)"/) != null) ? x.match(/src="(.*?)"/)[1]: '';
 				return x.replace(/src="(.*?)"/, 'src="' + baseURL + filePath + '"');
 			}).join('\n');
-			
-			var dialogContent = '<div class="scroll-wrapper">' + data + '</div>';
-			target.html(dialogContent);
+
+			target.html(data);
 		});
 	},
 	
