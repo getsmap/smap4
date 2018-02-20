@@ -61,6 +61,12 @@ sMap.moduleConfig.LayerTree = {
 		 * Use this icon for all folders. Set to null if you don't want any icon.
 		 */
 		folderIcon: "img/folder_page.gif",
+
+		/**
+		 * In the case of the content parameter is an URL: show content in an iframe
+		 * or fetch the source and place the content in the dialog element.
+		 */
+		contentAsIframe: true,
 		
 		/**
 		 * Option to add some text in the dialog title for layers. The text is specified in the lang file.

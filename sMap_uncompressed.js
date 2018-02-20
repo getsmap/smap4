@@ -12174,13 +12174,22 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				});
 			});
 		}
+		textWindow.hide();
 		textWindow.empty();
 		if (content.substring(0, 4) == "http") {
 			// We are dealing with a URL.
-			// Use helper method to get HTML from the URL and append to the textWindow.
-			$(".ui-dialog-titlebar").css({'width': 'auto'});
-			this.htmlToDialog(content, textWindow);
-
+			if (this.contentAsIframe) {
+				// Place content in an iframe.
+				var iFrame = $('<iframe width="470" height="100%" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0"></iframe>'); // scrolling='no'
+				iFrame.attr("src", content);
+				textWindow.css("overflow", "hidden")
+				textWindow.append(iFrame);
+			}
+			else {
+				// Use helper method to get HTML from the URL and append to the textWindow.
+				$(".ui-dialog-titlebar").css({'width': 'auto'});
+				this.htmlToDialog(content, textWindow);
+			}
 		}
 		else {
 			textWindow.html(content);
@@ -12626,6 +12635,12 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 		 * Use this icon for all folders. Set to null if you don't want any icon.
 		 */
 		folderIcon: "img/folder_page.gif",
+
+		/**
+		 * In the case of the content parameter is an URL: show content in an iframe
+		 * or fetch the source and place the content in the dialog element.
+		 */
+		contentAsIframe: true,
 		
 		/**
 		 * Option to add some text in the dialog title for layers. The text is specified in the lang file.
@@ -19117,7 +19132,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 						add : options.add,
 						xy: new OpenLayers.Pixel(px.x, px.y)
 					});
-					if (self.zoomToExtent && self.fitBoundsIfNotContained) {
+					if (self.fitBoundsIfNotContained) {
 						// Zoom to the feature's extent IF it's not contained in viewport.
 						var bounds = f.geometry.getBounds(),
 							viewportBounds = self.map.getExtent();
@@ -19233,18 +19248,6 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		 */
 		activateFromStart : true,
 		
-		/**
-		 * Zoom to extent of selected feature.
-		 * @type {Boolean}
-		 */
-		zoomToExtent: true,
-
-		/**
-		 * Zoom to extent of selected feature only if feature is not contained 
-		 * by current viewport.
-		 * @type {Boolean}
-		 * @requires zoomToExtent === true
-		 */
 		fitBoundsIfNotContained: true,
 		
 		

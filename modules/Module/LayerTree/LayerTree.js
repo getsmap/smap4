@@ -911,13 +911,22 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 				});
 			});
 		}
+		textWindow.hide();
 		textWindow.empty();
 		if (content.substring(0, 4) == "http") {
 			// We are dealing with a URL.
-			// Use helper method to get HTML from the URL and append to the textWindow.
-			$(".ui-dialog-titlebar").css({'width': 'auto'});
-			this.htmlToDialog(content, textWindow);
-
+			if (this.contentAsIframe) {
+				// Place content in an iframe.
+				var iFrame = $('<iframe width="470" height="100%" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0"></iframe>'); // scrolling='no'
+				iFrame.attr("src", content);
+				textWindow.css("overflow", "hidden")
+				textWindow.append(iFrame);
+			}
+			else {
+				// Use helper method to get HTML from the URL and append to the textWindow.
+				$(".ui-dialog-titlebar").css({'width': 'auto'});
+				this.htmlToDialog(content, textWindow);
+			}
 		}
 		else {
 			textWindow.html(content);
