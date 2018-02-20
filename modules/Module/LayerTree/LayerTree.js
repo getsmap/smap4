@@ -936,11 +936,11 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 
 	htmlToDialog: function(path, target) {
 		$.get(path, function(data) {
-
 			// Replace all relative paths in src-attributes.
 			var baseURL = path.match(/.*\//)[0]; //removes filename from end of URL
 			data = data.split('\n').map(function(x) {
 				var filePath = (x.match(/src="(?!http)(.*?)"/) != null) ? x.match(/src="(.*?)"/)[1]: '';
+				x = x.replace(/<script.*\/script>/, ''); //remove all scripts from page
 				return x.replace(/src="(.*?)"/, 'src="' + baseURL + filePath + '"');
 			}).join('\n');
 

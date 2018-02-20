@@ -12199,11 +12199,11 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 
 	htmlToDialog: function(path, target) {
 		$.get(path, function(data) {
-
 			// Replace all relative paths in src-attributes.
 			var baseURL = path.match(/.*\//)[0]; //removes filename from end of URL
 			data = data.split('\n').map(function(x) {
 				var filePath = (x.match(/src="(?!http)(.*?)"/) != null) ? x.match(/src="(.*?)"/)[1]: '';
+				x = x.replace(/<script.*\/script>/, ''); //remove all scripts from page
 				return x.replace(/src="(.*?)"/, 'src="' + baseURL + filePath + '"');
 			}).join('\n');
 
@@ -19132,7 +19132,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 						add : options.add,
 						xy: new OpenLayers.Pixel(px.x, px.y)
 					});
-					if (self.fitBoundsIfNotContained) {
+					if (self.zoomToExtent && self.fitBoundsIfNotContained) {
 						// Zoom to the feature's extent IF it's not contained in viewport.
 						var bounds = f.geometry.getBounds(),
 							viewportBounds = self.map.getExtent();
@@ -19248,6 +19248,18 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		 */
 		activateFromStart : true,
 		
+		/**
+		 * Zoom to extent of selected feature.
+		 * @type {Boolean}
+		 */
+		zoomToExtent: true,
+
+		/**
+		 * Zoom to extent of selected feature only if feature is not contained 
+		 * by current viewport.
+		 * @type {Boolean}
+		 * @requires zoomToExtent === true
+		 */
 		fitBoundsIfNotContained: true,
 		
 		
