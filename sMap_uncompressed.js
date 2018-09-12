@@ -6040,13 +6040,7 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 							strokeOpacity: .20
 						}
 						break;
-	//				case "mixed":
-	//					style = {
-	//						strokeWidth: 4,
-	//						strokeColor: "#0f0",
-	//						fillOpacity: 0,
-	//						strokeOpacity: 0.9
-	//					}
+
 					default:
 						style = {
 							strokeWidth: 12,
@@ -6310,12 +6304,6 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 	
 	makeRow: function(t, options) {
 		var row = $("<div unselectable='on' class='unselectable "+options.className+"' />");
-		
-		// Store all fids in a array.
-//		var fids = [];
-//		for (var i=0,len=arr.length; i<len; i++) {
-//			fids.push( arr[i].fids );
-//		}
 		var fids = t.fids;
 		
 		row.data("fids", fids); // Store configs so we can get and select the features on row click
@@ -6330,16 +6318,27 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 			// We are dealing with a URL.
 			this.attrDiv.hide(); // Avoid interference with iframe scrolling
 			this.attrDiv.empty();
-			this.attrDiv.parent().find("iframe").remove();
-			
-			var iFrame = $("<iframe scrolling='1' border='none' frameborder='0' width='100%' height='100%' />"); // scrolling='no'
-			iFrame.attr("src", content);
-			this.attrDiv.parent().append(iFrame);
+			var textWindow = $('#blixtenpopup-rightdiv');
+			this.htmlToDialog(content, textWindow);
 		}
 		else {
 			this.showAttributes( {}, content);
 			
 		}
+	},
+
+	htmlToDialog: function(path, target) {
+		$.get(path, function(data) {
+			// Replace all relative paths in src-attributes.
+			var baseURL = path.match(/.*\//)[0]; //removes filename from end of URL
+			data = data.split('\n').map(function(x) {
+				var filePath = (x.match(/src="(?!http)(.*?)"/) != null) ? x.match(/src="(.*?)"/)[1]: '';
+				x = x.replace(/<script.*\/script>/, ''); //remove all scripts from page
+				return x.replace(/src="(.*?)"/, 'src="' + baseURL + filePath + '"');
+			}).join('\n');
+
+			target.html(data);
+		});
 	},
 	
 	/**
@@ -6530,28 +6529,7 @@ sMap.Module.BlixtenPopup2 = OpenLayers.Class(sMap.Module, {
 			}
 		}
 		this.addItems( layersDict );
-		
-//		this.dialogDiv.prev().dblclick(function() {
-//			$(this).next().dialog("close");
-//			sMap.events.triggerEvent("addtoolbutton", this, {
-//				index : 2,
-//				label : "Sökresultat",
-//				iconCSS : "ui-icon-info",
-//				tagID : "button-blixtenpopup-results",
-//				bindActivation: false,
-//				on: function() {
-//					$("#blixtenpopup-dialogdiv").dialog("close");
-//					sMap.events.triggerEvent("removeitem", this, {
-//						item: $("#button-blixtenpopup-results"),
-//						doNotRedrawPosition: true
-//					});
-//				}
-////				left: this.left,
-////				right: this.right,
-////				margin: this.margin
-//			});
-//		});
-		
+				
 		
 	},
 	
@@ -12204,6 +12182,9 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			data = data.split('\n').map(function(x) {
 				var filePath = (x.match(/src="(?!http)(.*?)"/) != null) ? x.match(/src="(.*?)"/)[1]: '';
 				x = x.replace(/<script.*\/script>/, ''); //remove all scripts from page
+				if (x.match(/target="_blank"/) === null) {
+					x = x.replace(/<a href="http/, '<a target="_blank" href="http'); //add target to prevent link taking over current tab.
+				}
 				return x.replace(/src="(.*?)"/, 'src="' + baseURL + filePath + '"');
 			}).join('\n');
 

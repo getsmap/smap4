@@ -549,9 +549,10 @@ some checking/unchecking of boxes */
     border-right: 1px solid #aaa;
 }
 #blixtenpopup-rightdiv {
-    overflow: hidden;
-	z-index: 2;
+    z-index: 2;
     width: 59%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 #blixtenpopup-rowsdiv-bottom {
     position: relative;
