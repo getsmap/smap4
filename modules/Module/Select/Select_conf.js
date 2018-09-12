@@ -6,18 +6,6 @@ sMap.moduleConfig.Select = {
 		 */
 		activateFromStart : true,
 		
-		/**
-		 * Zoom to extent of selected feature.
-		 * @type {Boolean}
-		 */
-		zoomToExtent: true,
-
-		/**
-		 * Zoom to extent of selected feature only if feature is not contained 
-		 * by current viewport.
-		 * @type {Boolean}
-		 * @requires zoomToExtent === true
-		 */
 		fitBoundsIfNotContained: true,
 		
 		
