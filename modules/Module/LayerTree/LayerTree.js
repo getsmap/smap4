@@ -941,16 +941,9 @@ sMap.Module.LayerTree = OpenLayers.Class(sMap.Module, {
 			data = data.split('\n').map(function(x) {
 				var filePath = (x.match(/src="(?!http)(.*?)"/) != null) ? x.match(/src="(.*?)"/)[1]: '';
 				x = x.replace(/<script.*\/script>/, ''); //remove all scripts from page
-<<<<<<< .mine
-				if (x.match(/target="_blank"/) === null) {
-					x = x.replace(/<a href="http/, '<a target="_blank" href="http'); //add target to prevent link hostile takeover.
-				}
-||||||| .r204
-=======
 				if (x.match(/target="_blank"/) === null) {
 					x = x.replace(/<a href="http/, '<a target="_blank" href="http'); //add target to prevent link taking over current tab.
 				}
->>>>>>> .r206
 				return x.replace(/src="(.*?)"/, 'src="' + baseURL + filePath + '"');
 			}).join('\n');
 

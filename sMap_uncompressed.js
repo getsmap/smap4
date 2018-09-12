@@ -19113,7 +19113,7 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 						add : options.add,
 						xy: new OpenLayers.Pixel(px.x, px.y)
 					});
-					if (self.zoomToExtent && self.fitBoundsIfNotContained) {
+					if (self.fitBoundsIfNotContained) {
 						// Zoom to the feature's extent IF it's not contained in viewport.
 						var bounds = f.geometry.getBounds(),
 							viewportBounds = self.map.getExtent();
@@ -19229,18 +19229,6 @@ sMap.Module.Select = OpenLayers.Class(sMap.Module, {
 		 */
 		activateFromStart : true,
 		
-		/**
-		 * Zoom to extent of selected feature.
-		 * @type {Boolean}
-		 */
-		zoomToExtent: true,
-
-		/**
-		 * Zoom to extent of selected feature only if feature is not contained 
-		 * by current viewport.
-		 * @type {Boolean}
-		 * @requires zoomToExtent === true
-		 */
 		fitBoundsIfNotContained: true,
 		
 		
